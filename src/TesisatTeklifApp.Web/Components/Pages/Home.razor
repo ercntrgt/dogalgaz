@@ -1,0 +1,98 @@
+@page "/"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IOfferService OfferService
+@inject IProductService ProductService
+@inject IStockControlService StockService
+
+<PageTitle>Ana Sayfa - ÖZDEMİR Tesisat Teklif</PageTitle>
+
+<h2 class="mb-4">Yönetim Paneli</h2>
+
+@if (loading)
+{
+    <p class="text-muted">Yükleniyor...</p>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card text-center p-3 summary-box">
+                <div class="display-6 text-primary">@offerCount</div>
+                <div class="text-muted">Toplam Teklif</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card text-center p-3 summary-box">
+                <div class="display-6 text-success">@orderCount</div>
+                <div class="text-muted">Sipariş</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card text-center p-3 summary-box">
+                <div class="display-6 text-warning">@criticalCount</div>
+                <div class="text-muted">Kritik Stok</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card text-center p-3 summary-box">
+                <div class="display-6 text-secondary">@productCount</div>
+                <div class="text-muted">Aktif Ürün</div>
+            </div>
+        </div>
+    </div>
+
+    <AuthorizeView Roles="Admin,SalesPerson">
+        <div class="mb-4">
+            <a href="offers/new" class="btn btn-primary">➕ Yeni Teklif Oluştur</a>
+            <a href="customers/new" class="btn btn-outline-primary">👤 Yeni Müşteri</a>
+        </div>
+    </AuthorizeView>
+
+    <div class="card summary-box">
+        <div class="card-header bg-white fw-semibold">Son Teklifler</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr><th>Form No</th><th>Müşteri</th><th>Tarih</th><th>Durum</th><th class="text-end">Genel Toplam</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in recent)
+                    {
+                        <tr style="cursor:pointer" @onclick="@(() => Nav.NavigateTo($"offers/{o.Id}"))">
+                            <td>@o.OfferNumber</td>
+                            <td>@o.Customer?.FullName</td>
+                            <td>@o.OfferDate.ToString("dd.MM.yyyy")</td>
+                            <td><StatusBadge Status="o.Status" /></td>
+                            <td class="text-end">@o.GrandTotal.ToString("#,##0.00") ₺</td>
+                        </tr>
+                    }
+                    @if (recent.Count == 0)
+                    {
+                        <tr><td colspan="5" class="text-center text-muted py-3">Henüz teklif yok.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@code {
+    [Inject] NavigationManager Nav { get; set; } = default!;
+
+    private bool loading = true;
+    private int offerCount, orderCount, criticalCount, productCount;
+    private List<Offer> recent = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var all = await OfferService.SearchAsync(new OfferSearchFilter());
+        offerCount = all.Count;
+        orderCount = all.Count(o => o.IsOrder);
+        recent = all.Take(8).ToList();
+
+        productCount = (await ProductService.GetActiveAsync()).Count;
+        criticalCount = (await StockService.GetCriticalStockItemsAsync()).Count;
+        loading = false;
+    }
+}

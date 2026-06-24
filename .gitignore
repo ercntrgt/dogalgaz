@@ -1,0 +1,22 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.vscode/
+
+## SQLite veritabanı (her ortamda yeniden oluşur / seed edilir)
+*.db
+*.db-shm
+*.db-wal
+
+## Rider
+.idea/
+
+## macOS
+.DS_Store
+
+## Yayın çıktıları
+publish/
+*.pdf

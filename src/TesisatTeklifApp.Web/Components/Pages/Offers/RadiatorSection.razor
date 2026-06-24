@@ -1,0 +1,108 @@
+@* Radyatör bölümü (E). Panel + vana hesabı OfferCalculationService'te yapılır. *@
+
+<div class="card card-section summary-box mb-3 @(collapsed ? "collapsed" : "")">
+    <div class="card-header d-flex align-items-center" @onclick="Toggle">
+        <span>Radyatör</span>
+        <span class="ms-2 badge bg-light text-dark">@Items.Count</span>
+        <span class="ms-auto toggle-ico">▼</span>
+    </div>
+    @if (!collapsed)
+    {
+        <div class="table-responsive">
+            <table class="table table-sm mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th style="min-width:130px">Oda</th>
+                        <th style="min-width:140px">Radyatör Ürünü</th>
+                        <th style="width:90px">Marka</th>
+                        <th style="width:80px">Ölçü</th>
+                        <th style="width:90px">Panel (m)</th>
+                        <th style="width:90px">Metre ₺</th>
+                        <th style="width:70px">Vana</th>
+                        <th style="width:90px">Vana ₺</th>
+                        <th style="width:110px" class="text-end">Toplam</th>
+                        <th style="width:100px">Stok</th>
+                        <th style="width:40px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Items)
+                    {
+                        <tr class="@(r.IsStockInsufficient ? "stock-insufficient" : "")">
+                            <td>
+                                <select class="form-select form-select-sm" @bind="r.RoomName" @bind:after="Changed">
+                                    <option value="">-- oda --</option>
+                                    @foreach (var room in RoomNames.All)
+                                    {
+                                        <option value="@room">@room</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm" value="@r.RadiatorProductId"
+                                        @onchange="@(e => OnRadiatorSelected(r, e.Value?.ToString()))">
+                                    <option value="">-- ürün --</option>
+                                    @foreach (var p in RadiatorProducts)
+                                    {
+                                        <option value="@p.Id" selected="@(r.RadiatorProductId == p.Id)">@p.Name</option>
+                                    }
+                                </select>
+                            </td>
+                            <td><input class="form-control form-control-sm" @bind="r.RadiatorBrand" @bind:after="Changed" /></td>
+                            <td><input class="form-control form-control-sm" @bind="r.RadiatorSize" @bind:after="Changed" /></td>
+                            <td><input type="number" step="any" class="form-control form-control-sm" @bind="r.PanelLength" @bind:after="Changed" /></td>
+                            <td><input type="number" step="any" class="form-control form-control-sm" @bind="r.MeterPrice" @bind:after="Changed" /></td>
+                            <td><input type="number" step="any" class="form-control form-control-sm" @bind="r.ValveQuantity" @bind:after="Changed" /></td>
+                            <td><input type="number" step="any" class="form-control form-control-sm" @bind="r.ValveUnitPrice" @bind:after="Changed" /></td>
+                            <td class="text-end fw-semibold">@r.TotalPrice.ToString("#,##0.00") ₺</td>
+                            <td><span class="badge @StockStatusStyles.BadgeClass(r.StockStatus)">@StockStatusStyles.Label(r.StockStatus)</span></td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger" @onclick="@(() => Remove(r))">×</button></td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="table-light">
+                        <td colspan="4" class="text-end fw-semibold">Toplam panel uzunluğu:</td>
+                        <td class="fw-semibold">@TotalPanel.ToString("0.##") m</td>
+                        <td colspan="6"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddRow">➕ Radyatör Ekle</button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public ICollection<RadiatorItem> Items { get; set; } = new List<RadiatorItem>();
+    [Parameter] public List<Product> RadiatorProducts { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private bool collapsed;
+    private void Toggle() => collapsed = !collapsed;
+
+    private decimal TotalPanel => Items.Sum(i => i.PanelLength);
+
+    private void AddRow() { Items.Add(new RadiatorItem()); Changed(); }
+    private void Remove(RadiatorItem r) { Items.Remove(r); Changed(); }
+
+    private void OnRadiatorSelected(RadiatorItem r, string? value)
+    {
+        if (int.TryParse(value, out var pid))
+        {
+            var p = RadiatorProducts.FirstOrDefault(x => x.Id == pid);
+            if (p is not null)
+            {
+                r.RadiatorProductId = p.Id;
+                r.RadiatorBrand = string.IsNullOrEmpty(r.RadiatorBrand) ? p.Brand : r.RadiatorBrand;
+                if (r.MeterPrice <= 0) r.MeterPrice = p.SalePrice;
+            }
+        }
+        else { r.RadiatorProductId = null; }
+        Changed();
+    }
+
+    private void Changed() => OnChanged.InvokeAsync();
+}

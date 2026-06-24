@@ -1,0 +1,105 @@
+@page "/admin/users"
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject UserManager<ApplicationUser> UserManager
+
+<PageTitle>Kullanıcılar</PageTitle>
+
+<h2 class="mb-3">Kullanıcı Yönetimi</h2>
+
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="card summary-box">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead><tr><th>Ad</th><th>E-posta</th><th>Rol</th><th>Durum</th></tr></thead>
+                    <tbody>
+                        @foreach (var u in users)
+                        {
+                            <tr>
+                                <td>@u.User.FullName</td>
+                                <td>@u.User.Email</td>
+                                <td><span class="badge bg-primary">@AppRoles.DisplayName(u.Role)</span></td>
+                                <td>@(u.User.IsActive ? "Aktif" : "Pasif")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card summary-box">
+            <div class="card-header bg-white fw-semibold">Yeni Kullanıcı</div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(msg))
+                {
+                    <div class="alert @(ok ? "alert-success" : "alert-danger") py-2">@msg</div>
+                }
+                <div class="mb-2">
+                    <label class="form-label">Ad Soyad</label>
+                    <input class="form-control" @bind="newFullName" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">E-posta</label>
+                    <input class="form-control" @bind="newEmail" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Şifre</label>
+                    <input type="password" class="form-control" @bind="newPassword" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Rol</label>
+                    <select class="form-select" @bind="newRole">
+                        @foreach (var r in AppRoles.All)
+                        {
+                            <option value="@r">@AppRoles.DisplayName(r)</option>
+                        }
+                    </select>
+                </div>
+                <button class="btn btn-success" @onclick="Create">➕ Oluştur</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private record UserRow(ApplicationUser User, string Role);
+    private List<UserRow> users = new();
+
+    private string newFullName = "", newEmail = "", newPassword = "", newRole = AppRoles.SalesPerson;
+    private string? msg;
+    private bool ok;
+
+    protected override async Task OnInitializedAsync() => await Load();
+
+    private async Task Load()
+    {
+        users = new();
+        foreach (var u in UserManager.Users.ToList())
+        {
+            var roles = await UserManager.GetRolesAsync(u);
+            users.Add(new UserRow(u, roles.FirstOrDefault() ?? "-"));
+        }
+    }
+
+    private async Task Create()
+    {
+        msg = null;
+        var user = new ApplicationUser { UserName = newEmail, Email = newEmail, EmailConfirmed = true, FullName = newFullName, IsActive = true };
+        var result = await UserManager.CreateAsync(user, newPassword);
+        if (result.Succeeded)
+        {
+            await UserManager.AddToRoleAsync(user, newRole);
+            ok = true; msg = "Kullanıcı oluşturuldu.";
+            newFullName = newEmail = newPassword = "";
+            await Load();
+        }
+        else
+        {
+            ok = false; msg = string.Join(" ", result.Errors.Select(e => e.Description));
+        }
+    }
+}

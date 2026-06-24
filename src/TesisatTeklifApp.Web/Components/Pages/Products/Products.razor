@@ -1,0 +1,106 @@
+@page "/products"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IProductService ProductService
+@inject NavigationManager Nav
+
+<PageTitle>Ürünler</PageTitle>
+
+<div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0">Ürün / Malzeme Yönetimi</h2>
+    <AuthorizeView Roles="Admin" Context="a">
+        <a href="products/new" class="btn btn-primary ms-auto">➕ Yeni Ürün</a>
+    </AuthorizeView>
+</div>
+
+<div class="card summary-box mb-3">
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <input class="form-control" placeholder="Ara: ad / marka / model" @bind="filter.Keyword" @bind:event="oninput" />
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" @bind="filter.Category">
+                    <option value="">Tüm kategoriler</option>
+                    @foreach (var c in ProductCategories.All)
+                    {
+                        <option value="@c">@c</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="crit" @bind="filter.OnlyCriticalStock" />
+                    <label class="form-check-label" for="crit">Sadece kritik stok</label>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-primary w-100" @onclick="Load">Filtrele</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card summary-box">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Ad</th><th>Kategori</th><th>Marka/Model</th><th>Birim</th>
+                    <th class="text-end">Satış ₺</th><th class="text-end">Stok</th><th>Durum</th>
+                    <AuthorizeView Roles="Admin" Context="a"><th></th></AuthorizeView>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in items)
+                {
+                    <tr class="@RowClass(p)">
+                        <td>@p.Name</td>
+                        <td>@p.Category</td>
+                        <td>@p.Brand @p.Model</td>
+                        <td>@p.Unit</td>
+                        <td class="text-end">@p.SalePrice.ToString("#,##0.00")</td>
+                        <td class="text-end">@(p.IsStockTracked ? FormatQty(p.StockQuantity) : "-")</td>
+                        <td>@StockLabel(p)</td>
+                        <AuthorizeView Roles="Admin" Context="a">
+                            <td class="text-end">
+                                <a href="products/@p.Id" class="btn btn-sm btn-outline-secondary">Düzenle</a>
+                            </td>
+                        </AuthorizeView>
+                    </tr>
+                }
+                @if (items.Count == 0)
+                {
+                    <tr><td colspan="8" class="text-center text-muted py-4">Kayıt bulunamadı.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private ProductSearchFilter filter = new();
+    private List<Product> items = new();
+
+    protected override async Task OnInitializedAsync() => await Load();
+
+    private async Task Load() => items = await ProductService.SearchAsync(filter);
+
+    private string RowClass(Product p)
+    {
+        if (!p.IsStockTracked) return "";
+        if (p.StockQuantity <= 0) return "stock-insufficient";
+        if (p.StockQuantity <= p.CriticalStockQuantity) return "stock-critical";
+        return "";
+    }
+
+    private string StockLabel(Product p)
+    {
+        if (!p.IsStockTracked) return "Takipsiz";
+        if (p.StockQuantity <= 0) return "Yetersiz";
+        if (p.StockQuantity <= p.CriticalStockQuantity) return "Kritik";
+        return "Yeterli";
+    }
+
+    private static string FormatQty(decimal q) => q % 1 == 0 ? q.ToString("0") : q.ToString("0.##");
+}

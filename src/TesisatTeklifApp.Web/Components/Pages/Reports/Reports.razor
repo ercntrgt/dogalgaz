@@ -1,0 +1,157 @@
+@page "/reports"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IReportService ReportService
+@inject IExcelExportService Excel
+@inject IJSRuntime JS
+
+<PageTitle>Raporlar</PageTitle>
+
+<h2 class="mb-3">Raporlar</h2>
+
+<div class="card summary-box mb-3">
+    <div class="card-body row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label">Rapor Türü</label>
+            <select class="form-select" @bind="reportKey" @bind:after="Run">
+                <option value="offers">1. Teklif Listesi</option>
+                <option value="orders">2. Sipariş Listesi</option>
+                <option value="approved">3. Onaylanan Teklifler</option>
+                <option value="cancelled">4. İptal Edilen Teklifler</option>
+                <option value="completed">5. Tamamlanan Siparişler</option>
+                <option value="insufficient">6. Eksik Stok Raporu</option>
+                <option value="critical">7. Kritik Stok Raporu</option>
+                <option value="revenue">8. Toplam Ciro Raporu</option>
+                <option value="productsales">9. Ürün Bazlı Satış</option>
+                <option value="customer">10. Müşteri Bazlı Rapor</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Başlangıç</label>
+            <input type="date" class="form-control" @bind="filter.FromDate" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Bitiş</label>
+            <input type="date" class="form-control" @bind="filter.ToDate" />
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-outline-primary w-100" @onclick="Run">Getir</button>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-outline-success w-100" @onclick="ExportExcel">⬇ Excel</button>
+        </div>
+    </div>
+</div>
+
+<div class="card summary-box">
+    <div class="table-responsive">
+        @if (rows is null || rows.Count == 0)
+        {
+            <p class="text-center text-muted py-4">Kayıt bulunamadı.</p>
+        }
+        else
+        {
+            <table class="table table-sm table-hover mb-0">
+                <thead>
+                    <tr>
+                        @foreach (var h in headers)
+                        {
+                            <th>@h</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in rows)
+                    {
+                        <tr>
+                            @foreach (var c in r)
+                            {
+                                <td>@c</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@code {
+    private string reportKey = "offers";
+    private ReportFilter filter = new();
+    private List<string> headers = new();
+    private List<List<string>> rows = new();
+
+    protected override async Task OnInitializedAsync() => await Run();
+
+    private async Task Run()
+    {
+        var of = new OfferSearchFilter { FromDate = filter.FromDate, ToDate = filter.ToDate };
+        switch (reportKey)
+        {
+            case "offers":
+                await Tabulate(await ReportService.GetOffersAsync(of), new[] { "Form No", "Müşteri", "Tarih", "Durum", "Genel Toplam" },
+                    o => new[] { o.OfferNumber, o.Customer?.FullName ?? "-", o.OfferDate.ToString("dd.MM.yyyy"), OfferStatusText.Label(o.Status), Money(o.GrandTotal) });
+                break;
+            case "orders":
+                of.OnlyOrders = true;
+                await Tabulate(await ReportService.GetOffersAsync(of), new[] { "Sipariş No", "Müşteri", "Tarih", "Durum", "Genel Toplam" },
+                    o => new[] { o.OrderNumber ?? o.OfferNumber, o.Customer?.FullName ?? "-", o.OfferDate.ToString("dd.MM.yyyy"), OfferStatusText.Label(o.Status), Money(o.GrandTotal) });
+                break;
+            case "approved":
+                of.Status = OfferStatus.Approved;
+                await Tabulate(await ReportService.GetOffersAsync(of), new[] { "Form No", "Müşteri", "Tarih", "Genel Toplam" },
+                    o => new[] { o.OfferNumber, o.Customer?.FullName ?? "-", o.OfferDate.ToString("dd.MM.yyyy"), Money(o.GrandTotal) });
+                break;
+            case "cancelled":
+                of.Status = OfferStatus.Cancelled;
+                await Tabulate(await ReportService.GetOffersAsync(of), new[] { "Form No", "Müşteri", "Tarih", "Genel Toplam" },
+                    o => new[] { o.OfferNumber, o.Customer?.FullName ?? "-", o.OfferDate.ToString("dd.MM.yyyy"), Money(o.GrandTotal) });
+                break;
+            case "completed":
+                of.Status = OfferStatus.Completed;
+                await Tabulate(await ReportService.GetOffersAsync(of), new[] { "Sipariş No", "Müşteri", "Tarih", "Genel Toplam" },
+                    o => new[] { o.OrderNumber ?? o.OfferNumber, o.Customer?.FullName ?? "-", o.OfferDate.ToString("dd.MM.yyyy"), Money(o.GrandTotal) });
+                break;
+            case "insufficient":
+                await Tabulate(await ReportService.GetInsufficientStockReportAsync(filter), new[] { "Ürün", "Kategori", "Talep", "Mevcut", "Eksik", "Birim" },
+                    r => new[] { r.ProductName, r.Category, Q(r.RequestedQuantity), Q(r.AvailableStock), Q(r.MissingQuantity), r.Unit });
+                break;
+            case "critical":
+                await Tabulate(await ReportService.GetCriticalStockReportAsync(filter), new[] { "Ürün", "Kategori", "Mevcut Stok", "Kritik Seviye", "Birim" },
+                    p => new[] { p.Name, p.Category, Q(p.StockQuantity), Q(p.CriticalStockQuantity), p.Unit });
+                break;
+            case "revenue":
+                await Tabulate(await ReportService.GetRevenueReportAsync(filter), new[] { "Dönem", "Sipariş Adedi", "Ciro", "KDV", "İskonto" },
+                    r => new[] { r.Period, r.OrderCount.ToString(), Money(r.TotalRevenue), Money(r.TotalVat), Money(r.TotalDiscount) });
+                break;
+            case "productsales":
+                await Tabulate(await ReportService.GetProductSalesReportAsync(filter), new[] { "Ürün", "Kategori", "Toplam Miktar", "Toplam Tutar" },
+                    r => new[] { r.ProductName, r.Category, Q(r.TotalQuantity), Money(r.TotalAmount) });
+                break;
+            case "customer":
+                await Tabulate(await ReportService.GetCustomerReportAsync(filter), new[] { "Müşteri", "Teklif", "Sipariş", "Toplam Tutar" },
+                    r => new[] { r.CustomerName, r.OfferCount.ToString(), r.OrderCount.ToString(), Money(r.TotalAmount) });
+                break;
+        }
+    }
+
+    private Task Tabulate<T>(List<T> data, string[] cols, Func<T, string[]> map)
+    {
+        headers = cols.ToList();
+        rows = data.Select(d => map(d).ToList()).ToList();
+        return Task.CompletedTask;
+    }
+
+    private async Task ExportExcel()
+    {
+        if (rows.Count == 0) return;
+        var bytes = Excel.ExportTable(headers, rows.Cast<IReadOnlyList<string>>().ToList(), reportKey);
+        var b64 = Convert.ToBase64String(bytes);
+        await JS.InvokeVoidAsync("downloadFile", $"Rapor_{reportKey}.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", b64);
+    }
+
+    private static string Money(decimal v) => v.ToString("#,##0.00") + " ₺";
+    private static string Q(decimal v) => v % 1 == 0 ? v.ToString("0") : v.ToString("0.##");
+}

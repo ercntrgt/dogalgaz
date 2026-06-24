@@ -1,0 +1,19 @@
+<span class="badge @CssClass">@Label</span>
+
+@code {
+    [Parameter] public OfferStatus Status { get; set; }
+
+    private string CssClass => Status switch
+    {
+        OfferStatus.Draft => "bg-secondary",
+        OfferStatus.SentToCustomer => "bg-info text-dark",
+        OfferStatus.Approved => "bg-primary",
+        OfferStatus.ConvertedToOrder => "bg-success",
+        OfferStatus.WaitingSupply => "bg-warning text-dark",
+        OfferStatus.Completed => "bg-success",
+        OfferStatus.Cancelled => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    private string Label => OfferStatusText.Label(Status);
+}

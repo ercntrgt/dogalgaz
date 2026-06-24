@@ -1,0 +1,105 @@
+@page "/offers"
+@page "/orders"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IOfferService OfferService
+@inject NavigationManager Nav
+
+<PageTitle>@Title</PageTitle>
+
+<div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0">@Title</h2>
+    <div class="ms-auto d-flex gap-2">
+        <a class="btn btn-outline-success" href="/download/offers/excel" target="_blank">⬇ Excel</a>
+        <AuthorizeView Roles="Admin,SalesPerson" Context="a">
+            <a href="offers/new" class="btn btn-primary">➕ Yeni Teklif</a>
+        </AuthorizeView>
+    </div>
+</div>
+
+<div class="card summary-box mb-3">
+    <div class="card-body row g-2">
+        <div class="col-md-3"><input type="date" class="form-control" @bind="filter.FromDate" /></div>
+        <div class="col-md-3"><input type="date" class="form-control" @bind="filter.ToDate" /></div>
+        <div class="col-md-2"><input class="form-control" placeholder="Müşteri" @bind="filter.CustomerName" /></div>
+        <div class="col-md-2"><input class="form-control" placeholder="Form No" @bind="filter.FormNumber" /></div>
+        <div class="col-md-2">
+            <select class="form-select" @bind="StatusValue">
+                <option value="">Tüm durumlar</option>
+                @foreach (var s in OfferStatusText.All)
+                {
+                    <option value="@((int)s)">@OfferStatusText.Label(s)</option>
+                }
+            </select>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-outline-primary" @onclick="Load">Filtrele</button>
+            <button class="btn btn-link" @onclick="Reset">Temizle</button>
+        </div>
+    </div>
+</div>
+
+<div class="card summary-box">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Form / Sipariş No</th><th>Müşteri</th><th>Tarih</th>
+                    <th>Durum</th><th class="text-end">Genel Toplam</th><th>Sorumlu</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in items)
+                {
+                    <tr style="cursor:pointer" @onclick="@(() => Nav.NavigateTo($"offers/{o.Id}"))">
+                        <td>
+                            <strong>@o.OfferNumber</strong>
+                            @if (o.OrderNumber is not null) { <br /><span class="text-success small">@o.OrderNumber</span> }
+                        </td>
+                        <td>@o.Customer?.FullName</td>
+                        <td>@o.OfferDate.ToString("dd.MM.yyyy")</td>
+                        <td><StatusBadge Status="o.Status" /></td>
+                        <td class="text-end">@o.GrandTotal.ToString("#,##0.00") ₺</td>
+                        <td>@o.ResponsiblePerson</td>
+                        <td class="text-end" @onclick:stopPropagation="true">
+                            <a href="offers/@o.Id" class="btn btn-sm btn-outline-secondary">Detay</a>
+                        </td>
+                    </tr>
+                }
+                @if (items.Count == 0)
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-4">Kayıt bulunamadı.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private OfferSearchFilter filter = new();
+    private List<Offer> items = new();
+    private bool onlyOrders;
+
+    private string Title => onlyOrders ? "Siparişler" : "Teklifler";
+
+    private string StatusValue
+    {
+        get => filter.Status is null ? "" : ((int)filter.Status).ToString();
+        set => filter.Status = string.IsNullOrEmpty(value) ? null : (OfferStatus)int.Parse(value);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        onlyOrders = Nav.Uri.Contains("/orders", StringComparison.OrdinalIgnoreCase);
+        filter.OnlyOrders = onlyOrders;
+        await Load();
+    }
+
+    private async Task Load() => items = await OfferService.SearchAsync(filter);
+
+    private async Task Reset()
+    {
+        filter = new OfferSearchFilter { OnlyOrders = onlyOrders };
+        await Load();
+    }
+}

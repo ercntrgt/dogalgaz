@@ -1,0 +1,86 @@
+@page "/customers/new"
+@page "/customers/{Id:int}"
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
+@rendermode InteractiveServer
+@inject ICustomerService CustomerService
+@inject NavigationManager Nav
+
+<PageTitle>@(IsNew ? "Yeni Müşteri" : "Müşteri Düzenle")</PageTitle>
+
+<h2 class="mb-3">@(IsNew ? "Yeni Müşteri" : $"Müşteri Düzenle: {model.FullName}")</h2>
+
+<EditForm Model="model" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <div class="card summary-box">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Ad *</label>
+                    <InputText class="form-control" @bind-Value="model.FirstName" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Soyad *</label>
+                    <InputText class="form-control" @bind-Value="model.LastName" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">T.C. Kimlik No</label>
+                    <InputText class="form-control" @bind-Value="model.NationalId" maxlength="11" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Telefon</label>
+                    <InputText class="form-control" @bind-Value="model.Phone" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">İl</label>
+                    <InputText class="form-control" @bind-Value="model.City" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">İlçe</label>
+                    <InputText class="form-control" @bind-Value="model.District" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Adres</label>
+                    <InputTextArea class="form-control" rows="2" @bind-Value="model.Address" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Açıklama</label>
+                    <InputText class="form-control" @bind-Value="model.Description" />
+                </div>
+            </div>
+        </div>
+        <div class="card-footer d-flex gap-2">
+            <button type="submit" class="btn btn-success">💾 Kaydet</button>
+            <a href="customers" class="btn btn-outline-secondary">İptal</a>
+            <AuthorizeView Roles="Admin" Context="a">
+                @if (!IsNew)
+                {
+                    <button type="button" class="btn btn-outline-danger ms-auto" @onclick="Delete">🗑 Sil</button>
+                }
+            </AuthorizeView>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    private bool IsNew => Id is null;
+    private Customer model = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is int id)
+            model = await CustomerService.GetByIdAsync(id) ?? model;
+    }
+
+    private async Task Save()
+    {
+        if (IsNew) await CustomerService.AddAsync(model);
+        else await CustomerService.UpdateAsync(model);
+        Nav.NavigateTo("customers");
+    }
+
+    private async Task Delete()
+    {
+        if (Id is int id) { await CustomerService.SoftDeleteAsync(id); Nav.NavigateTo("customers"); }
+    }
+}

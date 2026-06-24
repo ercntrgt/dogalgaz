@@ -1,0 +1,62 @@
+@page "/admin/stock-settings"
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+@using TesisatTeklifApp.Infrastructure.Data
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
+
+<PageTitle>Stok Ayarları</PageTitle>
+
+<h2 class="mb-3">Stok Ayarları</h2>
+
+@if (settings is null)
+{
+    <p>Yükleniyor...</p>
+}
+else
+{
+    <div class="card summary-box" style="max-width:640px;">
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Stoktan Düşme Modu</label>
+                <select class="form-select" @bind="settings.StockDeductionMode">
+                    <option value="@StockDeductionMode.DeductOnApproval">Sipariş onaylanınca stoktan otomatik düş</option>
+                    <option value="@StockDeductionMode.DeductOnCompletion">Sipariş tamamlanınca stoktan düş</option>
+                    <option value="@StockDeductionMode.Manual">Manuel stok düş</option>
+                </select>
+            </div>
+            <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="neg" @bind="settings.AllowNegativeStock" />
+                <label class="form-check-label" for="neg">Stok eksiye düşebilsin</label>
+            </div>
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="warn" @bind="settings.ShowStockWarningOnOffer" />
+                <label class="form-check-label" for="warn">Teklif ekranında stok uyarısı göster</label>
+            </div>
+            <button class="btn btn-success" @onclick="Save">💾 Kaydet</button>
+            @if (saved) { <span class="text-success ms-2">✓ Kaydedildi</span> }
+        </div>
+    </div>
+}
+
+@code {
+    private TesisatTeklifApp.Domain.Entities.StockSettings? settings;
+    private bool saved;
+
+    protected override async Task OnInitializedAsync()
+    {
+        settings = await Db.StockSettings.FirstOrDefaultAsync();
+        if (settings is null)
+        {
+            settings = new TesisatTeklifApp.Domain.Entities.StockSettings();
+            Db.StockSettings.Add(settings);
+            await Db.SaveChangesAsync();
+        }
+    }
+
+    private async Task Save()
+    {
+        await Db.SaveChangesAsync();
+        saved = true;
+    }
+}

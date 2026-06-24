@@ -1,0 +1,77 @@
+@page "/Account/Login"
+@layout EmptyLayout
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@attribute [AllowAnonymous]
+@inject SignInManager<ApplicationUser> SignInManager
+@inject NavigationManager Nav
+
+<PageTitle>Giriş - ÖZDEMİR Tesisat Teklif</PageTitle>
+
+<div class="login-wrap">
+    <div class="card login-card shadow-lg p-4">
+        <img src="images/logo.png" class="logo" alt="ÖZDEMİR Mühendislik" />
+        <h5 class="text-center mb-3">Tesisat Teklif &amp; Sipariş Sistemi</h5>
+
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alert alert-danger py-2">@error</div>
+        }
+
+        <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+            <DataAnnotationsValidator />
+            <div class="mb-3">
+                <label class="form-label">E-posta</label>
+                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" />
+                <ValidationMessage For="() => Input.Email" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Şifre</label>
+                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" />
+                <ValidationMessage For="() => Input.Password" />
+            </div>
+            <div class="form-check mb-3">
+                <InputCheckbox @bind-Value="Input.RememberMe" class="form-check-input" id="remember" />
+                <label class="form-check-label" for="remember">Beni hatırla</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+        </EditForm>
+
+        <hr />
+        <div class="small text-muted">
+            <strong>Demo hesaplar:</strong><br />
+            Admin: admin@ozdemir.local / Admin!123<br />
+            Satış: satis@ozdemir.local / Satis!123<br />
+            Görüntüleyici: gozlemci@ozdemir.local / Gozlem!123
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm] private LoginModel Input { get; set; } = new();
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
+    private string? error;
+
+    private async Task LoginUser()
+    {
+        var result = await SignInManager.PasswordSignInAsync(
+            Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
+        if (result.Succeeded)
+            Nav.NavigateTo(ReturnUrl ?? "/");
+        else
+            error = "E-posta veya şifre hatalı.";
+    }
+
+    private sealed class LoginModel
+    {
+        [Required(ErrorMessage = "E-posta gerekli")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta girin")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Şifre gerekli")]
+        public string Password { get; set; } = "";
+
+        public bool RememberMe { get; set; }
+    }
+}

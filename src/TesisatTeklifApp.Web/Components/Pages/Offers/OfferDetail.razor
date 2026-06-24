@@ -1,0 +1,258 @@
+@page "/offers/{Id:int}"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IOfferService OfferService
+@inject IStockControlService StockService
+@inject NavigationManager Nav
+
+<PageTitle>@offer?.OfferNumber</PageTitle>
+
+@if (offer is null)
+{
+    <p>Yükleniyor...</p>
+}
+else
+{
+    <div class="d-flex align-items-center mb-3 flex-wrap gap-2">
+        <h2 class="mb-0">@offer.OfferNumber</h2>
+        @if (offer.OrderNumber is not null)
+        {
+            <span class="badge bg-success">@offer.OrderNumber</span>
+        }
+        <StatusBadge Status="offer.Status" />
+        <div class="ms-auto d-flex gap-2 flex-wrap">
+            <a class="btn btn-outline-danger" href="/download/offer/@offer.Id/pdf" target="_blank">📄 PDF</a>
+            <AuthorizeView Roles="Admin,SalesPerson" Context="a">
+                <a class="btn btn-outline-secondary" href="offers/@offer.Id/edit">✏️ Düzenle</a>
+                <button class="btn btn-outline-primary" @onclick="Copy">📋 Kopyala</button>
+                @if (offer.Status is OfferStatus.Draft or OfferStatus.SentToCustomer or OfferStatus.Approved)
+                {
+                    <button class="btn btn-success" @onclick="ConvertToOrder">📦 Siparişe Dönüştür</button>
+                }
+                @if (offer.Status != OfferStatus.Cancelled && offer.Status != OfferStatus.Completed)
+                {
+                    <button class="btn btn-outline-danger" @onclick="Cancel">İptal Et</button>
+                }
+            </AuthorizeView>
+        </div>
+    </div>
+
+    @* Genel stok uyarısı *@
+    @if (stockSummary is not null)
+    {
+        <div class="alert @(stockSummary.AllSufficient ? "alert-success" : (stockSummary.InsufficientCount > 0 ? "alert-danger" : "alert-warning"))">
+            @foreach (var m in stockSummary.Messages)
+            {
+                <div>• @m</div>
+            }
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert alert-info">@message</div>
+    }
+
+    <div class="row g-3">
+        <div class="col-lg-8">
+            @* Müşteri *@
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">Müşteri Bilgileri</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div><strong>@offer.Customer?.FullName</strong></div>
+                            <div class="text-muted">T.C.: @offer.Customer?.NationalId</div>
+                            <div class="text-muted">Tel: @offer.Customer?.Phone</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-muted">@offer.Customer?.City / @offer.Customer?.District</div>
+                            <div class="text-muted">@offer.Customer?.Address</div>
+                            <div class="text-muted">Sorumlu: @offer.ResponsiblePerson</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @SectionCard("B) Kombi / Kazan", OfferSections.KombiKazan)
+            @SectionCard("C) Doğalgaz Tesisatı", OfferSections.GasInstallation)
+            @SectionCard("D) Malzeme / Ekipman", OfferSections.Material)
+
+            @* Radyatör *@
+            @if (offer.RadiatorItems.Count > 0)
+            {
+                <div class="card summary-box mb-3">
+                    <div class="card-header bg-white fw-semibold">E) Radyatör</div>
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead><tr><th>Oda</th><th>Marka/Ölçü</th><th>Panel(m)</th><th>Vana</th><th class="text-end">Toplam</th><th>Stok</th></tr></thead>
+                            <tbody>
+                                @foreach (var r in offer.RadiatorItems)
+                                {
+                                    <tr class="@(r.IsStockInsufficient ? "stock-insufficient" : "")">
+                                        <td>@r.RoomName</td>
+                                        <td>@r.RadiatorBrand @r.RadiatorSize</td>
+                                        <td>@r.PanelLength</td>
+                                        <td>@r.ValveQuantity</td>
+                                        <td class="text-end">@Money(r.TotalPrice)</td>
+                                        <td><span class="badge @StockStatusStyles.BadgeClass(r.StockStatus)">@StockStatusStyles.Label(r.StockStatus)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @SectionCard("F) Tesisat Hizmetleri", OfferSections.Installation)
+            @SectionCard("İşçilik", OfferSections.Labor)
+
+            @* Eksik Ürünler *@
+            @if (stockSummary is not null && stockSummary.InsufficientItems.Count > 0)
+            {
+                <div class="card mb-3" style="border:2px solid #c0392b;">
+                    <div class="card-header text-white" style="background:#c0392b;">⚠️ Eksik Ürünler</div>
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead><tr><th>Ürün</th><th>Kategori</th><th>Talep</th><th>Mevcut</th><th>Eksik</th><th>Birim</th></tr></thead>
+                            <tbody>
+                                @foreach (var r in stockSummary.InsufficientItems)
+                                {
+                                    <tr class="stock-insufficient">
+                                        <td>@r.ProductName</td><td>@r.Category</td>
+                                        <td>@r.RequestedQuantity</td><td>@r.AvailableStock</td>
+                                        <td class="fw-bold text-danger">@r.MissingQuantity</td><td>@r.Unit</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer small text-danger">
+                        Stok yetersiz olarak işaretlenen ürünler tedarik sürecine alınmalıdır.
+                        Bu ürünler stok tamamlanmadan uygulama / montaj planına dahil edilmemelidir.
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(offer.GeneralNotes))
+            {
+                <div class="card summary-box mb-3">
+                    <div class="card-header bg-white fw-semibold">Genel Açıklamalar</div>
+                    <div class="card-body">@offer.GeneralNotes</div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">Fiyatlandırma Özeti</div>
+                <div class="card-body">
+                    <table class="table table-sm mb-0">
+                        <tbody>
+                            <tr><td>Ara Toplam</td><td class="text-end">@Money(offer.SubTotal)</td></tr>
+                            <tr><td>İskonto (%@offer.DiscountRate)</td><td class="text-end">@Money(offer.DiscountAmount)</td></tr>
+                            <tr><td>KDV (%@offer.VatRate)</td><td class="text-end">@Money(offer.VatAmount)</td></tr>
+                            <tr class="border-top"><td class="fw-bold">Genel Toplam</td><td class="text-end fw-bold text-primary">@Money(offer.GrandTotal)</td></tr>
+                            <tr><td>Peşinat</td><td class="text-end">@Money(offer.AdvancePayment)</td></tr>
+                            <tr><td class="fw-semibold">Kalan Ödeme</td><td class="text-end fw-semibold">@Money(offer.RemainingPayment)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @if (offer.PaymentPlans.Count > 0)
+            {
+                <div class="card summary-box mb-3">
+                    <div class="card-header bg-white fw-semibold">Ödeme Planı</div>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var p in offer.PaymentPlans)
+                        {
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>@PaymentTypeText.Label(p.PaymentType) @(p.PaymentDate?.ToString("dd.MM.yyyy"))</span>
+                                <strong>@Money(p.Amount)</strong>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">İş Programı</div>
+                <div class="card-body small">
+                    <div>Başlangıç: @offer.WorkStartDate?.ToString("dd.MM.yyyy")</div>
+                    <div>Teslim: @offer.WorkEndDate?.ToString("dd.MM.yyyy")</div>
+                    <div>İşveren: @offer.EmployerName</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Offer? offer;
+    private OfferStockSummary? stockSummary;
+    private string? message;
+
+    protected override async Task OnParametersSetAsync() => await Reload();
+
+    private async Task Reload()
+    {
+        offer = await OfferService.GetByIdAsync(Id);
+        if (offer is not null)
+            stockSummary = await StockService.CheckOfferStockAvailabilityAsync(offer);
+    }
+
+    private RenderFragment SectionCard(string title, string section) => builder =>
+    {
+        var rows = offer!.Items.Where(i => i.SectionName == section && (i.IsSelected || i.TotalPrice > 0)).ToList();
+        if (rows.Count == 0) return;
+        int seq = 0;
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", "card summary-box mb-3");
+        builder.AddMarkupContent(2, $"<div class='card-header bg-white fw-semibold'>{title}</div>");
+        builder.OpenElement(3, "div");
+        builder.AddAttribute(4, "class", "table-responsive");
+        builder.OpenElement(5, "table");
+        builder.AddAttribute(6, "class", "table table-sm mb-0");
+        builder.AddMarkupContent(7, "<thead><tr><th>#</th><th>Kalem</th><th>Adet</th><th>Birim</th><th class='text-end'>B.Fiyat</th><th class='text-end'>Toplam</th><th>Stok</th></tr></thead>");
+        builder.OpenElement(8, "tbody");
+        foreach (var it in rows)
+        {
+            builder.OpenElement(10, "tr");
+            builder.AddAttribute(11, "class", it.IsStockInsufficient ? "stock-insufficient" : "");
+            builder.AddMarkupContent(12,
+                $"<td>{++seq}</td><td>{System.Net.WebUtility.HtmlEncode(it.ItemName)}</td>" +
+                $"<td>{it.Quantity:0.##}</td><td>{System.Net.WebUtility.HtmlEncode(it.Unit)}</td>" +
+                $"<td class='text-end'>{it.UnitPrice:#,##0.00}</td><td class='text-end'>{it.TotalPrice:#,##0.00}</td>" +
+                $"<td><span class='badge {StockStatusStyles.BadgeClass(it.StockStatus)}'>{StockStatusStyles.Label(it.StockStatus)}</span></td>");
+            builder.CloseElement();
+        }
+        builder.CloseElement();
+        builder.CloseElement();
+        builder.CloseElement();
+        builder.CloseElement();
+    };
+
+    private async Task ConvertToOrder()
+    {
+        await OfferService.ConvertToOrderAsync(Id);
+        await Reload();
+        message = "Teklif siparişe dönüştürüldü ve stok kontrolü yapıldı.";
+    }
+
+    private async Task Cancel()
+    {
+        await OfferService.CancelAsync(Id);
+        await Reload();
+        message = "Sipariş iptal edildi, düşülen stok geri eklendi.";
+    }
+
+    private async Task Copy()
+    {
+        var copy = await OfferService.CopyAsync(Id);
+        Nav.NavigateTo($"offers/{copy.Id}/edit");
+    }
+
+    private static string Money(decimal v) => v.ToString("#,##0.00") + " ₺";
+}

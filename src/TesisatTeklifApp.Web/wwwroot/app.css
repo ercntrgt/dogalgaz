@@ -1,0 +1,92 @@
+:root {
+    --ozd-navy: #1a3a6b;
+    --ozd-navy-dark: #142d52;
+    --ozd-gray: #595959;
+    --ozd-light: #f5f6f8;
+}
+
+html, body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--ozd-light);
+    color: #222;
+}
+
+a, .btn-link { color: var(--ozd-navy); }
+
+.btn-primary {
+    color: #fff;
+    background-color: var(--ozd-navy);
+    border-color: var(--ozd-navy-dark);
+}
+.btn-primary:hover { background-color: var(--ozd-navy-dark); border-color: var(--ozd-navy-dark); }
+
+.btn:focus, .btn:active:focus, .form-control:focus, .form-check-input:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.15rem rgba(26, 58, 107, .25);
+    border-color: var(--ozd-navy);
+}
+
+h1, h2, h3, h4, h5 { color: var(--ozd-navy); }
+h1:focus { outline: none; }
+
+/* --- Kurumsal başlık çubuğu --- */
+.app-topbar {
+    background: #fff;
+    border-bottom: 3px solid var(--ozd-navy);
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.app-topbar .brand-logo { height: 42px; }
+
+/* --- Sol menü --- */
+.sidebar {
+    background: linear-gradient(180deg, var(--ozd-navy) 0%, var(--ozd-navy-dark) 100%);
+    min-height: 100vh;
+}
+.sidebar .nav-link {
+    color: rgba(255,255,255,.82);
+    border-radius: .4rem;
+    margin: 2px 8px;
+    padding: .5rem .8rem;
+}
+.sidebar .nav-link:hover { background: rgba(255,255,255,.12); color: #fff; }
+.sidebar .nav-link.active { background: #fff; color: var(--ozd-navy); font-weight: 600; }
+.sidebar .nav-group-title {
+    color: rgba(255,255,255,.5);
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: .8rem 1rem .2rem;
+}
+
+/* --- Kartlar --- */
+.card-section > .card-header {
+    background: var(--ozd-navy);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+.card-section .card-header .toggle-ico { transition: transform .2s; }
+.card-section.collapsed .card-header .toggle-ico { transform: rotate(-90deg); }
+
+/* --- Stok renk satırları --- */
+tr.stock-insufficient, .stock-insufficient > td { background-color: #f8d7da !important; }
+tr.stock-critical, .stock-critical > td { background-color: #fff3cd !important; }
+tr.stock-sufficient td .stock-dot { color: #198754; }
+.stock-dot { font-size: .7rem; }
+
+/* --- Login --- */
+.login-wrap {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--ozd-navy) 0%, var(--ozd-navy-dark) 100%);
+}
+.login-card { width: 100%; max-width: 410px; border: none; border-radius: .8rem; }
+.login-card .logo { max-width: 230px; margin: 0 auto 1rem; display: block; }
+
+.table thead th { background: var(--ozd-navy); color: #fff; font-size: .85rem; }
+.summary-box { background: #fff; border: 1px solid #dde1e7; border-radius: .5rem; }
+
+.validation-message { color: #d33; font-size: .85rem; }
+.blazor-error-boundary {
+    background: #b32121; padding: 1rem; color: white;
+}
+.blazor-error-boundary::after { content: "Bir hata oluştu."; }

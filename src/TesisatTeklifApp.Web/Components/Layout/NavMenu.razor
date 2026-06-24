@@ -1,0 +1,24 @@
+<nav class="nav flex-column py-2">
+    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">🏠 Ana Sayfa</NavLink>
+
+    <div class="nav-group-title">Teklif &amp; Sipariş</div>
+    <NavLink class="nav-link" href="offers">📄 Teklifler</NavLink>
+    <NavLink class="nav-link" href="orders">📦 Siparişler</NavLink>
+    <AuthorizeView Roles="Admin,SalesPerson" Context="a">
+        <NavLink class="nav-link" href="offers/new">➕ Yeni Teklif</NavLink>
+    </AuthorizeView>
+
+    <div class="nav-group-title">Tanımlar</div>
+    <NavLink class="nav-link" href="customers">👤 Müşteriler</NavLink>
+    <NavLink class="nav-link" href="products">🔧 Ürünler</NavLink>
+
+    <div class="nav-group-title">Raporlar</div>
+    <NavLink class="nav-link" href="reports">📊 Raporlar</NavLink>
+
+    <AuthorizeView Roles="Admin" Context="b">
+        <div class="nav-group-title">Yönetim</div>
+        <NavLink class="nav-link" href="admin/stock-settings">⚙️ Stok Ayarları</NavLink>
+        <NavLink class="nav-link" href="admin/stock-movements">📑 Stok Hareketleri</NavLink>
+        <NavLink class="nav-link" href="admin/users">🔐 Kullanıcılar</NavLink>
+    </AuthorizeView>
+</nav>

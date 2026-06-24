@@ -1,0 +1,130 @@
+@* Tekrar kullanılabilir kalem bölümü (B, C, D, F, İşçilik). Hesaplama YAPMAZ; sadece veri girişi + OnChanged bildirir. *@
+
+<div class="card card-section summary-box mb-3 @(collapsed ? "collapsed" : "")">
+    <div class="card-header d-flex align-items-center" @onclick="Toggle">
+        <span>@Title</span>
+        <span class="ms-2 badge bg-light text-dark">@SectionItems.Count</span>
+        <span class="ms-auto toggle-ico">▼</span>
+    </div>
+    @if (!collapsed)
+    {
+        <div class="table-responsive">
+            <table class="table table-sm mb-0 align-middle">
+                <thead>
+                    <tr>
+                        @if (ShowCheckbox)
+                        {
+                            <th style="width:40px">Kullan</th>
+                        }
+                        <th style="min-width:180px">Ürün / Kalem</th>
+                        <th style="width:90px">Adet/Metre</th>
+                        <th style="width:80px">Birim</th>
+                        <th style="width:110px">Birim Fiyat</th>
+                        <th style="width:120px" class="text-end">Toplam</th>
+                        @if (ShowStock)
+                        {
+                            <th style="width:110px">Stok</th>
+                        }
+                        <th style="min-width:120px">Açıklama</th>
+                        <th style="width:40px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in SectionItems)
+                    {
+                        <tr class="@(item.IsStockInsufficient ? "stock-insufficient" : "")">
+                            @if (ShowCheckbox)
+                            {
+                                <td>
+                                    <input type="checkbox" class="form-check-input"
+                                           @bind="item.IsSelected" @bind:after="Changed" />
+                                </td>
+                            }
+                            <td>
+                                <select class="form-select form-select-sm" value="@item.ProductId"
+                                        @onchange="@(e => OnProductSelected(item, e.Value?.ToString()))">
+                                    <option value="">@(string.IsNullOrEmpty(item.ItemName) ? "-- ürün seçin --" : item.ItemName)</option>
+                                    @foreach (var p in Products)
+                                    {
+                                        <option value="@p.Id" selected="@(item.ProductId == p.Id)">@p.Name (@p.SalePrice.ToString("#,##0") ₺)</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" step="any" class="form-control form-control-sm"
+                                       @bind="item.Quantity" @bind:after="Changed" />
+                            </td>
+                            <td>
+                                <input class="form-control form-control-sm"
+                                       @bind="item.Unit" @bind:after="Changed" />
+                            </td>
+                            <td>
+                                <input type="number" step="any" class="form-control form-control-sm"
+                                       @bind="item.UnitPrice" @bind:after="Changed" />
+                            </td>
+                            <td class="text-end fw-semibold">@item.TotalPrice.ToString("#,##0.00") ₺</td>
+                            @if (ShowStock)
+                            {
+                                <td><span class="badge @StockStatusStyles.BadgeClass(item.StockStatus)">@StockStatusStyles.Label(item.StockStatus)</span></td>
+                            }
+                            <td>
+                                <input class="form-control form-control-sm"
+                                       @bind="item.Description" @bind:after="Changed" />
+                            </td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger" @onclick="@(() => Remove(item))">×</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddRow">➕ Satır Ekle</button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string SectionName { get; set; } = "";
+    [Parameter] public ICollection<OfferItem> AllItems { get; set; } = new List<OfferItem>();
+    [Parameter] public List<Product> Products { get; set; } = new();
+    [Parameter] public bool ShowCheckbox { get; set; }
+    [Parameter] public bool ShowStock { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private bool collapsed;
+    private void Toggle() => collapsed = !collapsed;
+
+    private List<OfferItem> SectionItems => AllItems.Where(i => i.SectionName == SectionName).ToList();
+
+    private void AddRow()
+    {
+        AllItems.Add(new OfferItem { SectionName = SectionName, Unit = "Adet", Quantity = 1, IsSelected = !ShowCheckbox });
+        Changed();
+    }
+
+    private void Remove(OfferItem item) { AllItems.Remove(item); Changed(); }
+
+    private void OnProductSelected(OfferItem item, string? value)
+    {
+        if (int.TryParse(value, out var pid))
+        {
+            var p = Products.FirstOrDefault(x => x.Id == pid);
+            if (p is not null)
+            {
+                item.ProductId = p.Id;
+                item.ItemName = p.Name;
+                item.Unit = p.Unit;
+                item.UnitPrice = p.SalePrice;
+                if (item.Quantity <= 0) item.Quantity = 1;
+            }
+        }
+        else
+        {
+            item.ProductId = null;
+        }
+        Changed();
+    }
+
+    private void Changed() => OnChanged.InvokeAsync();
+}

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TesisatTeklifApp.Application/TesisatTeklifApp.Application.csproj" />
+    <Project Path="src/TesisatTeklifApp.Domain/TesisatTeklifApp.Domain.csproj" />
+    <Project Path="src/TesisatTeklifApp.Infrastructure/TesisatTeklifApp.Infrastructure.csproj" />
+    <Project Path="src/TesisatTeklifApp.Web/TesisatTeklifApp.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TesisatTeklifApp.Tests/TesisatTeklifApp.Tests.csproj" />
+  </Folder>
+</Solution>

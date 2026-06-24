@@ -1,0 +1,272 @@
+@page "/offers/new"
+@page "/offers/{Id:int}/edit"
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
+@rendermode InteractiveServer
+@inject IOfferService OfferService
+@inject ICustomerService CustomerService
+@inject IProductService ProductService
+@inject IOfferCalculationService Calc
+@inject NavigationManager Nav
+
+<PageTitle>@(IsNew ? "Yeni Teklif" : offer.OfferNumber)</PageTitle>
+
+@if (loading)
+{
+    <p>Yükleniyor...</p>
+}
+else
+{
+    <div class="d-flex align-items-center mb-3">
+        <h2 class="mb-0">@(IsNew ? "Yeni Teklif / Sipariş Formu" : $"Teklif Düzenle — {offer.OfferNumber}")</h2>
+        <span class="ms-3"><StatusBadge Status="offer.Status" /></span>
+    </div>
+
+    @* A) Müşteri Bilgileri *@
+    <div class="card summary-box mb-3">
+        <div class="card-header bg-white fw-semibold">A) Müşteri Bilgileri</div>
+        <div class="card-body row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Müşteri *</label>
+                @if (IsNew)
+                {
+                    <select class="form-select" @bind="offer.CustomerId">
+                        <option value="0">-- müşteri seçin --</option>
+                        @foreach (var c in customers)
+                        {
+                            <option value="@c.Id">@c.FullName — @c.Phone</option>
+                        }
+                    </select>
+                }
+                else
+                {
+                    <input class="form-control" value="@selectedCustomer?.FullName" disabled />
+                }
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Form No</label>
+                <input class="form-control" value="@(IsNew ? "(otomatik)" : offer.OfferNumber)" disabled />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Teklif Tarihi</label>
+                <input type="date" class="form-control" @bind="offer.OfferDate" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Sorumlu Personel</label>
+                <input class="form-control" @bind="offer.ResponsiblePerson" />
+            </div>
+        </div>
+    </div>
+
+    @* B-F bölümleri *@
+    <OfferItemSection Title="B) Kombi / Kazan" SectionName="@OfferSections.KombiKazan"
+                      AllItems="offer.Items" Products="kombiKazanProducts" OnChanged="Recalc" />
+
+    <OfferItemSection Title="C) Doğalgaz Tesisatı" SectionName="@OfferSections.GasInstallation"
+                      AllItems="offer.Items" Products="allProducts" OnChanged="Recalc" />
+
+    <OfferItemSection Title="D) Malzeme / Ekipman" SectionName="@OfferSections.Material"
+                      AllItems="offer.Items" Products="allProducts" ShowCheckbox="true" ShowStock="true" OnChanged="Recalc" />
+
+    <RadiatorSection Items="offer.RadiatorItems" RadiatorProducts="radiatorProducts" OnChanged="Recalc" />
+
+    <OfferItemSection Title="F) Tesisat Hizmetleri" SectionName="@OfferSections.Installation"
+                      AllItems="offer.Items" Products="allProducts" OnChanged="Recalc" />
+
+    <OfferItemSection Title="İşçilik" SectionName="@OfferSections.Labor"
+                      AllItems="offer.Items" Products="allProducts" OnChanged="Recalc" />
+
+    @* G) Genel Açıklamalar *@
+    <div class="card summary-box mb-3">
+        <div class="card-header bg-white fw-semibold">G) Genel Açıklamalar</div>
+        <div class="card-body">
+            <textarea class="form-control" rows="2" @bind="offer.GeneralNotes"></textarea>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        @* H) Fiyatlandırma Özeti *@
+        <div class="col-lg-6">
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">H) Fiyatlandırma Özeti</div>
+                <div class="card-body">
+                    <table class="table table-sm mb-2">
+                        <tbody>
+                            <tr><td>Kombi / Kazan</td><td class="text-end">@Money(offer.KombiKazanTotal)</td></tr>
+                            <tr><td>Doğalgaz Tesisatı</td><td class="text-end">@Money(offer.GasInstallationTotal)</td></tr>
+                            <tr><td>Malzeme / Ekipman</td><td class="text-end">@Money(offer.MaterialTotal)</td></tr>
+                            <tr><td>Radyatör</td><td class="text-end">@Money(offer.RadiatorTotal)</td></tr>
+                            <tr><td>Tesisat Hizmetleri</td><td class="text-end">@Money(offer.InstallationTotal)</td></tr>
+                            <tr><td>İşçilik</td><td class="text-end">@Money(offer.LaborTotal)</td></tr>
+                            <tr class="border-top"><td class="fw-semibold">Ara Toplam</td><td class="text-end fw-semibold">@Money(offer.SubTotal)</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="row g-2 align-items-center mb-2">
+                        <div class="col-7">İskonto Oranı (%)</div>
+                        <div class="col-5">
+                            <input type="number" step="any" class="form-control form-control-sm" @bind="offer.DiscountRate" @bind:after="Recalc" />
+                        </div>
+                        <div class="col-7 text-muted">İskonto Tutarı</div>
+                        <div class="col-5 text-end">@Money(offer.DiscountAmount)</div>
+                        <div class="col-7">KDV Oranı (%)</div>
+                        <div class="col-5">
+                            <input type="number" step="any" class="form-control form-control-sm" @bind="offer.VatRate" @bind:after="Recalc" />
+                        </div>
+                        <div class="col-7">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="vatinc" @bind="offer.IsVatIncluded" @bind:after="Recalc" />
+                                <label class="form-check-label" for="vatinc">Fiyatlara KDV dahil</label>
+                            </div>
+                        </div>
+                        <div class="col-5 text-end text-muted">KDV: @Money(offer.VatAmount)</div>
+                    </div>
+                    <div class="d-flex justify-content-between border-top pt-2">
+                        <span class="fw-bold fs-5">Genel Toplam</span>
+                        <span class="fw-bold fs-5 text-primary">@Money(offer.GrandTotal)</span>
+                    </div>
+                    <div class="row g-2 align-items-center mt-1">
+                        <div class="col-7">Peşinat</div>
+                        <div class="col-5">
+                            <input type="number" step="any" class="form-control form-control-sm" @bind="offer.AdvancePayment" @bind:after="Recalc" />
+                        </div>
+                        <div class="col-7 fw-semibold">Kalan Ödeme</div>
+                        <div class="col-5 text-end fw-semibold">@Money(offer.RemainingPayment)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* I) Ödeme Planı + J) İş Programı *@
+        <div class="col-lg-6">
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">I) Ödeme Planı</div>
+                <div class="card-body">
+                    @foreach (var pp in offer.PaymentPlans)
+                    {
+                        <div class="row g-2 mb-2 align-items-center">
+                            <div class="col-3">
+                                <select class="form-select form-select-sm" @bind="pp.PaymentType">
+                                    <option value="@PaymentType.Cash">Nakit</option>
+                                    <option value="@PaymentType.CreditCard">Kredi Kartı</option>
+                                    <option value="@PaymentType.Other">Diğer</option>
+                                </select>
+                            </div>
+                            <div class="col-3"><input type="number" step="any" class="form-control form-control-sm" @bind="pp.Amount" placeholder="Tutar" /></div>
+                            <div class="col-3"><input type="date" class="form-control form-control-sm" @bind="pp.PaymentDate" /></div>
+                            <div class="col-2"><input class="form-control form-control-sm" @bind="pp.Description" placeholder="Açıklama" /></div>
+                            <div class="col-1"><button type="button" class="btn btn-sm btn-outline-danger" @onclick="@(() => offer.PaymentPlans.Remove(pp))">×</button></div>
+                        </div>
+                    }
+                    <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddPayment">➕ Ödeme Satırı</button>
+                </div>
+            </div>
+
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">J) İş Programı</div>
+                <div class="card-body row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">İş Başlangıç Tarihi</label>
+                        <input type="date" class="form-control" @bind="offer.WorkStartDate" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">İş Teslim Tarihi</label>
+                        <input type="date" class="form-control" @bind="offer.WorkEndDate" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">İşveren Adı</label>
+                        <input class="form-control" @bind="offer.EmployerName" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+
+    <div class="d-flex gap-2 mb-5 sticky-bottom bg-light py-2">
+        <button class="btn btn-success" @onclick="Save">💾 Kaydet</button>
+        <a href="offers" class="btn btn-outline-secondary">İptal</a>
+        @if (!IsNew)
+        {
+            <a href="offers/@offer.Id" class="btn btn-outline-primary ms-auto">Detay Görünümü</a>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    [SupplyParameterFromQuery] public int? CustomerId { get; set; }
+
+    private bool IsNew => Id is null;
+    private bool loading = true;
+    private string? error;
+
+    private Offer offer = new();
+    private List<Customer> customers = new();
+    private List<Product> allProducts = new();
+    private List<Product> kombiKazanProducts = new();
+    private List<Product> radiatorProducts = new();
+    private Customer? selectedCustomer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        allProducts = await ProductService.GetActiveAsync();
+        kombiKazanProducts = allProducts.Where(p => p.Category is ProductCategories.Kombi or ProductCategories.Kazan).ToList();
+        radiatorProducts = allProducts.Where(p => p.Category == ProductCategories.Radyator).ToList();
+        customers = await CustomerService.SearchAsync(new CustomerSearchFilter());
+
+        if (Id is int id)
+        {
+            offer = await OfferService.GetByIdAsync(id) ?? new Offer();
+            selectedCustomer = offer.Customer;
+        }
+        else
+        {
+            offer = NewDraft();
+            if (CustomerId is int cid) offer.CustomerId = cid;
+        }
+        loading = false;
+    }
+
+    private Offer NewDraft()
+    {
+        var o = new Offer { OfferDate = DateTime.Today, Status = OfferStatus.Draft, VatRate = 20m };
+        // C) Doğalgaz tesisatı standart kalemleri
+        foreach (var n in new[] { "Ocak tesisatı", "Kombi tesisatı", "Yeni tesisat", "Tadilat", "Demir malzeme", "1\" boru", "3/4\" boru", "1/2\" boru" })
+            o.Items.Add(new OfferItem { SectionName = OfferSections.GasInstallation, ItemName = n, Unit = "Adet", IsSelected = true });
+        // D) Malzeme/Ekipman standart kalemleri (kullan checkbox'ı kapalı)
+        foreach (var n in new[] { "Radyatör vanası", "Termostatik vana", "Kombi dolabı", "Oda termostatı", "Baca uzatması", "Kombi elektrik işi", "Selenoid vana", "Gaz alarm cihazı", "Cam menfezi", "Doğalgaz boruları", "Doğalgaz vanaları", "Fittings malzemeler", "Plastik borular", "Malzeme", "İşçilik" })
+            o.Items.Add(new OfferItem { SectionName = OfferSections.Material, ItemName = n, Unit = "Adet", IsSelected = false });
+        // F) Tesisat hizmetleri
+        foreach (var n in new[] { "Montaj", "Full tesisat", "Hat taşıma", "Ek hat alma" })
+            o.Items.Add(new OfferItem { SectionName = OfferSections.Installation, ItemName = n, Unit = "Adet", IsSelected = true });
+        return o;
+    }
+
+    private void Recalc()
+    {
+        Calc.RecalculateOfferTotals(offer);
+        StateHasChanged();
+    }
+
+    private void AddPayment() => offer.PaymentPlans.Add(new PaymentPlan { PaymentType = PaymentType.Cash });
+
+    private async Task Save()
+    {
+        error = null;
+        if (offer.CustomerId <= 0) { error = "Lütfen bir müşteri seçin."; return; }
+        try
+        {
+            await OfferService.SaveAsync(offer);
+            Nav.NavigateTo($"offers/{offer.Id}");
+        }
+        catch (Exception ex)
+        {
+            error = "Kayıt sırasında hata: " + ex.Message;
+        }
+    }
+
+    private static string Money(decimal v) => v.ToString("#,##0.00") + " ₺";
+}

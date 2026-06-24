@@ -1,0 +1,45 @@
+@inherits LayoutComponentBase
+
+<AuthorizeView>
+    <Authorized>
+        <div class="d-flex">
+            <div class="sidebar d-none d-md-block" style="width: 240px;">
+                <NavMenu />
+            </div>
+            <div class="flex-grow-1 d-flex flex-column" style="min-width:0;">
+                <div class="app-topbar d-flex align-items-center px-3 py-2">
+                    <button class="btn btn-sm btn-outline-secondary d-md-none me-2" @onclick="ToggleMobile">☰</button>
+                    <img src="images/logo.png" class="brand-logo" alt="ÖZDEMİR" />
+                    <div class="ms-auto d-flex align-items-center gap-3">
+                        <span class="text-muted small">@context.User.Identity?.Name</span>
+                        <form action="/Account/Logout" method="post">
+                            <AntiforgeryToken />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Çıkış</button>
+                        </form>
+                    </div>
+                </div>
+                @if (showMobileMenu)
+                {
+                    <div class="sidebar d-md-none"><NavMenu /></div>
+                }
+                <main class="p-3 p-md-4 flex-grow-1">
+                    @Body
+                </main>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @Body
+    </NotAuthorized>
+</AuthorizeView>
+
+<div id="blazor-error-ui" data-nosnippet>
+    Bir hata oluştu.
+    <a href="." class="reload">Yenile</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    private bool showMobileMenu;
+    private void ToggleMobile() => showMobileMenu = !showMobileMenu;
+}

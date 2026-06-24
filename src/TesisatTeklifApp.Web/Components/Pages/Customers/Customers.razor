@@ -1,0 +1,66 @@
+@page "/customers"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject ICustomerService CustomerService
+
+<PageTitle>Müşteriler</PageTitle>
+
+<div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0">Müşteri Yönetimi</h2>
+    <AuthorizeView Roles="Admin,SalesPerson" Context="a">
+        <a href="customers/new" class="btn btn-primary ms-auto">➕ Yeni Müşteri</a>
+    </AuthorizeView>
+</div>
+
+<div class="card summary-box mb-3">
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-9">
+                <input class="form-control" placeholder="Ara: ad, soyad, telefon, T.C." @bind="filter.Keyword" @bind:event="oninput" @onkeyup="OnKey" />
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-primary w-100" @onclick="Load">Ara</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card summary-box">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead>
+                <tr><th>Ad Soyad</th><th>T.C.</th><th>Telefon</th><th>İl / İlçe</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var c in items)
+                {
+                    <tr>
+                        <td>@c.FullName</td>
+                        <td>@c.NationalId</td>
+                        <td>@c.Phone</td>
+                        <td>@c.City / @c.District</td>
+                        <td class="text-end">
+                            <AuthorizeView Roles="Admin,SalesPerson" Context="a">
+                                <a href="offers/new?customerId=@c.Id" class="btn btn-sm btn-outline-primary">Teklif</a>
+                                <a href="customers/@c.Id" class="btn btn-sm btn-outline-secondary">Düzenle</a>
+                            </AuthorizeView>
+                        </td>
+                    </tr>
+                }
+                @if (items.Count == 0)
+                {
+                    <tr><td colspan="5" class="text-center text-muted py-4">Kayıt bulunamadı.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private CustomerSearchFilter filter = new();
+    private List<Customer> items = new();
+
+    protected override async Task OnInitializedAsync() => await Load();
+    private async Task Load() => items = await CustomerService.SearchAsync(filter);
+    private async Task OnKey(KeyboardEventArgs e) { if (e.Key == "Enter") await Load(); }
+}
