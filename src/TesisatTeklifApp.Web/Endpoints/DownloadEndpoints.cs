@@ -24,6 +24,21 @@ public static class DownloadEndpoints
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         });
 
+        // Ürün/stok Excel şablonu
+        group.MapGet("/products/template", [Authorize(Roles = "Admin")] async (IProductService products) =>
+        {
+            var (fileName, content) = await products.ExportProductsExcelAsync();
+            return Results.File(content,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        });
+
+        // Teklif/sipariş fotoğrafı (DB'den)
+        group.MapGet("/photo/{id:int}", [Authorize] async (int id, IPhotoService photos) =>
+        {
+            var data = await photos.GetDataAsync(id);
+            return data is null ? Results.NotFound() : Results.File(data.Value.Data, data.Value.ContentType);
+        });
+
         return endpoints;
     }
 }

@@ -45,3 +45,13 @@ public enum PaymentType
     CreditCard = 1,
     Other = 2
 }
+
+/// <summary>Satınalma siparişi durumu.</summary>
+public enum PurchaseStatus
+{
+    Draft = 0,              // Taslak
+    Ordered = 1,           // Sipariş verildi
+    PartiallyReceived = 2, // Kısmen teslim alındı
+    Received = 3,          // Teslim alındı
+    Cancelled = 4          // İptal
+}

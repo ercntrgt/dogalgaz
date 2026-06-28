@@ -13,7 +13,7 @@
     <div class="table-responsive">
         <table class="table table-sm table-hover mb-0">
             <thead>
-                <tr><th>Tarih</th><th>Ürün</th><th>Tür</th><th class="text-end">Miktar</th><th class="text-end">Önceki</th><th class="text-end">Yeni</th><th>Açıklama</th></tr>
+                <tr><th>Tarih</th><th>Ürün</th><th>Tür</th><th class="text-end">Miktar</th><th class="text-end">Önceki</th><th class="text-end">Yeni</th><th>Müşteri / Belge</th><th>Açıklama</th></tr>
             </thead>
             <tbody>
                 @foreach (var m in movements)
@@ -25,12 +25,20 @@
                         <td class="text-end">@m.Quantity.ToString("0.##")</td>
                         <td class="text-end">@m.PreviousStock.ToString("0.##")</td>
                         <td class="text-end">@m.NewStock.ToString("0.##")</td>
+                        <td>
+                            @if (m.Offer is not null)
+                            {
+                                <span>@(m.Offer.Customer?.FullName ?? "-")</span>
+                                <br /><a class="small text-muted" href="offers/@m.OfferId">@(m.Offer.OrderNumber ?? m.Offer.OfferNumber)</a>
+                            }
+                            else { <span class="text-muted">-</span> }
+                        </td>
                         <td class="small text-muted">@m.Description</td>
                     </tr>
                 }
                 @if (movements.Count == 0)
                 {
-                    <tr><td colspan="7" class="text-center text-muted py-4">Henüz stok hareketi yok.</td></tr>
+                    <tr><td colspan="8" class="text-center text-muted py-4">Henüz stok hareketi yok.</td></tr>
                 }
             </tbody>
         </table>
@@ -44,6 +52,7 @@
     {
         movements = await Db.StockMovements
             .Include(m => m.Product)
+            .Include(m => m.Offer).ThenInclude(o => o!.Customer)
             .OrderByDescending(m => m.CreatedDate)
             .Take(300)
             .ToListAsync();

@@ -1,0 +1,234 @@
+@page "/customers/{Id:int}/tracking"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject ICustomerService CustomerService
+@inject IOfferService OfferService
+@inject IPaymentService PaymentService
+@inject NavigationManager Nav
+
+<PageTitle>Müşteri Takip</PageTitle>
+
+<ConfirmModal @ref="confirm" />
+
+@if (customer is null)
+{
+    <p>Yükleniyor...</p>
+}
+else
+{
+    <div class="d-flex align-items-center mb-3">
+        <h2 class="mb-0">Müşteri Takip — @customer.FullName</h2>
+        <a href="customers/@customer.Id" class="btn btn-outline-secondary ms-auto">Müşteriyi Düzenle</a>
+    </div>
+
+    <div class="card summary-box mb-3">
+        <div class="card-body row">
+            <div class="col-md-6">
+                <div><strong>@customer.FullName</strong></div>
+                <div class="text-muted">T.C.: @customer.NationalId • Tel: @customer.Phone</div>
+                <div class="text-muted">@customer.City / @customer.District — @customer.Address</div>
+            </div>
+        </div>
+    </div>
+
+    @* Özet kartları (siparişler bazında ödeme takibi) *@
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card text-center p-3 summary-box">
+                <div class="display-6 text-primary">@orders.Count</div>
+                <div class="text-muted">Sipariş</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card text-center p-3 summary-box">
+                <div class="h3 mb-0 text-dark">@Money(totalAmount)</div>
+                <div class="text-muted">Toplam Tutar</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card text-center p-3 summary-box">
+                <div class="h3 mb-0 text-success">@Money(totalPaid)</div>
+                <div class="text-muted">Tahsil Edilen</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card text-center p-3 summary-box">
+                <div class="h3 mb-0 @(totalRemaining > 0 ? "text-danger" : "text-success")">@Money(totalRemaining)</div>
+                <div class="text-muted">Kalan Bakiye</div>
+            </div>
+        </div>
+    </div>
+
+    @* Siparişler + ödeme dökümü *@
+    <div class="card summary-box mb-4">
+        <div class="card-header bg-white fw-semibold">Siparişler ve Ödeme Dökümü</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th></th><th>Sipariş No</th><th>Tarih</th><th>Durum</th>
+                        <th class="text-end">Tutar</th><th class="text-end">Peşinat</th>
+                        <th class="text-end">Tahsil</th><th class="text-end">Kalan</th><th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in orders)
+                    {
+                        var paid = Paid(o);
+                        var remaining = o.GrandTotal - paid;
+                        <tr>
+                            <td>
+                                <button class="btn btn-sm btn-link p-0" @onclick="@(() => Toggle(o.Id))">
+                                    @(expanded.Contains(o.Id) ? "▾" : "▸")
+                                </button>
+                            </td>
+                            <td><strong>@(o.OrderNumber ?? o.OfferNumber)</strong></td>
+                            <td>@o.OfferDate.ToString("dd.MM.yyyy")</td>
+                            <td><StatusBadge Status="o.Status" /></td>
+                            <td class="text-end">@Money(o.GrandTotal)</td>
+                            <td class="text-end">@Money(o.AdvancePayment)</td>
+                            <td class="text-end text-success">@Money(paid)</td>
+                            <td class="text-end @(remaining > 0 ? "text-danger fw-semibold" : "text-success")">@Money(remaining)</td>
+                            <td class="text-end"><a href="offers/@o.Id" class="btn btn-sm btn-outline-secondary">Detay</a></td>
+                        </tr>
+                        @if (expanded.Contains(o.Id))
+                        {
+                            <tr class="bg-light">
+                                <td></td>
+                                <td colspan="8">
+                                    <div class="small">
+                                        <div class="mb-1"><strong>Ödeme Dökümü</strong></div>
+                                        <div>Peşinat: @Money(o.AdvancePayment)</div>
+                                        @if (o.PaymentPlans.Count == 0)
+                                        {
+                                            <div class="text-muted">Taksit/vade girilmemiş.</div>
+                                        }
+                                        else
+                                        {
+                                            <table class="table table-sm mb-1" style="max-width:640px;">
+                                                <thead><tr><th>Tür</th><th>Tutar</th><th>Vade</th><th>Durum</th><th></th></tr></thead>
+                                                <tbody>
+                                                    @foreach (var p in o.PaymentPlans.OrderBy(x => x.PaymentDate))
+                                                    {
+                                                        <tr class="@(p.IsPaid ? "table-success" : "")">
+                                                            <td>@PaymentTypeText.Label(p.PaymentType)</td>
+                                                            <td>@Money(p.Amount)</td>
+                                                            <td>@(p.PaymentDate?.ToString("dd.MM.yyyy") ?? "-")</td>
+                                                            <td>
+                                                                @if (p.IsPaid)
+                                                                {
+                                                                    <span class="badge bg-success">Tahsil @(p.PaidDate?.ToString("dd.MM.yyyy"))</span>
+                                                                }
+                                                                else { <span class="badge bg-secondary">Bekliyor</span> }
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <AuthorizeView Roles="Admin,SalesPerson" Context="pp">
+                                                                    @if (p.IsPaid)
+                                                                    {
+                                                                        <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => MarkPaid(p.Id, false))">Geri Al</button>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <button class="btn btn-sm btn-success" @onclick="@(() => MarkPaid(p.Id, true))"><i class="bi bi-cash-coin"></i> Tahsil Et</button>
+                                                                    }
+                                                                </AuthorizeView>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+                                        <div>Toplam Tahsil: <span class="text-success">@Money(Paid(o))</span>
+                                            • Kalan: <span class="@(o.GrandTotal - Paid(o) > 0 ? "text-danger" : "text-success")">@Money(o.GrandTotal - Paid(o))</span></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    @if (orders.Count == 0)
+                    {
+                        <tr><td colspan="9" class="text-center text-muted py-4">Bu müşteriye ait sipariş yok.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @* Teklifler (siparişe dönüşmemiş) *@
+    <div class="card summary-box">
+        <div class="card-header bg-white fw-semibold">Teklifler (Siparişe Dönüşmemiş)</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead><tr><th>Form No</th><th>Tarih</th><th>Durum</th><th class="text-end">Tutar</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var t in offersOnly)
+                    {
+                        <tr>
+                            <td>@t.OfferNumber</td>
+                            <td>@t.OfferDate.ToString("dd.MM.yyyy")</td>
+                            <td><StatusBadge Status="t.Status" /></td>
+                            <td class="text-end">@Money(t.GrandTotal)</td>
+                            <td class="text-end"><a href="offers/@t.Id" class="btn btn-sm btn-outline-secondary">Detay</a></td>
+                        </tr>
+                    }
+                    @if (offersOnly.Count == 0)
+                    {
+                        <tr><td colspan="5" class="text-center text-muted py-4">Teklif yok.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Customer? customer;
+    private List<Offer> all = new();
+    private List<Offer> orders = new();
+    private List<Offer> offersOnly = new();
+    private readonly HashSet<int> expanded = new();
+
+    private decimal totalAmount, totalPaid, totalRemaining;
+
+    protected override async Task OnParametersSetAsync() => await LoadData();
+
+    private async Task LoadData()
+    {
+        customer = await CustomerService.GetByIdAsync(Id);
+        all = await OfferService.GetByCustomerAsync(Id);
+
+        orders = all.Where(o => o.IsOrder).ToList();
+        offersOnly = all.Where(o => !o.IsOrder && o.Status != OfferStatus.Cancelled).ToList();
+
+        totalAmount = orders.Sum(o => o.GrandTotal);
+        totalPaid = orders.Sum(Paid);
+        totalRemaining = totalAmount - totalPaid;
+    }
+
+    private ConfirmModal? confirm;
+
+    private async Task MarkPaid(int paymentPlanId, bool paid)
+    {
+        if (paid && confirm is not null)
+        {
+            var ok = await confirm.ShowAsync("Tahsilat Onayı",
+                "Bu ödemeyi 'tahsil edildi' olarak işaretlemek istediğinize emin misiniz? Sonradan 'Geri Al' ile iptal edebilirsiniz.",
+                "Evet, tahsil edildi", "primary");
+            if (!ok) return;
+        }
+        await PaymentService.MarkPaidAsync(paymentPlanId, paid);
+        await LoadData();   // özet kartlar + bakiye güncellenir
+    }
+
+    // Tahsil = peşinat + "ödendi" işaretli ödeme satırları.
+    private static decimal Paid(Offer o) => o.AdvancePayment + o.PaymentPlans.Where(p => p.IsPaid).Sum(p => p.Amount);
+
+    private void Toggle(int offerId)
+    {
+        if (!expanded.Add(offerId)) expanded.Remove(offerId);
+    }
+
+    private static string Money(decimal v) => v.ToString("#,##0.00") + " ₺";
+}

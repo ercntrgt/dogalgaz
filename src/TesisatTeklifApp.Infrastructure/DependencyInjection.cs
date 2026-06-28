@@ -29,6 +29,9 @@ public static class DependencyInjection
         {
             if (provider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
                 options.UseSqlServer(conn);
+            else if (provider.Equals("Postgres", StringComparison.OrdinalIgnoreCase)
+                  || provider.Equals("PostgreSQL", StringComparison.OrdinalIgnoreCase))
+                options.UseNpgsql(conn);
             else
                 options.UseSqlite(conn);
         });
@@ -42,6 +45,11 @@ public static class DependencyInjection
         services.AddScoped<IOfferService, OfferService>();
         services.AddScoped<INumberGeneratorService, NumberGeneratorService>();
         services.AddScoped<IStockControlService, StockControlService>();
+        services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<ISupplierService, SupplierService>();
+        services.AddScoped<IPurchaseService, PurchaseService>();
+        services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<IPhotoService, PhotoService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IExcelExportService, ExcelExportService>();
         services.AddScoped<IPdfExportService>(sp => new PdfExportService(

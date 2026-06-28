@@ -14,7 +14,11 @@ public static class DbSeeder
     public static async Task SeedAsync(AppDbContext db,
         UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
     {
-        await db.Database.MigrateAsync();
+        // SQLite: migration geçmişiyle; diğer sağlayıcılar (Postgres): modelden şema oluştur.
+        if (db.Database.IsSqlite())
+            await db.Database.MigrateAsync();
+        else
+            await db.Database.EnsureCreatedAsync();
 
         // --- Roller ---
         foreach (var role in AppRoles.All)

@@ -9,7 +9,10 @@
 <div class="d-flex align-items-center mb-3">
     <h2 class="mb-0">Ürün / Malzeme Yönetimi</h2>
     <AuthorizeView Roles="Admin" Context="a">
-        <a href="products/new" class="btn btn-primary ms-auto">➕ Yeni Ürün</a>
+        <div class="ms-auto d-flex gap-2">
+            <a href="products/bulk" class="btn btn-outline-success">📊 Toplu Excel</a>
+            <a href="products/new" class="btn btn-primary">➕ Yeni Ürün</a>
+        </div>
     </AuthorizeView>
 </div>
 

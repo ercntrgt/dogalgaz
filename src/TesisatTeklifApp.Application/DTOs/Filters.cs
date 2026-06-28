@@ -33,6 +33,12 @@ public class OfferSearchFilter
     public OfferStatus? Status { get; set; }
     public string? ResponsiblePerson { get; set; }
     public bool OnlyOrders { get; set; }
+
+    /// <summary>"Teklifler" listesi için: siparişe dönüşmüş kayıtları gizler.</summary>
+    public bool ExcludeOrders { get; set; }
+
+    /// <summary>Yalnızca bu kullanıcının oluşturduğu kayıtlar (satış personeli kısıtı).</summary>
+    public string? CreatedBy { get; set; }
 }
 
 /// <summary>Rapor filtresi (eksik/kritik stok, ciro vb.).</summary>

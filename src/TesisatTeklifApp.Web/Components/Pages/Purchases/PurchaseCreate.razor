@@ -1,0 +1,170 @@
+@page "/purchases/new"
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
+@rendermode InteractiveServer
+@inject IPurchaseService PurchaseService
+@inject ISupplierService SupplierService
+@inject IProductService ProductService
+@inject NavigationManager Nav
+
+<PageTitle>Yeni Satınalma</PageTitle>
+
+<h2 class="mb-3">Yeni Satınalma Siparişi</h2>
+
+<div class="card summary-box mb-3">
+    <div class="card-body row g-3">
+        <div class="col-md-5">
+            <label class="form-label">Tedarikçi *</label>
+            <select class="form-select" @bind="order.SupplierId">
+                <option value="0">-- tedarikçi seçin --</option>
+                @foreach (var s in suppliers)
+                {
+                    <option value="@s.Id">@s.Name</option>
+                }
+            </select>
+            @if (suppliers.Count == 0)
+            {
+                <small class="text-danger">Önce <a href="suppliers/new">tedarikçi ekleyin</a>.</small>
+            }
+        </div>
+        <div class="col-md-3"><label class="form-label">Tarih</label><input type="date" class="form-control" @bind="order.OrderDate" /></div>
+        <div class="col-md-4"><label class="form-label">Not</label><input class="form-control" @bind="order.Notes" /></div>
+    </div>
+</div>
+
+@* Satınalma önerileri *@
+@if (suggestions.Count > 0)
+{
+    <div class="card summary-box mb-3">
+        <div class="card-header bg-white fw-semibold d-flex align-items-center">
+            <span>📉 Satınalma Önerileri (kritik/eksik stok)</span>
+            <button class="btn btn-sm btn-warning ms-auto" @onclick="AddAllSuggestions">Tümünü Ekle</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Ürün</th><th>Mevcut</th><th>Önerilen</th><th>Sebep</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var s in suggestions)
+                    {
+                        <tr>
+                            <td>@s.ProductName</td>
+                            <td>@s.CurrentStock.ToString("0.##") @s.Unit</td>
+                            <td>@s.SuggestedQuantity.ToString("0.##")</td>
+                            <td class="small text-muted">@s.Reason</td>
+                            <td class="text-end"><button class="btn btn-sm btn-outline-primary" @onclick="@(() => AddSuggestion(s))">+ Ekle</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@* Satınalma kalemleri *@
+<div class="card summary-box mb-3">
+    <div class="card-header bg-white fw-semibold">Satınalma Kalemleri</div>
+    <div class="table-responsive">
+        <table class="table table-sm mb-0 align-middle">
+            <thead><tr><th style="min-width:200px">Ürün</th><th>Miktar</th><th>Birim Fiyat</th><th class="text-end">Toplam</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var it in order.Items)
+                {
+                    <tr>
+                        <td>
+                            <select class="form-select form-select-sm" value="@it.ProductId" @onchange="@(e => OnProduct(it, e.Value?.ToString()))">
+                                <option value="">-- ürün --</option>
+                                @foreach (var p in products)
+                                {
+                                    <option value="@p.Id" selected="@(it.ProductId == p.Id)">@p.Name</option>
+                                }
+                            </select>
+                        </td>
+                        <td><input type="number" step="any" class="form-control form-control-sm" @bind="it.Quantity" @bind:after="StateHasChanged" style="width:90px" /></td>
+                        <td><input type="number" step="any" class="form-control form-control-sm" @bind="it.UnitPrice" @bind:after="StateHasChanged" style="width:110px" /></td>
+                        <td class="text-end fw-semibold">@((it.Quantity * it.UnitPrice).ToString("#,##0.00")) ₺</td>
+                        <td><button class="btn btn-sm btn-outline-danger" @onclick="@(() => order.Items.Remove(it))">×</button></td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-light">
+                    <td colspan="3" class="text-end fw-semibold">Genel Toplam</td>
+                    <td class="text-end fw-bold text-primary">@Total.ToString("#,##0.00") ₺</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="card-footer">
+        <button class="btn btn-sm btn-outline-primary" @onclick="AddRow">➕ Satır Ekle</button>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<div class="d-flex gap-2 mb-5">
+    <button class="btn btn-success" @onclick="Save">💾 Satınalmayı Kaydet</button>
+    <a href="purchases" class="btn btn-outline-secondary">İptal</a>
+</div>
+
+@code {
+    private PurchaseOrder order = new() { OrderDate = DateTime.Today };
+    private List<Supplier> suppliers = new();
+    private List<Product> products = new();
+    private List<PurchaseSuggestionRow> suggestions = new();
+    private string? error;
+
+    private decimal Total => order.Items.Sum(i => i.Quantity * i.UnitPrice);
+
+    protected override async Task OnInitializedAsync()
+    {
+        suppliers = await SupplierService.SearchAsync(null);
+        products = await ProductService.GetActiveAsync();
+        suggestions = await PurchaseService.GetSuggestionsAsync();
+    }
+
+    private void AddRow() => order.Items.Add(new PurchaseOrderItem { Quantity = 1 });
+
+    private void AddSuggestion(PurchaseSuggestionRow s)
+    {
+        if (order.Items.Any(i => i.ProductId == s.ProductId)) return;
+        order.Items.Add(new PurchaseOrderItem
+        {
+            ProductId = s.ProductId, ItemName = s.ProductName,
+            Quantity = s.SuggestedQuantity, UnitPrice = s.LastPurchasePrice
+        });
+    }
+
+    private void AddAllSuggestions()
+    {
+        foreach (var s in suggestions) AddSuggestion(s);
+    }
+
+    private void OnProduct(PurchaseOrderItem it, string? val)
+    {
+        if (int.TryParse(val, out var pid))
+        {
+            var p = products.FirstOrDefault(x => x.Id == pid);
+            if (p is not null)
+            {
+                it.ProductId = p.Id; it.ItemName = p.Name;
+                if (it.UnitPrice <= 0) it.UnitPrice = p.PurchasePrice;
+                if (it.Quantity <= 0) it.Quantity = 1;
+            }
+        }
+        else it.ProductId = null;
+        StateHasChanged();
+    }
+
+    private async Task Save()
+    {
+        error = null;
+        if (order.SupplierId <= 0) { error = "Lütfen tedarikçi seçin."; return; }
+        if (!order.Items.Any(i => i.ProductId.HasValue && i.Quantity > 0)) { error = "En az bir kalem ekleyin."; return; }
+        order.Items = order.Items.Where(i => i.ProductId.HasValue && i.Quantity > 0).ToList();
+        var saved = await PurchaseService.CreateAsync(order);
+        Nav.NavigateTo($"purchases/{saved.Id}");
+    }
+}

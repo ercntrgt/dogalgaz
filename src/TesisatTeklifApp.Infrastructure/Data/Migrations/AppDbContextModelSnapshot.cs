@@ -145,6 +145,43 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.ActivityLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ActivityLogs");
+                });
+
             modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.Customer", b =>
                 {
                     b.Property<int>("Id")
@@ -201,6 +238,9 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TEXT");
 
@@ -208,6 +248,18 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CustomerSignature")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("DeleteRequested")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DeleteRequestedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DeliveredBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DeliveredDate")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("DiscountAmount")
@@ -390,6 +442,46 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                     b.ToTable("OfferItems");
                 });
 
+            modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.OfferPhoto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OfferId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UploadedBy")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OfferId");
+
+                    b.ToTable("OfferPhotos");
+                });
+
             modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.PaymentPlan", b =>
                 {
                     b.Property<int>("Id")
@@ -409,8 +501,14 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("OfferId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("PaidDate")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("TEXT");
@@ -505,6 +603,107 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.PurchaseOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ExpectedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PurchaseNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PurchaseNumber")
+                        .IsUnique();
+
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("PurchaseOrders");
+                });
+
+            modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.PurchaseOrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsReceived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PurchaseOrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ReceivedQuantity")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("PurchaseOrderId");
+
+                    b.ToTable("PurchaseOrderItems");
+                });
+
             modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.RadiatorItem", b =>
                 {
                     b.Property<int>("Id")
@@ -548,11 +747,17 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                     b.Property<string>("RadiatorBrand")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("RadiatorHeight")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("RadiatorProductId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("RadiatorSize")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("RadiatorWidth")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("RoomName")
                         .HasColumnType("TEXT");
@@ -664,6 +869,54 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StockSettings");
+                });
+
+            modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.Supplier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("City")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("District")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TaxNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("TesisatTeklifApp.Infrastructure.Identity.ApplicationUser", b =>
@@ -816,6 +1069,17 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.OfferPhoto", b =>
+                {
+                    b.HasOne("TesisatTeklifApp.Domain.Entities.Offer", "Offer")
+                        .WithMany()
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Offer");
+                });
+
             modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.PaymentPlan", b =>
                 {
                     b.HasOne("TesisatTeklifApp.Domain.Entities.Offer", "Offer")
@@ -825,6 +1089,35 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Offer");
+                });
+
+            modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.PurchaseOrder", b =>
+                {
+                    b.HasOne("TesisatTeklifApp.Domain.Entities.Supplier", "Supplier")
+                        .WithMany("PurchaseOrders")
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.PurchaseOrderItem", b =>
+                {
+                    b.HasOne("TesisatTeklifApp.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("TesisatTeklifApp.Domain.Entities.PurchaseOrder", "PurchaseOrder")
+                        .WithMany("Items")
+                        .HasForeignKey("PurchaseOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("PurchaseOrder");
                 });
 
             modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.RadiatorItem", b =>
@@ -879,6 +1172,16 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                     b.Navigation("PaymentPlans");
 
                     b.Navigation("RadiatorItems");
+                });
+
+            modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.PurchaseOrder", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("TesisatTeklifApp.Domain.Entities.Supplier", b =>
+                {
+                    b.Navigation("PurchaseOrders");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,10 +4,20 @@
 @inject IOfferService OfferService
 @inject IProductService ProductService
 @inject IStockControlService StockService
+@inject IPaymentService PaymentService
+@inject IReportService ReportService
+@inject NavigationManager Nav
 
 <PageTitle>Ana Sayfa - ÖZDEMİR Tesisat Teklif</PageTitle>
 
-<h2 class="mb-4">Yönetim Paneli</h2>
+<PageHeader Title="Yönetim Paneli" Icon="bi-grid-1x2">
+    <Actions>
+        <AuthorizeView Roles="Admin,SalesPerson">
+            <a href="offers/new" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Yeni Teklif</a>
+            <a href="customers/new" class="btn btn-outline-primary"><i class="bi bi-person-plus"></i> Yeni Müşteri</a>
+        </AuthorizeView>
+    </Actions>
+</PageHeader>
 
 @if (loading)
 {
@@ -15,84 +25,147 @@
 }
 else
 {
+    @* Uyarılar *@
+    <AlertBox Type="danger" Visible="pay.OverdueAmount > 0">
+        <strong>@Money(pay.OverdueAmount)</strong> tutarında gecikmiş ödeme var.
+        <a href="payments" class="alert-link">Ödeme Takvimi</a>
+    </AlertBox>
+    <AlertBox Type="warning" Visible="criticalCount > 0">
+        <strong>@criticalCount</strong> üründe kritik stok seviyesi. <a href="products" class="alert-link">Ürünler</a>
+    </AlertBox>
+    <AlertBox Type="info" Visible="waitingSupplyCount > 0">
+        <strong>@waitingSupplyCount</strong> sipariş bekleyen tedarikte.
+    </AlertBox>
+
+    @* Özet kartları *@
     <div class="row g-3 mb-4">
-        <div class="col-6 col-lg-3">
-            <div class="card text-center p-3 summary-box">
-                <div class="display-6 text-primary">@offerCount</div>
-                <div class="text-muted">Toplam Teklif</div>
-            </div>
+        <div class="col-6 col-lg-4 col-xl-2">
+            <StatCard Tone="info" Icon="bi-cash-stack" Title="Bu Ay Ciro" Value="@FormatK(thisMonthRevenue)" Sub="bu ay" />
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card text-center p-3 summary-box">
-                <div class="display-6 text-success">@orderCount</div>
-                <div class="text-muted">Sipariş</div>
-            </div>
+        <div class="col-6 col-lg-4 col-xl-2">
+            <StatCard Tone="primary" Icon="bi-file-earmark-text" Title="Bekleyen Teklif" Value="@offerCount.ToString()"
+                      OnClick="@(() => Nav.NavigateTo("offers"))" />
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card text-center p-3 summary-box">
-                <div class="display-6 text-warning">@criticalCount</div>
-                <div class="text-muted">Kritik Stok</div>
-            </div>
+        <div class="col-6 col-lg-4 col-xl-2">
+            <StatCard Tone="success" Icon="bi-box-seam" Title="Sipariş" Value="@orderCount.ToString()"
+                      OnClick="@(() => Nav.NavigateTo("orders"))" />
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card text-center p-3 summary-box">
-                <div class="display-6 text-secondary">@productCount</div>
-                <div class="text-muted">Aktif Ürün</div>
-            </div>
+        <div class="col-6 col-lg-4 col-xl-2">
+            <StatCard Tone="danger" Icon="bi-exclamation-octagon" Title="Gecikmiş Ödeme" Value="@FormatK(pay.OverdueAmount)"
+                      OnClick="@(() => Nav.NavigateTo("payments"))" />
+        </div>
+        <div class="col-6 col-lg-4 col-xl-2">
+            <StatCard Tone="warning" Icon="bi-clipboard-x" Title="Kritik Stok" Value="@criticalCount.ToString()"
+                      OnClick="@(() => Nav.NavigateTo("products"))" />
+        </div>
+        <div class="col-6 col-lg-4 col-xl-2">
+            <StatCard Tone="info" Icon="bi-truck" Title="Bekleyen Tedarik" Value="@waitingSupplyCount.ToString()"
+                      OnClick="@(() => Nav.NavigateTo("purchases"))" />
         </div>
     </div>
 
-    <AuthorizeView Roles="Admin,SalesPerson">
-        <div class="mb-4">
-            <a href="offers/new" class="btn btn-primary">➕ Yeni Teklif Oluştur</a>
-            <a href="customers/new" class="btn btn-outline-primary">👤 Yeni Müşteri</a>
+    <div class="row g-3">
+        @* Aylık ciro grafiği *@
+        <div class="col-lg-6">
+            <div class="ds-card h-100">
+                <div class="card-header bg-white fw-semibold"><i class="bi bi-bar-chart-line me-1"></i> Aylık Ciro (son 6 ay)</div>
+                <div class="card-body">
+                    @if (revenue.Count == 0)
+                    {
+                        <p class="text-muted">Veri yok.</p>
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-end justify-content-around" style="height:200px;">
+                            @foreach (var r in revenue)
+                            {
+                                var pct = maxRevenue > 0 ? (int)(r.TotalRevenue / maxRevenue * 100) : 0;
+                                <div class="text-center" style="flex:1;">
+                                    <div class="small text-muted">@FormatK(r.TotalRevenue)</div>
+                                    <div class="mx-auto" style="width:58%; background:var(--color-primary); border-radius:6px 6px 0 0; height:@(pct)%; min-height:3px;" title="@Money(r.TotalRevenue)"></div>
+                                    <div class="small mt-1">@MonthLabel(r.Period)</div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
-    </AuthorizeView>
 
-    <div class="card summary-box">
-        <div class="card-header bg-white fw-semibold">Son Teklifler</div>
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
-                    <tr><th>Form No</th><th>Müşteri</th><th>Tarih</th><th>Durum</th><th class="text-end">Genel Toplam</th></tr>
-                </thead>
-                <tbody>
-                    @foreach (var o in recent)
-                    {
-                        <tr style="cursor:pointer" @onclick="@(() => Nav.NavigateTo($"offers/{o.Id}"))">
-                            <td>@o.OfferNumber</td>
-                            <td>@o.Customer?.FullName</td>
-                            <td>@o.OfferDate.ToString("dd.MM.yyyy")</td>
-                            <td><StatusBadge Status="o.Status" /></td>
-                            <td class="text-end">@o.GrandTotal.ToString("#,##0.00") ₺</td>
-                        </tr>
-                    }
-                    @if (recent.Count == 0)
-                    {
-                        <tr><td colspan="5" class="text-center text-muted py-3">Henüz teklif yok.</td></tr>
-                    }
-                </tbody>
-            </table>
+        @* Son teklifler *@
+        <div class="col-lg-6">
+            <div class="ds-card h-100">
+                <div class="card-header bg-white fw-semibold"><i class="bi bi-clock-history me-1"></i> Son Teklifler</div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead><tr><th>Form No</th><th>Müşteri</th><th>Durum</th><th class="text-end">Tutar</th></tr></thead>
+                        <tbody>
+                            @foreach (var o in recent)
+                            {
+                                <tr style="cursor:pointer" @onclick="@(() => Nav.NavigateTo($"offers/{o.Id}"))">
+                                    <td>@o.OfferNumber</td>
+                                    <td>@o.Customer?.FullName</td>
+                                    <td><StatusBadge Status="o.Status" /></td>
+                                    <td class="text-end">@o.GrandTotal.ToString("#,##0") ₺</td>
+                                </tr>
+                            }
+                            @if (recent.Count == 0)
+                            {
+                                <tr><td colspan="4" class="text-center text-muted py-3">Henüz teklif yok.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 }
 
 @code {
-    [Inject] NavigationManager Nav { get; set; } = default!;
-
     private bool loading = true;
-    private int offerCount, orderCount, criticalCount, productCount;
+    private int offerCount, orderCount, criticalCount, waitingSupplyCount;
     private List<Offer> recent = new();
+    private PaymentScheduleSummary pay = new();
+    private List<RevenueReportRow> revenue = new();
+    private decimal maxRevenue, thisMonthRevenue;
+
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var all = await OfferService.SearchAsync(new OfferSearchFilter());
-        offerCount = all.Count;
+        string? restrictToUser = null;
+        if (AuthState is not null)
+        {
+            var user = (await AuthState).User;
+            if (user.IsInRole(AppRoles.SalesPerson) && !user.IsInRole(AppRoles.Admin))
+                restrictToUser = user.Identity?.Name;
+        }
+
+        var all = await OfferService.SearchAsync(new OfferSearchFilter { CreatedBy = restrictToUser });
+        offerCount = all.Count(o => !o.IsOrder);
         orderCount = all.Count(o => o.IsOrder);
+        waitingSupplyCount = all.Count(o => o.Status == OfferStatus.WaitingSupply);
         recent = all.Take(8).ToList();
 
-        productCount = (await ProductService.GetActiveAsync()).Count;
         criticalCount = (await StockService.GetCriticalStockItemsAsync()).Count;
+        pay = await PaymentService.GetSummaryAsync();
+
+        var from = DateTime.Today.AddMonths(-5);
+        revenue = await ReportService.GetRevenueReportAsync(new ReportFilter { FromDate = new DateTime(from.Year, from.Month, 1) });
+        maxRevenue = revenue.Count > 0 ? revenue.Max(r => r.TotalRevenue) : 0;
+        var thisKey = DateTime.Today.ToString("yyyy-MM");
+        thisMonthRevenue = revenue.FirstOrDefault(r => r.Period == thisKey)?.TotalRevenue ?? 0;
+
         loading = false;
+    }
+
+    private static string Money(decimal v) => v.ToString("#,##0.00") + " ₺";
+    private static string FormatK(decimal v) => v >= 1000 ? $"{v / 1000:0.#}b ₺" : $"{v:0} ₺";
+    private static string MonthLabel(string period)
+    {
+        var parts = period.Split('-');
+        if (parts.Length != 2 || !int.TryParse(parts[1], out var m)) return period;
+        string[] aylar = { "", "Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara" };
+        return m >= 1 && m <= 12 ? aylar[m] : period;
     }
 }

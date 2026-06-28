@@ -1,0 +1,195 @@
+@page "/payments"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IPaymentService PaymentService
+@inject IAuditService Audit
+
+<PageTitle>Ödeme Takvimi</PageTitle>
+
+<h2 class="mb-3">Ödeme Takvimi — Yaklaşan & Geçmiş Ödemeler</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card text-center p-3 summary-box">
+            <div class="h4 mb-0 text-danger">@Money(summary.OverdueAmount)</div>
+            <div class="text-muted">Gecikmiş</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card text-center p-3 summary-box">
+            <div class="h4 mb-0 text-warning">@Money(summary.ThisMonthAmount)</div>
+            <div class="text-muted">Bu Ay Vadesi</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card text-center p-3 summary-box">
+            <div class="h4 mb-0 text-primary">@Money(summary.TotalPending)</div>
+            <div class="text-muted">Toplam Bekleyen</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card text-center p-3 summary-box">
+            <div class="h4 mb-0 text-success">@Money(summary.PaidAmount)</div>
+            <div class="text-muted">Tahsil Edilen</div>
+        </div>
+    </div>
+</div>
+
+<div class="card summary-box mb-3">
+    <div class="card-body row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Başlangıç</label>
+            <input type="date" class="form-control" @bind="filter.FromDate" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Bitiş</label>
+            <input type="date" class="form-control" @bind="filter.ToDate" />
+        </div>
+        <div class="col-md-2 d-flex align-items-center pt-3">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="unpaid" @bind="filter.OnlyUnpaid" />
+                <label class="form-check-label" for="unpaid">Sadece ödenmemiş</label>
+            </div>
+        </div>
+        <div class="col-md-2 d-flex align-items-center pt-3">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="overdue" @bind="filter.OnlyOverdue" />
+                <label class="form-check-label" for="overdue">Sadece gecikmiş</label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-outline-primary w-100" @onclick="Load">Filtrele</button>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-link btn-sm" @onclick="ShowUpcoming">Yaklaşan (bugünden itibaren)</button>
+            <button class="btn btn-link btn-sm" @onclick="ShowOverdue">Gecikmişler</button>
+            <button class="btn btn-link btn-sm" @onclick="ShowAll">Tümü</button>
+        </div>
+    </div>
+</div>
+
+<div class="card summary-box">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Vade Tarihi</th><th>Gün</th><th>Müşteri</th><th>Form / Sipariş No</th>
+                    <th>Tür</th><th class="text-end">Tutar</th><th>Durum</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in rows)
+                {
+                    <tr class="@RowClass(r.Status)">
+                        <td>@(r.PaymentDate?.ToString("dd.MM.yyyy") ?? "-")</td>
+                        <td>@DaysText(r)</td>
+                        <td><a href="customers/@r.CustomerId/tracking">@r.CustomerName</a></td>
+                        <td><a href="offers/@r.OfferId">@r.FormNumber</a></td>
+                        <td>@PaymentTypeText.Label(r.PaymentType)</td>
+                        <td class="text-end fw-semibold">@Money(r.Amount)</td>
+                        <td><span class="badge @BadgeClass(r.Status)">@StatusLabel(r.Status)</span></td>
+                        <td class="text-end">
+                            <AuthorizeView Roles="Admin,SalesPerson" Context="a">
+                                @if (r.IsPaid)
+                                {
+                                    <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => Mark(r, false))">Geri Al</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-success" @onclick="@(() => Mark(r, true))">✓ Tahsil Edildi</button>
+                                }
+                            </AuthorizeView>
+                        </td>
+                    </tr>
+                }
+                @if (rows.Count == 0)
+                {
+                    <tr><td colspan="8" class="text-center text-muted py-4">Bu kritere uygun ödeme yok.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private PaymentScheduleFilter filter = new();
+    private List<PaymentScheduleRow> rows = new();
+    private PaymentScheduleSummary summary = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        filter.OnlyUnpaid = true;
+        await Load();
+    }
+
+    private async Task Load()
+    {
+        rows = await PaymentService.GetScheduleAsync(filter);
+        summary = await PaymentService.GetSummaryAsync();
+    }
+
+    private async Task ShowUpcoming()
+    {
+        filter = new PaymentScheduleFilter { FromDate = DateTime.Today, OnlyUnpaid = true };
+        await Load();
+    }
+
+    private async Task ShowOverdue()
+    {
+        filter = new PaymentScheduleFilter { OnlyUnpaid = true, OnlyOverdue = true };
+        await Load();
+    }
+
+    private async Task ShowAll()
+    {
+        filter = new PaymentScheduleFilter();
+        await Load();
+    }
+
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+
+    private async Task Mark(PaymentScheduleRow r, bool paid)
+    {
+        await PaymentService.MarkPaidAsync(r.PaymentPlanId, paid);
+        var user = AuthState is null ? "bilinmiyor" : (await AuthState).User.Identity?.Name ?? "bilinmiyor";
+        await Audit.LogAsync("Offer", r.OfferId, paid ? "Ödeme tahsil edildi" : "Ödeme tahsili geri alındı",
+            user, $"{r.CustomerName} — {r.Amount:#,##0.00} ₺");
+        await Load();
+    }
+
+    private static string Money(decimal v) => v.ToString("#,##0.00") + " ₺";
+
+    private static string DaysText(PaymentScheduleRow r)
+    {
+        if (r.IsPaid || r.DaysRemaining is null) return "-";
+        var d = r.DaysRemaining.Value;
+        if (d == 0) return "Bugün";
+        return d > 0 ? $"{d} gün kaldı" : $"{-d} gün gecikti";
+    }
+
+    private static string RowClass(PaymentScheduleStatus s) => s switch
+    {
+        PaymentScheduleStatus.Overdue => "table-danger",
+        PaymentScheduleStatus.DueToday => "table-warning",
+        PaymentScheduleStatus.Paid => "table-success",
+        _ => ""
+    };
+
+    private static string BadgeClass(PaymentScheduleStatus s) => s switch
+    {
+        PaymentScheduleStatus.Paid => "bg-success",
+        PaymentScheduleStatus.Upcoming => "bg-primary",
+        PaymentScheduleStatus.DueToday => "bg-warning text-dark",
+        PaymentScheduleStatus.Overdue => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    private static string StatusLabel(PaymentScheduleStatus s) => s switch
+    {
+        PaymentScheduleStatus.Paid => "Tahsil Edildi",
+        PaymentScheduleStatus.Upcoming => "Bekliyor",
+        PaymentScheduleStatus.DueToday => "Bugün Vade",
+        PaymentScheduleStatus.Overdue => "Gecikmiş",
+        _ => "Tarihsiz"
+    };
+}

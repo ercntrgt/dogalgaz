@@ -2,10 +2,13 @@
 @page "/orders"
 @attribute [Authorize]
 @rendermode InteractiveServer
+@implements IDisposable
 @inject IOfferService OfferService
 @inject NavigationManager Nav
 
 <PageTitle>@Title</PageTitle>
+
+<ConfirmModal @ref="confirm" />
 
 <div class="d-flex align-items-center mb-3">
     <h2 class="mb-0">@Title</h2>
@@ -63,6 +66,13 @@
                         <td>@o.ResponsiblePerson</td>
                         <td class="text-end" @onclick:stopPropagation="true">
                             <a href="offers/@o.Id" class="btn btn-sm btn-outline-secondary">Detay</a>
+                            <AuthorizeView Roles="Admin" Context="da">
+                                <button class="btn btn-sm btn-outline-danger" title="Sil" @onclick="@(() => DeleteOffer(o.Id))"><i class="bi bi-trash"></i></button>
+                            </AuthorizeView>
+                            @if (o.DeleteRequested)
+                            {
+                                <span class="badge bg-warning text-dark" title="Silme talebi var"><i class="bi bi-trash"></i></span>
+                            }
                         </td>
                     </tr>
                 }
@@ -88,18 +98,68 @@
         set => filter.Status = string.IsNullOrEmpty(value) ? null : (OfferStatus)int.Parse(value);
     }
 
+    private bool loaded;
+
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+    // Satış personeli (Admin değilse) yalnızca kendi oluşturduklarını görür.
+    private string? restrictToUser;
+
+    // Aynı bileşen hem /offers hem /orders rotasına bakar. Blazor geçişte bileşeni
+    // koruyup OnInitialized/OnParametersSet'i tetiklemeyebildiği için, URL değişimini
+    // LocationChanged ile yakalayıp yeniden yüklüyoruz (en sağlam yol).
     protected override async Task OnInitializedAsync()
     {
-        onlyOrders = Nav.Uri.Contains("/orders", StringComparison.OrdinalIgnoreCase);
-        filter.OnlyOrders = onlyOrders;
-        await Load();
+        if (AuthState is not null)
+        {
+            var user = (await AuthState).User;
+            if (user.IsInRole(AppRoles.SalesPerson) && !user.IsInRole(AppRoles.Admin))
+                restrictToUser = user.Identity?.Name;
+        }
+        Nav.LocationChanged += HandleLocationChanged;
+        await DetectAndLoad();
     }
+
+    private async void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        if (await DetectAndLoad())
+            await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task<bool> DetectAndLoad()
+    {
+        var nowOrders = Nav.Uri.Contains("/orders", StringComparison.OrdinalIgnoreCase);
+        if (!loaded || nowOrders != onlyOrders)
+        {
+            onlyOrders = nowOrders;
+            filter = new OfferSearchFilter { OnlyOrders = onlyOrders, ExcludeOrders = !onlyOrders, CreatedBy = restrictToUser };
+            await Load();
+            loaded = true;
+            return true;
+        }
+        return false;
+    }
+
+    public void Dispose() => Nav.LocationChanged -= HandleLocationChanged;
 
     private async Task Load() => items = await OfferService.SearchAsync(filter);
 
+    private ConfirmModal? confirm;
+    private async Task DeleteOffer(int id)
+    {
+        if (confirm is not null)
+        {
+            var ok = await confirm.ShowAsync("Silme Onayı",
+                "Bu kayıt kalıcı olarak silinecek (sipariş ise stok iade edilir). Emin misiniz?", "Evet, Sil", "danger");
+            if (!ok) return;
+        }
+        await OfferService.DeleteAsync(id);
+        await Load();
+        StateHasChanged();
+    }
+
     private async Task Reset()
     {
-        filter = new OfferSearchFilter { OnlyOrders = onlyOrders };
+        filter = new OfferSearchFilter { OnlyOrders = onlyOrders, ExcludeOrders = !onlyOrders };
         await Load();
     }
 }

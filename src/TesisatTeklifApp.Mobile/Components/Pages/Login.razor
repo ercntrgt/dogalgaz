@@ -1,0 +1,59 @@
+@page "/login"
+@layout EmptyLayout
+@implements IDisposable
+@inject LoginService Auth
+@inject ConnectivityService Conn
+@inject NavigationManager Nav
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:linear-gradient(135deg,#1a3a6b,#142d52)">
+    <div class="card" style="max-width:420px;width:100%;border-radius:18px">
+        <div class="card-body p-4">
+            <img src="images/logo.png" style="max-width:230px;display:block;margin:0 auto 1rem" onerror="this.style.display='none'" />
+            <h5 class="text-center mb-3">Saha Girişi</h5>
+
+            <div class="alert @(Conn.IsOnline ? "alert-info" : "alert-warning") py-2 small">
+                @(Conn.IsOnline
+                    ? "İlk giriş için internet gereklidir. Bir kez giriş yapın; sonra bu tablette tekrar sorulmaz."
+                    : "İnternet yok. İlk giriş için bağlanmanız gerekir.")
+            </div>
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger py-2">@error</div>
+            }
+
+            <div class="mb-2">
+                <label class="form-label">E-posta</label>
+                <input class="form-control" @bind="email" autocomplete="username" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Şifre</label>
+                <input class="form-control" type="password" @bind="password" autocomplete="current-password" />
+            </div>
+            <button class="btn btn-primary w-100 btn-lg-touch" @onclick="DoLogin" disabled="@(!Conn.IsOnline)">
+                <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+            </button>
+
+            <div class="small text-muted mt-3">
+                Demo: satis@ozdemir.local / Satis!123
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string email = "", password = "";
+    private string? error;
+
+    protected override void OnInitialized() => Conn.StateChanged += OnConn;
+    private void OnConn() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Conn.StateChanged -= OnConn;
+
+    private void DoLogin()
+    {
+        error = null;
+        var (ok, err) = Auth.TryLogin(email, password);
+        if (ok) Nav.NavigateTo("/", true);
+        else error = err;
+    }
+}

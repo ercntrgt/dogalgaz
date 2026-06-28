@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+.git/
+.vs/
+.vscode/
+docs/
+*.db
+*.db-shm
+*.db-wal
+src/TesisatTeklifApp.Mobile/
+scratchpad/

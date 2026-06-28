@@ -27,14 +27,22 @@ public static class ProductCategories
     public const string FullTesisat = "Full tesisat";
     public const string HatTasima = "Hat taşıma";
     public const string EkHatAlma = "Ek hat alma";
+    public const string Klima = "Klima";
+    public const string IsiPompasi = "Isı Pompası";
+    public const string MalzemeEkipman = "Malzeme/Ekipman";
+    public const string DogalgazTesisati = "Doğalgaz Tesisatı";
+    public const string KolonTesisati = "Kolon Tesisatı";
+    public const string KaloriferTesisati = "Kalorifer Tesisatı";
+    public const string KlimaHizmet = "Klima Hizmet/Malzeme";
     public const string Diger = "Diğer";
 
     public static readonly IReadOnlyList<string> All = new[]
     {
-        Kombi, Kazan, Radyator, RadyatorVanasi, TermostatikVana, KombiDolabi,
+        Kombi, Kazan, Klima, Radyator, RadyatorVanasi, TermostatikVana, KombiDolabi,
         OdaTermostati, BacaUzatmasi, KombiElektrikIsi, SelenoidVana, GazAlarmCihazi,
-        CamMenfezi, DogalgazBorulari, DogalgazVanalari, FittingsMalzemeler,
-        PlastikBorular, Iscilik, Montaj, FullTesisat, HatTasima, EkHatAlma, Diger
+        CamMenfezi, DogalgazBorulari, DogalgazVanalari, DogalgazTesisati, KolonTesisati,
+        KaloriferTesisati, FittingsMalzemeler, PlastikBorular, MalzemeEkipman,
+        Iscilik, Montaj, FullTesisat, HatTasima, EkHatAlma, KlimaHizmet, Diger
     };
 }
 
@@ -48,6 +56,62 @@ public static class OfferSections
     public const string Material = "Material";             // D bölümü
     public const string Installation = "Installation";     // F bölümü
     public const string Labor = "Labor";                   // İşçilik
+}
+
+/// <summary>
+/// Teklif formunda her bölümün ürün açılır listesinde hangi kategorilerin
+/// görüneceğini belirler (alan bazlı filtre). Eşleşme yoksa tüm ürünler gösterilir.
+/// Yeni kategori eklendiğinde ilgili bölüme buradan eklenir.
+/// </summary>
+public static class SectionCategories
+{
+    public static readonly IReadOnlyDictionary<string, string[]> Map = new Dictionary<string, string[]>
+    {
+        [OfferSections.KombiKazan] = new[]
+        {
+            ProductCategories.Kombi, ProductCategories.Kazan,
+            ProductCategories.Klima, ProductCategories.IsiPompasi
+        },
+        [OfferSections.GasInstallation] = new[]
+        {
+            ProductCategories.DogalgazTesisati, ProductCategories.DogalgazBorulari,
+            ProductCategories.DogalgazVanalari, ProductCategories.KolonTesisati,
+            ProductCategories.FittingsMalzemeler, ProductCategories.PlastikBorular
+        },
+        [OfferSections.Material] = new[]
+        {
+            ProductCategories.MalzemeEkipman, ProductCategories.RadyatorVanasi,
+            ProductCategories.TermostatikVana, ProductCategories.KombiDolabi,
+            ProductCategories.OdaTermostati, ProductCategories.BacaUzatmasi,
+            ProductCategories.SelenoidVana, ProductCategories.GazAlarmCihazi,
+            ProductCategories.CamMenfezi, ProductCategories.KombiElektrikIsi,
+            ProductCategories.FittingsMalzemeler, ProductCategories.Diger
+        },
+        [OfferSections.Installation] = new[]
+        {
+            ProductCategories.Montaj, ProductCategories.FullTesisat,
+            ProductCategories.HatTasima, ProductCategories.EkHatAlma,
+            ProductCategories.KaloriferTesisati, ProductCategories.KlimaHizmet
+        },
+        [OfferSections.Labor] = new[] { ProductCategories.Iscilik },
+    };
+
+    /// <summary>Verilen bölüm için izin verilen kategoriler; yoksa null (=tümü).</summary>
+    public static string[]? For(string section) =>
+        Map.TryGetValue(section, out var cats) ? cats : null;
+}
+
+/// <summary>Ürün/kalem birimleri (açılır menüde kullanılır).</summary>
+public static class Units
+{
+    public const string Adet = "Adet";
+    public const string Metre = "Metre";
+
+    public static readonly IReadOnlyList<string> All = new[]
+    {
+        "Adet", "Metre", "m²", "m³", "Takım", "Set", "Paket", "Kutu", "Rulo",
+        "Kg", "Litre", "Saat", "Gün", "Boy", "Top"
+    };
 }
 
 /// <summary>Radyatör bölümü için hazır oda isimleri.</summary>

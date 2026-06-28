@@ -1,0 +1,229 @@
+@page "/schedule"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IOfferService OfferService
+@inject IPaymentService PaymentService
+@inject NavigationManager Nav
+
+<PageTitle>İş / Montaj Takvimi</PageTitle>
+
+<div class="d-flex align-items-center mb-3 flex-wrap gap-2">
+    <h2 class="mb-0">İş / Montaj Takvimi</h2>
+    <div class="btn-group ms-auto">
+        <button class="btn btn-sm @(view == "calendar" ? "btn-primary" : "btn-outline-primary")" @onclick='() => SetView("calendar")'>🗓️ Takvim</button>
+        <button class="btn btn-sm @(view == "list" ? "btn-primary" : "btn-outline-primary")" @onclick='() => SetView("list")'>📋 Liste</button>
+    </div>
+</div>
+
+@if (view == "calendar")
+{
+    <div class="card summary-box mb-3">
+        <div class="card-body d-flex align-items-center">
+            <button class="btn btn-outline-secondary" @onclick="PrevMonth">‹</button>
+            <h4 class="mb-0 mx-3">@month.ToString("MMMM yyyy", tr)</h4>
+            <button class="btn btn-outline-secondary" @onclick="NextMonth">›</button>
+            <button class="btn btn-link ms-2" @onclick="ThisMonthCal">Bugün</button>
+        </div>
+    </div>
+
+    <div class="card summary-box">
+        <div class="card-body">
+            <div class="cal-grid mb-1">
+                @foreach (var d in new[] { "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz" })
+                {
+                    <div class="cal-head">@d</div>
+                }
+            </div>
+            <div class="cal-grid">
+                @foreach (var day in gridDays)
+                {
+                    var items = byDate.TryGetValue(day.Date, out var list) ? list : new List<Offer>();
+                    <div class="cal-cell @(day.Month != month.Month ? "muted" : "") @(day.Date == DateTime.Today ? "today" : "")">
+                        <div class="cal-daynum">@day.Day</div>
+                        @foreach (var o in items.Take(3))
+                        {
+                            <div class="cal-event" style="background:@Color(o.Status)"
+                                 title="@o.Customer?.FullName — @(o.OrderNumber ?? o.OfferNumber)"
+                                 @onclick="@(() => Nav.NavigateTo($"offers/{o.Id}"))">
+                                @(o.Customer?.FullName ?? o.OfferNumber)
+                            </div>
+                        }
+                        @if (items.Count > 3)
+                        {
+                            <div class="cal-more">+@(items.Count - 3) daha</div>
+                        }
+                        @{ var pays = payByDate.TryGetValue(day.Date, out var pl) ? pl : new List<PaymentScheduleRow>(); }
+                        @foreach (var p in pays.Take(2))
+                        {
+                            <div class="cal-event" style="background:@PayColor(p.Status)"
+                                 title="@p.CustomerName — @p.Amount.ToString("#,##0.00") ₺ (@(p.IsPaid ? "tahsil" : "vade"))"
+                                 @onclick="@(() => Nav.NavigateTo($"offers/{p.OfferId}"))">
+                                💰 @ShortAmount(p.Amount)
+                            </div>
+                        }
+                        @if (pays.Count > 2)
+                        {
+                            <div class="cal-more">+@(pays.Count - 2) ödeme</div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="mt-3 small text-muted d-flex gap-3 flex-wrap">
+                <span><span class="badge" style="background:#1a3a6b">&nbsp;</span> Sipariş</span>
+                <span><span class="badge bg-warning text-dark">&nbsp;</span> Bekleyen tedarik</span>
+                <span><span class="badge bg-success">&nbsp;</span> Tamamlandı</span>
+                <span><span class="badge bg-secondary">&nbsp;</span> Onaylı teklif</span>
+                <span>💰 <span class="badge bg-info text-dark">&nbsp;</span> Ödeme vadesi</span>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card summary-box mb-3">
+        <div class="card-body row g-2 align-items-end">
+            <div class="col-md-3"><label class="form-label">Başlangıç</label><input type="date" class="form-control" @bind="from" /></div>
+            <div class="col-md-3"><label class="form-label">Bitiş</label><input type="date" class="form-control" @bind="to" /></div>
+            <div class="col-md-2"><button class="btn btn-outline-primary w-100" @onclick="LoadList">Getir</button></div>
+            <div class="col-12">
+                <button class="btn btn-link btn-sm" @onclick="ThisWeek">Bu Hafta</button>
+                <button class="btn btn-link btn-sm" @onclick="ThisMonthList">Bu Ay</button>
+                <button class="btn btn-link btn-sm" @onclick="Upcoming">Yaklaşan</button>
+                <button class="btn btn-link btn-sm" @onclick="All">Tümü</button>
+            </div>
+        </div>
+    </div>
+
+    @if (groups.Count == 0)
+    {
+        <div class="card summary-box"><div class="card-body text-center text-muted py-4">
+            Bu aralıkta iş yok. Onaylı teklifler ve siparişler buraya düşer; kesin tarih için teklif/sipariş formundaki <strong>İş Programı → İş Başlangıç Tarihi</strong> alanını doldurun.
+        </div></div>
+    }
+    else
+    {
+        @foreach (var g in groups)
+        {
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold d-flex">
+                    <span>📅 @g.Key.ToString("dd MMMM yyyy, dddd", tr)</span>
+                    <span class="ms-auto badge bg-secondary">@g.Count() iş</span>
+                    @if (g.Key.Date == DateTime.Today) { <span class="badge bg-primary ms-2">Bugün</span> }
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead><tr><th>Müşteri</th><th>Form/Sipariş</th><th>Sorumlu</th><th>Tarih Kaynağı</th><th>Durum</th><th></th></tr></thead>
+                        <tbody>
+                            @foreach (var o in g)
+                            {
+                                <tr style="cursor:pointer" @onclick="@(() => Nav.NavigateTo($"offers/{o.Id}"))">
+                                    <td><strong>@o.Customer?.FullName</strong><br /><span class="text-muted small">@o.Customer?.Phone</span></td>
+                                    <td>@(o.OrderNumber ?? o.OfferNumber)</td>
+                                    <td>@o.ResponsiblePerson</td>
+                                    <td>
+                                        @if (o.WorkStartDate.HasValue) { <span class="badge bg-info text-dark">İş başlangıcı</span> }
+                                        else { <span class="badge bg-light text-muted">Teklif tarihi</span> }
+                                    </td>
+                                    <td><StatusBadge Status="o.Status" /></td>
+                                    <td class="text-end" @onclick:stopPropagation="true"><a href="offers/@o.Id" class="btn btn-sm btn-outline-secondary">Detay</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+}
+
+@code {
+    private string view = "calendar";
+    private static readonly System.Globalization.CultureInfo tr = new("tr-TR");
+
+    // Liste görünümü
+    private DateTime? from;
+    private DateTime? to;
+    private List<IGrouping<DateTime, Offer>> groups = new();
+
+    // Takvim görünümü
+    private DateTime month = new(DateTime.Today.Year, DateTime.Today.Month, 1);
+    private List<DateTime> gridDays = new();
+    private Dictionary<DateTime, List<Offer>> byDate = new();
+    private Dictionary<DateTime, List<PaymentScheduleRow>> payByDate = new();
+
+    protected override async Task OnInitializedAsync() => await LoadCalendar();
+
+    private async Task SetView(string v)
+    {
+        view = v;
+        if (v == "calendar") await LoadCalendar();
+        else await LoadList();
+    }
+
+    // --- Takvim ---
+    private async Task LoadCalendar()
+    {
+        // Ayın ilk gününden önceki Pazartesi'den başla, 6 hafta (42 gün) göster.
+        var firstOfMonth = month;
+        int offset = ((int)firstOfMonth.DayOfWeek + 6) % 7; // Pazartesi = 0
+        var gridStart = firstOfMonth.AddDays(-offset);
+        gridDays = Enumerable.Range(0, 42).Select(i => gridStart.AddDays(i)).ToList();
+        var gridEnd = gridDays.Last();
+
+        var list = await OfferService.GetWorkScheduleAsync(gridStart, gridEnd);
+        byDate = list.GroupBy(o => (o.WorkStartDate ?? o.OfferDate).Date)
+                     .ToDictionary(g => g.Key, g => g.ToList());
+
+        // Ödeme vadeleri de takvime düşsün (tutarıyla).
+        var pays = await PaymentService.GetScheduleAsync(new PaymentScheduleFilter { FromDate = gridStart, ToDate = gridEnd });
+        payByDate = pays.Where(p => p.PaymentDate.HasValue)
+                        .GroupBy(p => p.PaymentDate!.Value.Date)
+                        .ToDictionary(g => g.Key, g => g.ToList());
+    }
+
+    private static string PayColor(PaymentScheduleStatus s) => s switch
+    {
+        PaymentScheduleStatus.Paid => "#198754",
+        PaymentScheduleStatus.Overdue => "#dc3545",
+        PaymentScheduleStatus.DueToday => "#fd7e14",
+        _ => "#0dcaf0"
+    };
+
+    private static string ShortAmount(decimal v) => v >= 1000 ? $"{v / 1000:0.#}b₺" : $"{v:0}₺";
+
+    private async Task PrevMonth() { month = month.AddMonths(-1); await LoadCalendar(); }
+    private async Task NextMonth() { month = month.AddMonths(1); await LoadCalendar(); }
+    private async Task ThisMonthCal() { month = new(DateTime.Today.Year, DateTime.Today.Month, 1); await LoadCalendar(); }
+
+    private static string Color(OfferStatus s) => s switch
+    {
+        OfferStatus.Completed => "#198754",
+        OfferStatus.WaitingSupply => "#fd7e14",
+        OfferStatus.ConvertedToOrder => "#1a3a6b",
+        OfferStatus.Approved => "#6c757d",
+        _ => "#6c757d"
+    };
+
+    // --- Liste ---
+    private async Task LoadList()
+    {
+        var list = await OfferService.GetWorkScheduleAsync(from, to);
+        groups = list.GroupBy(o => (o.WorkStartDate ?? o.OfferDate).Date).OrderBy(g => g.Key).ToList();
+    }
+
+    private async Task ThisWeek()
+    {
+        var today = DateTime.Today;
+        int diff = ((int)today.DayOfWeek + 6) % 7;
+        from = today.AddDays(-diff); to = from.Value.AddDays(6);
+        await LoadList();
+    }
+    private async Task ThisMonthList()
+    {
+        var t = DateTime.Today;
+        from = new DateTime(t.Year, t.Month, 1); to = from.Value.AddMonths(1).AddDays(-1);
+        await LoadList();
+    }
+    private async Task Upcoming() { from = DateTime.Today; to = null; await LoadList(); }
+    private async Task All() { from = null; to = null; await LoadList(); }
+}

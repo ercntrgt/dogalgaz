@@ -1,0 +1,35 @@
+@inherits LayoutComponentBase
+@inject TesisatTeklifApp.Mobile.Services.ConnectivityService Conn
+@inject TesisatTeklifApp.Mobile.Services.LoginService Login
+@inject NavigationManager Nav
+@implements IDisposable
+
+<div class="app-top">
+    <img src="images/logo.png" class="logo" onerror="this.style.display='none'" />
+    <span class="title">ÖZDEMİR Saha</span>
+    <span class="ms-auto badge @(Conn.IsOnline ? "bg-success" : "bg-secondary")">
+        <i class="bi @(Conn.IsOnline ? "bi-wifi" : "bi-wifi-off")"></i>
+        @(Conn.IsOnline ? "Çevrimiçi" : "Çevrimdışı")
+    </span>
+</div>
+
+<div class="app-body">
+    @Body
+</div>
+
+<nav class="bottom-nav">
+    <NavLink href="" Match="NavLinkMatch.All"><i class="bi bi-house-door"></i>Ana Sayfa</NavLink>
+    <NavLink class="fab" href="offer/new"><i class="bi bi-plus-lg"></i>Yeni</NavLink>
+    <NavLink href="offers"><i class="bi bi-card-list"></i>Teklifler</NavLink>
+</nav>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Conn.StateChanged += OnConn;
+        if (!Login.IsLoggedIn)
+            Nav.NavigateTo("/login");
+    }
+    private void OnConn() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Conn.StateChanged -= OnConn;
+}

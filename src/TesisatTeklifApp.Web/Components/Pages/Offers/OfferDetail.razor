@@ -3,11 +3,21 @@
 @rendermode InteractiveServer
 @inject IOfferService OfferService
 @inject IStockControlService StockService
+@inject IAuditService Audit
+@inject IPhotoService PhotoService
 @inject NavigationManager Nav
+@inject IJSRuntime JS
 
 <PageTitle>@offer?.OfferNumber</PageTitle>
 
-@if (offer is null)
+@if (denied)
+{
+    <div class="alert-box ab-danger"><i class="bi bi-shield-lock"></i>
+        <div>Bu kaydı görüntüleme yetkiniz yok. Yalnızca kendi oluşturduğunuz teklif/siparişleri görebilirsiniz.</div>
+    </div>
+    <a href="offers" class="btn btn-outline-secondary mt-2">Tekliflere dön</a>
+}
+else if (offer is null)
 {
     <p>Yükleniyor...</p>
 }
@@ -21,21 +31,79 @@ else
         }
         <StatusBadge Status="offer.Status" />
         <div class="ms-auto d-flex gap-2 flex-wrap">
-            <a class="btn btn-outline-danger" href="/download/offer/@offer.Id/pdf" target="_blank">📄 PDF</a>
+            <a class="btn btn-outline-danger" href="/download/offer/@offer.Id/pdf" target="_blank"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
             <AuthorizeView Roles="Admin,SalesPerson" Context="a">
-                <a class="btn btn-outline-secondary" href="offers/@offer.Id/edit">✏️ Düzenle</a>
-                <button class="btn btn-outline-primary" @onclick="Copy">📋 Kopyala</button>
-                @if (offer.Status is OfferStatus.Draft or OfferStatus.SentToCustomer or OfferStatus.Approved)
+                <a class="btn btn-outline-secondary" href="offers/@offer.Id/edit"><i class="bi bi-pencil"></i> Düzenle</a>
+                <button class="btn btn-outline-primary" @onclick="Copy"><i class="bi bi-files"></i> Kopyala</button>
+            </AuthorizeView>
+
+            @* 1) Yönetici Onayı — sadece Admin, taslak/gönderilmiş durumda *@
+            <AuthorizeView Roles="Admin" Context="adm">
+                @if (offer.Status is OfferStatus.Draft or OfferStatus.SentToCustomer)
                 {
-                    <button class="btn btn-success" @onclick="ConvertToOrder">📦 Siparişe Dönüştür</button>
+                    <button class="btn btn-primary" @onclick="Approve"><i class="bi bi-check2-circle"></i> Yönetici Onayı</button>
+                }
+            </AuthorizeView>
+
+            @* 2) Siparişe Dönüştür — yalnızca onaylı + imzalı *@
+            <AuthorizeView Roles="Admin,SalesPerson" Context="conv">
+                @if (offer.Status == OfferStatus.Approved)
+                {
+                    @if (string.IsNullOrEmpty(offer.CustomerSignature))
+                    {
+                        <button class="btn btn-success" disabled title="Önce müşteri imzası alın"><i class="bi bi-pen"></i> İmza bekleniyor</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-success" @onclick="ConvertToOrder"><i class="bi bi-box-seam"></i> Siparişe Dönüştür</button>
+                    }
+                }
+            </AuthorizeView>
+
+            @* 3) Teslimat *@
+            <AuthorizeView Roles="Admin,SalesPerson" Context="dlv">
+                @if (offer.Status is OfferStatus.ConvertedToOrder or OfferStatus.WaitingSupply)
+                {
+                    <button class="btn btn-dark" @onclick="MarkDelivered"><i class="bi bi-truck"></i> Teslim Edildi</button>
                 }
                 @if (offer.Status != OfferStatus.Cancelled && offer.Status != OfferStatus.Completed)
                 {
-                    <button class="btn btn-outline-danger" @onclick="Cancel">İptal Et</button>
+                    <button class="btn btn-outline-warning" @onclick="Cancel">İptal Et</button>
+                }
+            </AuthorizeView>
+
+            @* Sil — yönetici doğrudan, satış talep eder *@
+            <AuthorizeView Roles="Admin" Context="del">
+                <button class="btn btn-outline-danger" @onclick="DeleteOffer"><i class="bi bi-trash"></i> Sil</button>
+            </AuthorizeView>
+            <AuthorizeView Roles="SalesPerson" Context="delr">
+                @if (!offer.DeleteRequested)
+                {
+                    <button class="btn btn-outline-danger" @onclick="RequestDelete"><i class="bi bi-trash"></i> Silme Talebi</button>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark align-self-center">Silme talebi gönderildi</span>
                 }
             </AuthorizeView>
         </div>
     </div>
+
+    @* Yönetici: bekleyen silme talebi *@
+    <AuthorizeView Roles="Admin" Context="dr">
+        @if (offer.DeleteRequested)
+        {
+            <div class="alert-box ab-warning mb-3"><i class="bi bi-trash"></i>
+                <div>
+                    <strong>Silme talebi</strong> — <strong>@offer.DeleteRequestedBy</strong> bu kaydın silinmesini istedi.
+                    <button class="btn btn-sm btn-danger ms-2" @onclick="DeleteOffer">Onayla &amp; Sil</button>
+                    <button class="btn btn-sm btn-outline-secondary" @onclick="RejectDelete">Reddet</button>
+                </div>
+            </div>
+        }
+    </AuthorizeView>
+
+    <ConfirmModal @ref="confirm" />
 
     @* Genel stok uyarısı *@
     @if (stockSummary is not null)
@@ -91,7 +159,7 @@ else
                                 {
                                     <tr class="@(r.IsStockInsufficient ? "stock-insufficient" : "")">
                                         <td>@r.RoomName</td>
-                                        <td>@r.RadiatorBrand @r.RadiatorSize</td>
+                                        <td>@r.RadiatorBrand @(r.RadiatorHeight.HasValue || r.RadiatorWidth.HasValue ? $"{r.RadiatorHeight}*{r.RadiatorWidth}" : r.RadiatorSize)</td>
                                         <td>@r.PanelLength</td>
                                         <td>@r.ValveQuantity</td>
                                         <td class="text-end">@Money(r.TotalPrice)</td>
@@ -134,6 +202,32 @@ else
                 </div>
             }
 
+            @* Stoktan Ayrılan (rezerve/düşülen) ürünler *@
+            @{ var allocated = offer.Items.Where(i => i.IsStockDeducted).ToList(); }
+            @if (allocated.Count > 0)
+            {
+                <div class="card summary-box mb-3" style="border-left:4px solid #198754;">
+                    <div class="card-header bg-white fw-semibold">📦 Stoktan Ayrılan Ürünler</div>
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead><tr><th>Ürün / Kalem</th><th class="text-end">Ayrılan Miktar</th><th>Birim</th><th>Durum</th></tr></thead>
+                            <tbody>
+                                @foreach (var it in allocated)
+                                {
+                                    <tr>
+                                        <td>@it.ItemName</td>
+                                        <td class="text-end fw-semibold">@it.Quantity.ToString("0.##")</td>
+                                        <td>@it.Unit</td>
+                                        <td><span class="badge bg-success">Ayrıldı</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer small text-muted">Bu miktarlar bu sipariş için stoktan ayrılmıştır (düşülmüştür).</div>
+                </div>
+            }
+
             @if (!string.IsNullOrEmpty(offer.GeneralNotes))
             {
                 <div class="card summary-box mb-3">
@@ -141,6 +235,50 @@ else
                     <div class="card-body">@offer.GeneralNotes</div>
                 </div>
             }
+
+            @* Fotoğraflar *@
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold d-flex align-items-center">
+                    <span>📷 Fotoğraflar</span>
+                    <span class="ms-2 badge bg-secondary">@photos.Count</span>
+                </div>
+                <div class="card-body">
+                    <AuthorizeView Roles="Admin,SalesPerson" Context="ph">
+                        <div class="mb-3">
+                            <label class="btn btn-outline-primary btn-sm mb-0">
+                                📤 Fotoğraf Yükle
+                                <InputFile OnChange="OnPhotosSelected" multiple accept="image/*" capture="environment" hidden />
+                            </label>
+                            @if (uploading) { <span class="ms-2 text-muted small">Yükleniyor...</span> }
+                            @if (!string.IsNullOrEmpty(photoError)) { <div class="text-danger small mt-1">@photoError</div> }
+                            <div class="form-text">Telefondan kamerayla çekebilir veya galeriden seçebilirsiniz.</div>
+                        </div>
+                    </AuthorizeView>
+
+                    @if (photos.Count == 0)
+                    {
+                        <div class="text-muted small">Henüz fotoğraf yok.</div>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var p in photos)
+                            {
+                                <div class="position-relative" style="width:120px;">
+                                    <a href="/download/photo/@p.Id" target="_blank">
+                                        <img src="/download/photo/@p.Id" alt="@p.FileName"
+                                             style="width:120px; height:120px; object-fit:cover; border-radius:6px; border:1px solid #ddd;" />
+                                    </a>
+                                    <AuthorizeView Roles="Admin,SalesPerson" Context="pd">
+                                        <button class="btn btn-sm btn-danger position-absolute top-0 end-0 py-0 px-1"
+                                                style="border-radius:0 6px 0 6px;" @onclick="@(() => DeletePhoto(p.Id))">×</button>
+                                    </AuthorizeView>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
 
         <div class="col-lg-4">
@@ -180,8 +318,83 @@ else
                 <div class="card-header bg-white fw-semibold">İş Programı</div>
                 <div class="card-body small">
                     <div>Başlangıç: @offer.WorkStartDate?.ToString("dd.MM.yyyy")</div>
-                    <div>Teslim: @offer.WorkEndDate?.ToString("dd.MM.yyyy")</div>
+                    <div>Teslim (planlanan): @offer.WorkEndDate?.ToString("dd.MM.yyyy")</div>
                     <div>İşveren: @offer.EmployerName</div>
+                    @if (offer.DeliveredDate.HasValue)
+                    {
+                        <div class="alert alert-success py-1 px-2 mt-2 mb-0">
+                            ✅ <strong>Teslim Edildi:</strong> @offer.DeliveredDate.Value.ToString("dd.MM.yyyy")
+                            @if (!string.IsNullOrEmpty(offer.DeliveredBy)) { <text>— @offer.DeliveredBy</text> }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @* İşlem Geçmişi (hangi aşamayı kim yaptı) *@
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">🕑 İşlem Geçmişi</div>
+                <div class="card-body p-0">
+                    @if (activity.Count == 0)
+                    {
+                        <div class="p-3 text-muted small">Henüz işlem kaydı yok.</div>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var a in activity)
+                            {
+                                <li class="list-group-item py-2">
+                                    <div class="small"><strong>@a.Action</strong></div>
+                                    <div class="text-muted" style="font-size:.78rem;">
+                                        @a.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                                        — @(a.UserName ?? "bilinmiyor")
+                                        @if (!string.IsNullOrEmpty(a.Description)) { <text> · @a.Description</text> }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+
+            @* Müşteri İmzası *@
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">✍️ Müşteri İmzası</div>
+                <div class="card-body">
+                    @if (!signing)
+                    {
+                        @if (!string.IsNullOrEmpty(offer.CustomerSignature))
+                        {
+                            <img src="@offer.CustomerSignature" alt="İmza" class="img-fluid border rounded mb-2" style="max-height:140px; background:#fff;" />
+                            <div class="text-success small mb-2">✓ İmza alındı</div>
+                        }
+                        else
+                        {
+                            <div class="text-muted small mb-2">Henüz imza alınmadı.</div>
+                        }
+                        <AuthorizeView Roles="Admin,SalesPerson" Context="s">
+                            <button class="btn btn-sm btn-primary" @onclick="StartSign">✍️ İmzala / Yenile</button>
+                            @if (!string.IsNullOrEmpty(offer.CustomerSignature))
+                            {
+                                <button class="btn btn-sm btn-outline-danger" @onclick="RemoveSign">Sil</button>
+                            }
+                        </AuthorizeView>
+                    }
+                    else
+                    {
+                        <p class="small text-muted mb-1">Müşteri aşağıdaki alana parmağı veya fare ile imzalasın:</p>
+                        <canvas id="sigCanvas" width="420" height="160"
+                                style="border:1px dashed #888; border-radius:6px; touch-action:none; width:100%; max-width:420px; background:#fff;"></canvas>
+                        @if (!string.IsNullOrEmpty(signError))
+                        {
+                            <div class="text-danger small">@signError</div>
+                        }
+                        <div class="mt-2 d-flex gap-2">
+                            <button class="btn btn-sm btn-success" @onclick="SaveSign">💾 Kaydet</button>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="ClearSign">Temizle</button>
+                            <button class="btn btn-sm btn-link" @onclick="CancelSign">Vazgeç</button>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -190,22 +403,90 @@ else
 
 @code {
     [Parameter] public int Id { get; set; }
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+
     private Offer? offer;
     private OfferStockSummary? stockSummary;
+    private List<ActivityLog> activity = new();
     private string? message;
 
     protected override async Task OnParametersSetAsync() => await Reload();
 
+    private async Task<string> CurrentUser()
+    {
+        if (AuthState is null) return "bilinmiyor";
+        var state = await AuthState;
+        return state.User.Identity?.Name ?? "bilinmiyor";
+    }
+
+    private bool denied;
+
     private async Task Reload()
     {
         offer = await OfferService.GetByIdAsync(Id);
+
+        // Satış personeli (Admin değil) başkasının kaydını açamaz.
+        if (offer is not null && AuthState is not null)
+        {
+            var user = (await AuthState).User;
+            if (user.IsInRole(AppRoles.SalesPerson) && !user.IsInRole(AppRoles.Admin)
+                && offer.CreatedBy != user.Identity?.Name)
+            {
+                denied = true;
+                offer = null;
+                return;
+            }
+        }
+
         if (offer is not null)
             stockSummary = await StockService.CheckOfferStockAvailabilityAsync(offer);
+        activity = await Audit.GetForAsync("Offer", Id);
+        photos = await PhotoService.GetForOfferAsync(Id);
+    }
+
+    // --- Fotoğraflar ---
+    private List<PhotoInfo> photos = new();
+    private bool uploading;
+    private string? photoError;
+    private const long MaxPhotoBytes = 10 * 1024 * 1024; // 10 MB
+
+    private async Task OnPhotosSelected(InputFileChangeEventArgs e)
+    {
+        photoError = null;
+        uploading = true;
+        var user = await CurrentUser();
+        try
+        {
+            foreach (var file in e.GetMultipleFiles(maximumFileCount: 20))
+            {
+                if (file.Size > MaxPhotoBytes)
+                {
+                    photoError = $"{file.Name}: dosya 10 MB'tan büyük, atlandı.";
+                    continue;
+                }
+                using var ms = new MemoryStream();
+                await file.OpenReadStream(MaxPhotoBytes).CopyToAsync(ms);
+                await PhotoService.AddAsync(Id, file.Name, file.ContentType, ms.ToArray(), user);
+            }
+            await Audit.LogAsync("Offer", Id, "Fotoğraf eklendi", user);
+            await Reload();
+        }
+        catch (Exception ex)
+        {
+            photoError = "Yükleme hatası: " + ex.Message;
+        }
+        finally { uploading = false; }
+    }
+
+    private async Task DeletePhoto(int photoId)
+    {
+        await PhotoService.DeleteAsync(photoId);
+        await Reload();
     }
 
     private RenderFragment SectionCard(string title, string section) => builder =>
     {
-        var rows = offer!.Items.Where(i => i.SectionName == section && (i.IsSelected || i.TotalPrice > 0)).ToList();
+        var rows = offer!.Items.Where(i => i.SectionName == section && i.IsSelected && (i.Quantity > 0 || i.TotalPrice > 0)).ToList();
         if (rows.Count == 0) return;
         int seq = 0;
         builder.OpenElement(0, "div");
@@ -234,24 +515,133 @@ else
         builder.CloseElement();
     };
 
+    private ConfirmModal? confirm;
+
+    private async Task Approve()
+    {
+        await OfferService.ChangeStatusAsync(Id, OfferStatus.Approved);
+        await Audit.LogAsync("Offer", Id, "Yönetici onayı verildi", await CurrentUser());
+        await Reload();
+        message = "Teklif yönetici tarafından onaylandı. Müşteri imzası alındıktan sonra siparişe dönüştürülebilir.";
+    }
+
     private async Task ConvertToOrder()
     {
-        await OfferService.ConvertToOrderAsync(Id);
+        if (offer is null || offer.Status != OfferStatus.Approved || string.IsNullOrEmpty(offer.CustomerSignature))
+        {
+            message = "Siparişe dönüştürmek için önce yönetici onayı ve müşteri imzası gerekir.";
+            return;
+        }
+        var user = await CurrentUser();
+        var result = await OfferService.ConvertToOrderAsync(Id);
+        await Audit.LogAsync("Offer", Id, "Siparişe dönüştürüldü", user, $"Sipariş No: {result.OrderNumber}");
         await Reload();
         message = "Teklif siparişe dönüştürüldü ve stok kontrolü yapıldı.";
     }
 
+    private async Task DeleteOffer()
+    {
+        if (confirm is not null)
+        {
+            var ok = await confirm.ShowAsync("Silme Onayı",
+                "Bu teklif/sipariş kalıcı olarak silinecek (sipariş ise stok iade edilir). Emin misiniz?",
+                "Evet, Sil", "danger");
+            if (!ok) return;
+        }
+        await OfferService.DeleteAsync(Id);
+        await Audit.LogAsync("Offer", Id, "Silindi", await CurrentUser());
+        Nav.NavigateTo("offers");
+    }
+
+    private async Task RequestDelete()
+    {
+        if (confirm is not null)
+        {
+            var ok = await confirm.ShowAsync("Silme Talebi",
+                "Bu kaydın silinmesi için yönetici onayı istenecek. Devam edilsin mi?", "Talep Gönder", "primary");
+            if (!ok) return;
+        }
+        await OfferService.RequestDeleteAsync(Id, await CurrentUser());
+        await Reload();
+        message = "Silme talebi yöneticiye gönderildi.";
+    }
+
+    private async Task RejectDelete()
+    {
+        await OfferService.RejectDeleteAsync(Id);
+        await Reload();
+        message = "Silme talebi reddedildi.";
+    }
+
+    private async Task MarkDelivered()
+    {
+        var user = await CurrentUser();
+        await OfferService.MarkDeliveredAsync(Id, user);
+        await Audit.LogAsync("Offer", Id, "Teslim edildi", user);
+        await Reload();
+        message = "İş teslim edildi olarak işaretlendi.";
+    }
+
     private async Task Cancel()
     {
+        var user = await CurrentUser();
         await OfferService.CancelAsync(Id);
+        await Audit.LogAsync("Offer", Id, "İptal edildi", user, "Düşülen stok iade edildi");
         await Reload();
         message = "Sipariş iptal edildi, düşülen stok geri eklendi.";
     }
 
     private async Task Copy()
     {
-        var copy = await OfferService.CopyAsync(Id);
+        var copy = await OfferService.CopyAsync(Id, await CurrentUser());
         Nav.NavigateTo($"offers/{copy.Id}/edit");
+    }
+
+    // --- İmza ---
+    private bool signing;
+    private bool padInit;
+    private string? signError;
+
+    private void StartSign()
+    {
+        signError = null;
+        signing = true;
+        padInit = false;
+    }
+
+    private void CancelSign() => signing = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (signing && !padInit)
+        {
+            await JS.InvokeVoidAsync("signaturePad.init", "sigCanvas");
+            padInit = true;
+        }
+    }
+
+    private async Task ClearSign() => await JS.InvokeVoidAsync("signaturePad.clear", "sigCanvas");
+
+    private async Task SaveSign()
+    {
+        signError = null;
+        var empty = await JS.InvokeAsync<bool>("signaturePad.isEmpty", "sigCanvas");
+        if (empty)
+        {
+            signError = "Lütfen önce imzalayın.";
+            return;
+        }
+        var data = await JS.InvokeAsync<string>("signaturePad.getData", "sigCanvas");
+        await OfferService.SaveSignatureAsync(Id, data);
+        await Audit.LogAsync("Offer", Id, "Müşteri imzası alındı", await CurrentUser());
+        signing = false;
+        await Reload();
+    }
+
+    private async Task RemoveSign()
+    {
+        await OfferService.SaveSignatureAsync(Id, null);
+        await Reload();
     }
 
     private static string Money(decimal v) => v.ToString("#,##0.00") + " ₺";

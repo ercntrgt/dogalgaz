@@ -22,6 +22,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<PaymentPlan> PaymentPlans => Set<PaymentPlan>();
     public DbSet<StockSettings> StockSettings => Set<StockSettings>();
     public DbSet<StockMovement> StockMovements => Set<StockMovement>();
+    public DbSet<Supplier> Suppliers => Set<Supplier>();
+    public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
+    public DbSet<PurchaseOrderItem> PurchaseOrderItems => Set<PurchaseOrderItem>();
+    public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
+    public DbSet<OfferPhoto> OfferPhotos => Set<OfferPhoto>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -46,6 +51,25 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<RadiatorItem>().HasQueryFilter(e => !e.IsDeleted);
         builder.Entity<PaymentPlan>().HasQueryFilter(e => !e.IsDeleted);
         builder.Entity<StockMovement>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<Supplier>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<PurchaseOrder>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<PurchaseOrderItem>().HasQueryFilter(e => !e.IsDeleted);
+
+        builder.Entity<PurchaseOrder>()
+            .HasOne(p => p.Supplier).WithMany(s => s.PurchaseOrders)
+            .HasForeignKey(p => p.SupplierId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<PurchaseOrderItem>()
+            .HasOne(i => i.PurchaseOrder).WithMany(o => o.Items)
+            .HasForeignKey(i => i.PurchaseOrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<PurchaseOrderItem>()
+            .HasOne(i => i.Product).WithMany()
+            .HasForeignKey(i => i.ProductId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<PurchaseOrder>().HasIndex(p => p.PurchaseNumber).IsUnique();
+
+        builder.Entity<OfferPhoto>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<OfferPhoto>()
+            .HasOne(p => p.Offer).WithMany()
+            .HasForeignKey(p => p.OfferId).OnDelete(DeleteBehavior.Cascade);
 
         // İlişkiler
         builder.Entity<Offer>()

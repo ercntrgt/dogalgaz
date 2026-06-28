@@ -1,0 +1,37 @@
+@* Yeniden kullanılabilir onay modalı. Kullanım:
+   <ConfirmModal @ref="confirm" />
+   await confirm.ShowAsync("Sil?", "Emin misiniz?", "Sil", "danger");  // bool döner *@
+@if (visible)
+{
+    <div class="ds-modal-backdrop" @onclick="Cancel">
+        <div class="ds-modal" @onclick:stopPropagation="true">
+            <div class="ds-modal-head">
+                <i class="bi @(tone == "danger" ? "bi-exclamation-triangle text-danger" : "bi-question-circle text-primary")"></i>
+                @title
+            </div>
+            <div class="ds-modal-body">@message</div>
+            <div class="ds-modal-foot">
+                <button class="btn btn-outline-secondary" @onclick="Cancel">Vazgeç</button>
+                <button class="btn @(tone == "danger" ? "btn-danger" : "btn-primary")" @onclick="Confirm">@confirmText</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool visible;
+    private string title = "", message = "", confirmText = "Onayla", tone = "primary";
+    private TaskCompletionSource<bool>? tcs;
+
+    public Task<bool> ShowAsync(string title, string message, string confirmText = "Onayla", string tone = "primary")
+    {
+        this.title = title; this.message = message; this.confirmText = confirmText; this.tone = tone;
+        visible = true;
+        tcs = new TaskCompletionSource<bool>();
+        StateHasChanged();
+        return tcs.Task;
+    }
+
+    private void Confirm() { visible = false; tcs?.TrySetResult(true); }
+    private void Cancel() { visible = false; tcs?.TrySetResult(false); }
+}

@@ -1,0 +1,52 @@
+@page "/admin/activity"
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+@inject IAuditService Audit
+@inject NavigationManager Nav
+
+<PageTitle>İşlem Geçmişi</PageTitle>
+
+<h2 class="mb-3">İşlem Geçmişi (Tüm Sistem)</h2>
+<p class="text-muted">Hangi kaydın hangi aşamasını hangi kullanıcı ne zaman yaptı.</p>
+
+<div class="card summary-box">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead><tr><th>Tarih / Saat</th><th>Kullanıcı</th><th>İşlem</th><th>Kayıt</th><th>Açıklama</th></tr></thead>
+            <tbody>
+                @foreach (var a in items)
+                {
+                    <tr>
+                        <td>@a.CreatedDate.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td><span class="badge bg-primary">@(a.UserName ?? "bilinmiyor")</span></td>
+                        <td>@a.Action</td>
+                        <td>
+                            @if (a.EntityType == "Offer")
+                            {
+                                <a href="offers/@a.EntityId">Teklif #@a.EntityId</a>
+                            }
+                            else if (a.EntityType == "Purchase")
+                            {
+                                <a href="purchases/@a.EntityId">Satınalma #@a.EntityId</a>
+                            }
+                            else
+                            {
+                                <text>@a.EntityType #@a.EntityId</text>
+                            }
+                        </td>
+                        <td class="small text-muted">@a.Description</td>
+                    </tr>
+                }
+                @if (items.Count == 0)
+                {
+                    <tr><td colspan="5" class="text-center text-muted py-4">Henüz işlem kaydı yok.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private List<ActivityLog> items = new();
+    protected override async Task OnInitializedAsync() => items = await Audit.GetRecentAsync(200);
+}

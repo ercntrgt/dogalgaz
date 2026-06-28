@@ -2,30 +2,55 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="d-flex">
-            <div class="sidebar d-none d-md-block" style="width: 240px;">
-                <NavMenu />
-            </div>
-            <div class="flex-grow-1 d-flex flex-column" style="min-width:0;">
-                <div class="app-topbar d-flex align-items-center px-3 py-2">
-                    <button class="btn btn-sm btn-outline-secondary d-md-none me-2" @onclick="ToggleMobile">☰</button>
-                    <img src="images/logo.png" class="brand-logo" alt="ÖZDEMİR" />
-                    <div class="ms-auto d-flex align-items-center gap-3">
-                        <span class="text-muted small">@context.User.Identity?.Name</span>
-                        <form action="/Account/Logout" method="post">
-                            <AntiforgeryToken />
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Çıkış</button>
-                        </form>
-                    </div>
+        <div class="app-shell">
+            <div class="d-flex">
+                <div class="app-sidebar sidebar" style="width: 240px;">
+                    <NavMenu />
                 </div>
-                @if (showMobileMenu)
-                {
-                    <div class="sidebar d-md-none"><NavMenu /></div>
-                }
-                <main class="p-3 p-md-4 flex-grow-1">
-                    @Body
-                </main>
+                <div class="flex-grow-1 d-flex flex-column" style="min-width:0;">
+                    <div class="app-topbar d-flex align-items-center px-3 py-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary app-hamburger me-2" onclick="toggleDrawer()"><i class="bi bi-list"></i> Menü</button>
+                        <img src="images/logo.png" class="brand-logo" alt="ÖZDEMİR" />
+                        <div class="ms-auto d-flex align-items-center gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary app-viewtoggle" onclick="toggleSimpleMode()" title="Basit / mobil görünüm">
+                                <span class="simple-hide"><i class="bi bi-phone"></i> Basit</span>
+                                <span class="simple-show"><i class="bi bi-display"></i> Normal</span>
+                            </button>
+                            <span class="text-muted small d-none d-sm-inline">@context.User.Identity?.Name</span>
+                            <form action="/Account/Logout" method="post">
+                                <AntiforgeryToken />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Çıkış</button>
+                            </form>
+                        </div>
+                    </div>
+                    <main class="p-3 p-md-4 flex-grow-1">
+                        @Body
+                    </main>
+                </div>
             </div>
+
+            @* Off-canvas çekmece menü (hamburger ile açılır; her zaman DOM'da) *@
+            <div class="app-drawer">
+                <div class="app-drawer-backdrop" onclick="closeDrawer()"></div>
+                <div class="app-drawer-panel sidebar">
+                    <div class="p-2 d-flex">
+                        <strong class="text-white">Menü</strong>
+                        <button type="button" class="btn btn-sm btn-outline-light ms-auto" onclick="closeDrawer()"><i class="bi bi-x-lg"></i></button>
+                    </div>
+                    <NavMenu />
+                </div>
+            </div>
+
+            @* Basit görünüm / küçük ekran: alt gezinme *@
+            <nav class="app-bottomnav mobile-bottom-nav">
+                <NavLink class="nav-item-m" href="" Match="NavLinkMatch.All"><span class="ico"><i class="bi bi-grid-1x2"></i></span>Ana Sayfa</NavLink>
+                <NavLink class="nav-item-m" href="offers"><span class="ico"><i class="bi bi-file-earmark-text"></i></span>Teklifler</NavLink>
+                <AuthorizeView Roles="Admin,SalesPerson" Context="m">
+                    <NavLink class="nav-item-m fab" href="offers/new"><span class="ico"><i class="bi bi-plus-lg"></i></span>Yeni</NavLink>
+                </AuthorizeView>
+                <NavLink class="nav-item-m" href="customers"><span class="ico"><i class="bi bi-people"></i></span>Müşteri</NavLink>
+                <NavLink class="nav-item-m" href="schedule"><span class="ico"><i class="bi bi-calendar3"></i></span>Takvim</NavLink>
+            </nav>
         </div>
     </Authorized>
     <NotAuthorized>
@@ -38,8 +63,3 @@
     <a href="." class="reload">Yenile</a>
     <span class="dismiss">🗙</span>
 </div>
-
-@code {
-    private bool showMobileMenu;
-    private void ToggleMobile() => showMobileMenu = !showMobileMenu;
-}

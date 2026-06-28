@@ -36,7 +36,7 @@ public class CustomerService : ICustomerService
         if (!string.IsNullOrWhiteSpace(filter.District))
             q = q.Where(c => c.District != null && c.District.Contains(filter.District));
 
-        return await q.OrderByDescending(c => c.CreatedDate).ToListAsync();
+        return await q.AsNoTracking().OrderByDescending(c => c.CreatedDate).ToListAsync();
     }
 
     public Task<Customer?> GetByIdAsync(int id) =>

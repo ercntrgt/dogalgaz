@@ -1,0 +1,23 @@
+@* Tipli uyarı kutusu: danger/warning/info/success *@
+@if (Visible)
+{
+    <div class="alert-box ab-@Type mb-2">
+        <i class="bi @IconFor"></i>
+        <div>@ChildContent</div>
+    </div>
+}
+
+@code {
+    [Parameter] public string Type { get; set; } = "info";
+    [Parameter] public bool Visible { get; set; } = true;
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private string IconFor => Icon ?? Type switch
+    {
+        "danger" => "bi-exclamation-octagon",
+        "warning" => "bi-exclamation-triangle",
+        "success" => "bi-check-circle",
+        _ => "bi-info-circle"
+    };
+}

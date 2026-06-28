@@ -20,3 +20,7 @@ obj/
 ## Yayın çıktıları
 publish/
 *.pdf
+
+# DB yedekleri
+*.db.bak*
+*.bak_*

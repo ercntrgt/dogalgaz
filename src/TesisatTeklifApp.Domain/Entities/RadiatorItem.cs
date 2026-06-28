@@ -19,7 +19,9 @@ public class RadiatorItem : BaseEntity
 
     public string? RoomName { get; set; }
     public string? RadiatorBrand { get; set; }
-    public string? RadiatorSize { get; set; }
+    public string? RadiatorSize { get; set; }   // (eski) serbest ölçü metni
+    public int? RadiatorHeight { get; set; }     // Yükseklik (mm)
+    public int? RadiatorWidth { get; set; }      // En (mm)
 
     public decimal PanelLength { get; set; }
     public decimal ValveQuantity { get; set; }

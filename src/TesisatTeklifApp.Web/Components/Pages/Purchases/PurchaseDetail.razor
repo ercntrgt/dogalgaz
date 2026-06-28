@@ -1,0 +1,97 @@
+@page "/purchases/{Id:int}"
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
+@rendermode InteractiveServer
+@inject IPurchaseService PurchaseService
+@inject IAuditService Audit
+
+<PageTitle>@order?.PurchaseNumber</PageTitle>
+
+@if (order is null)
+{
+    <p>Yükleniyor...</p>
+}
+else
+{
+    <div class="d-flex align-items-center mb-3 flex-wrap gap-2">
+        <h2 class="mb-0">@order.PurchaseNumber</h2>
+        <span class="badge @PurchaseStatusText.Badge(order.Status)">@PurchaseStatusText.Label(order.Status)</span>
+        <div class="ms-auto d-flex gap-2">
+            @if (order.Status != PurchaseStatus.Received && order.Status != PurchaseStatus.Cancelled)
+            {
+                <button class="btn btn-success" @onclick="Receive">📥 Teslim Al (stoğa işle)</button>
+                <button class="btn btn-outline-danger" @onclick="Cancel">İptal</button>
+            }
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert alert-success">@message</div>
+    }
+
+    <div class="card summary-box mb-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div><strong>Tedarikçi:</strong> @order.Supplier?.Name</div>
+                    <div class="text-muted">@order.Supplier?.Phone</div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div>Tarih: @order.OrderDate.ToString("dd.MM.yyyy")</div>
+                    @if (!string.IsNullOrEmpty(order.Notes)) { <div class="text-muted">Not: @order.Notes</div> }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card summary-box">
+        <div class="card-header bg-white fw-semibold">Kalemler</div>
+        <div class="table-responsive">
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Ürün</th><th class="text-end">Miktar</th><th class="text-end">Birim Fiyat</th><th class="text-end">Toplam</th><th>Teslim</th></tr></thead>
+                <tbody>
+                    @foreach (var it in order.Items)
+                    {
+                        <tr>
+                            <td>@it.ItemName</td>
+                            <td class="text-end">@it.Quantity.ToString("0.##")</td>
+                            <td class="text-end">@it.UnitPrice.ToString("#,##0.00")</td>
+                            <td class="text-end">@it.TotalPrice.ToString("#,##0.00")</td>
+                            <td>@(it.IsReceived ? "✓ Alındı" : "Bekliyor")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="table-light"><td colspan="3" class="text-end fw-semibold">Genel Toplam</td><td class="text-end fw-bold text-primary">@order.TotalAmount.ToString("#,##0.00") ₺</td><td></td></tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private PurchaseOrder? order;
+    private string? message;
+
+    protected override async Task OnParametersSetAsync() => await Reload();
+
+    private async Task Reload() => order = await PurchaseService.GetByIdAsync(Id);
+
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+
+    private async Task Receive()
+    {
+        await PurchaseService.ReceiveAllAsync(Id);
+        var user = AuthState is null ? "bilinmiyor" : (await AuthState).User.Identity?.Name ?? "bilinmiyor";
+        await Audit.LogAsync("Purchase", Id, "Satınalma teslim alındı (stoğa işlendi)", user);
+        await Reload();
+        message = "Tüm kalemler teslim alındı ve stoğa işlendi.";
+    }
+
+    private async Task Cancel()
+    {
+        await PurchaseService.UpdateStatusAsync(Id, PurchaseStatus.Cancelled);
+        await Reload();
+    }
+}

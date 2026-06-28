@@ -30,6 +30,11 @@ public class OfferService : IOfferService
         if (filter.OnlyOrders)
             q = q.Where(o => o.Status == OfferStatus.ConvertedToOrder
                 || o.Status == OfferStatus.WaitingSupply || o.Status == OfferStatus.Completed);
+        if (filter.ExcludeOrders)
+            q = q.Where(o => o.Status != OfferStatus.ConvertedToOrder
+                && o.Status != OfferStatus.WaitingSupply && o.Status != OfferStatus.Completed);
+        if (!string.IsNullOrEmpty(filter.CreatedBy))
+            q = q.Where(o => o.CreatedBy == filter.CreatedBy);
         if (filter.FromDate.HasValue)
             q = q.Where(o => o.OfferDate >= filter.FromDate.Value.Date);
         if (filter.ToDate.HasValue)
@@ -46,6 +51,37 @@ public class OfferService : IOfferService
                 (o.Customer.FirstName.Contains(filter.CustomerName) || o.Customer.LastName.Contains(filter.CustomerName)));
 
         return await q.OrderByDescending(o => o.OfferDate).ThenByDescending(o => o.Id).ToListAsync();
+    }
+
+    public Task<List<Offer>> GetByCustomerAsync(int customerId) =>
+        _db.Offers
+            .AsNoTracking()
+            .Include(o => o.PaymentPlans)
+            .Where(o => o.CustomerId == customerId)
+            .OrderByDescending(o => o.OfferDate).ThenByDescending(o => o.Id)
+            .ToListAsync();
+
+    public async Task<List<Offer>> GetWorkScheduleAsync(DateTime? from, DateTime? to)
+    {
+        // Onaylı teklifler ve tüm siparişler (iptal/taslak hariç) takvime düşer.
+        // İş başlangıç tarihi girilmişse o, yoksa teklif/sipariş tarihi kullanılır.
+        var candidates = await _db.Offers
+            .AsNoTracking()
+            .Include(o => o.Customer)
+            .Where(o => o.Status == OfferStatus.Approved
+                || o.Status == OfferStatus.ConvertedToOrder
+                || o.Status == OfferStatus.WaitingSupply
+                || o.Status == OfferStatus.Completed
+                || o.WorkStartDate != null)
+            .ToListAsync();
+
+        IEnumerable<Offer> q = candidates;
+        if (from.HasValue)
+            q = q.Where(o => (o.WorkStartDate ?? o.OfferDate).Date >= from.Value.Date);
+        if (to.HasValue)
+            q = q.Where(o => (o.WorkStartDate ?? o.OfferDate).Date <= to.Value.Date);
+
+        return q.OrderBy(o => o.WorkStartDate ?? o.OfferDate).ToList();
     }
 
     public Task<Offer?> GetByIdAsync(int id) =>
@@ -82,6 +118,15 @@ public class OfferService : IOfferService
     {
         _calc.RecalculateOfferTotals(offer);
 
+        // Navigasyonları temizle: EF yalnızca FK (ProductId/CustomerId) kullansın.
+        // Aksi halde aynı ürün birden çok satırda olunca "already being tracked" çakışması olur.
+        DetachNavigations(offer);
+
+        // Blazor Server'da scoped DbContext oturum boyunca yaşar; önceki sorgular
+        // (ürün/müşteri dropdown'ları) ürünleri izliyor olabilir. Yazımdan önce
+        // izleyiciyi temizleyerek çift-izleme çakışmasını kesin olarak önle.
+        _db.ChangeTracker.Clear();
+
         if (offer.Id == 0)
         {
             if (string.IsNullOrEmpty(offer.OfferNumber))
@@ -103,14 +148,16 @@ public class OfferService : IOfferService
         _db.RadiatorItems.RemoveRange(existing.RadiatorItems);
         _db.PaymentPlans.RemoveRange(existing.PaymentPlans);
 
-        // Skaler alanları kopyala (numara/oluşturma tarihi korunur).
+        // Skaler alanları kopyala (numara/oluşturma bilgisi korunur).
         var number = existing.OfferNumber;
         var orderNumber = existing.OrderNumber;
         var created = existing.CreatedDate;
+        var createdBy = existing.CreatedBy;
         _db.Entry(existing).CurrentValues.SetValues(offer);
         existing.OfferNumber = number;
         existing.OrderNumber = orderNumber;
         existing.CreatedDate = created;
+        existing.CreatedBy = createdBy;
 
         foreach (var it in offer.Items)
         {
@@ -128,7 +175,32 @@ public class OfferService : IOfferService
         await _db.SaveChangesAsync();
     }
 
-    public async Task<Offer> CopyAsync(int offerId)
+    /// <summary>
+    /// Tüm navigasyon referanslarını null'lar; EF yalnızca FK alanlarını kullanır.
+    /// Geçersiz ProductId (0) değerlerini de null'a çevirir (FK ihlalini önler).
+    /// </summary>
+    private static void DetachNavigations(Offer offer)
+    {
+        offer.Customer = null;
+        foreach (var it in offer.Items)
+        {
+            it.Product = null;
+            it.Offer = null;
+            if (it.ProductId is 0) it.ProductId = null;
+        }
+        foreach (var r in offer.RadiatorItems)
+        {
+            r.RadiatorProduct = null;
+            r.ValveProduct = null;
+            r.Offer = null;
+            if (r.RadiatorProductId is 0) r.RadiatorProductId = null;
+            if (r.ValveProductId is 0) r.ValveProductId = null;
+        }
+        foreach (var p in offer.PaymentPlans)
+            p.Offer = null;
+    }
+
+    public async Task<Offer> CopyAsync(int offerId, string? createdBy = null)
     {
         var source = await GetByIdAsync(offerId)
             ?? throw new InvalidOperationException("Kopyalanacak teklif bulunamadı.");
@@ -139,6 +211,7 @@ public class OfferService : IOfferService
             OfferNumber = await _numbers.GenerateOfferNumberAsync(),
             OfferDate = DateTime.Today,
             Status = OfferStatus.Draft,
+            CreatedBy = createdBy ?? source.CreatedBy,
             VatRate = source.VatRate,
             DiscountRate = source.DiscountRate,
             IsVatIncluded = source.IsVatIncluded,
@@ -213,6 +286,59 @@ public class OfferService : IOfferService
             await _stock.DeductStockForOfferAsync(offerId);
 
         return (await GetByIdAsync(offerId))!;
+    }
+
+    public async Task DeleteAsync(int offerId)
+    {
+        var offer = await _db.Offers.FirstOrDefaultAsync(o => o.Id == offerId);
+        if (offer is null) return;
+        // Sipariş olup stok düşülmüşse iade et.
+        if (offer.IsOrder)
+            await _stock.RestoreStockForCancelledOrderAsync(offerId);
+        offer.IsDeleted = true;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task RequestDeleteAsync(int offerId, string user)
+    {
+        var offer = await _db.Offers.FirstOrDefaultAsync(o => o.Id == offerId);
+        if (offer is null) return;
+        offer.DeleteRequested = true;
+        offer.DeleteRequestedBy = user;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task RejectDeleteAsync(int offerId)
+    {
+        var offer = await _db.Offers.FirstOrDefaultAsync(o => o.Id == offerId);
+        if (offer is null) return;
+        offer.DeleteRequested = false;
+        offer.DeleteRequestedBy = null;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task SaveSignatureAsync(int offerId, string? signatureBase64)
+    {
+        var offer = await _db.Offers.FirstOrDefaultAsync(o => o.Id == offerId);
+        if (offer is null) return;
+        offer.CustomerSignature = signatureBase64;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task MarkDeliveredAsync(int offerId, string? userName)
+    {
+        var offer = await _db.Offers.FirstOrDefaultAsync(o => o.Id == offerId);
+        if (offer is null) return;
+
+        // Tamamlanınca stoktan düşme ayarı aktifse, henüz düşülmemiş kalemleri düş.
+        var settings = await _db.StockSettings.FirstOrDefaultAsync();
+        if (settings?.StockDeductionMode == StockDeductionMode.DeductOnCompletion)
+            await _stock.DeductStockForOfferAsync(offerId);
+
+        offer.Status = OfferStatus.Completed;
+        offer.DeliveredDate = DateTime.Today;
+        offer.DeliveredBy = userName;
+        await _db.SaveChangesAsync();
     }
 
     public async Task CancelAsync(int offerId)

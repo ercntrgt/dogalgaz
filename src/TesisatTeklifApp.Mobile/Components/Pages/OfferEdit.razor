@@ -1,0 +1,264 @@
+@page "/offer/new"
+@page "/offer/{Id:int}"
+@inject LocalDataService Data
+@inject IOfferCalculationService Calc
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+@inject LoginService Login
+
+<div class="d-flex align-items-center mb-2">
+    <button class="btn btn-link px-0" @onclick='() => Nav.NavigateTo("/")'><i class="bi bi-chevron-left"></i> Geri</button>
+    <h5 class="mb-0 ms-1">@(IsNew ? "Yeni Teklif" : offer.OfferNumber)</h5>
+</div>
+
+@* A) Müşteri *@
+<div class="card mb-3"><div class="card-body">
+    <label class="form-label fw-semibold">Müşteri</label>
+    <div class="input-group">
+        <select class="form-select" @bind="offer.CustomerId">
+            <option value="0">-- seçin --</option>
+            @foreach (var c in customers)
+            {
+                <option value="@c.Id">@c.FullName</option>
+            }
+        </select>
+        <button class="btn btn-outline-primary" @onclick="@(() => showNewCust = !showNewCust)"><i class="bi bi-person-plus"></i></button>
+    </div>
+    @if (showNewCust)
+    {
+        <div class="row g-2 mt-2">
+            <div class="col"><input class="form-control" placeholder="Ad" @bind="ncFirst" /></div>
+            <div class="col"><input class="form-control" placeholder="Soyad" @bind="ncLast" /></div>
+            <div class="col-12"><input class="form-control" placeholder="Telefon" @bind="ncPhone" /></div>
+            <div class="col-12"><button class="btn btn-success w-100" @onclick="AddCustomer">Kaydet & Seç</button></div>
+        </div>
+    }
+</div></div>
+
+@* B–F bölümleri (web ile aynı bileşenler) *@
+<OfferItemSection Title="Kombi / Kazan / Klima" SectionName="@OfferSections.KombiKazan"
+                  AllItems="offer.Items" Products="ForSection(OfferSections.KombiKazan)" OnChanged="Recalc" />
+<OfferItemSection Title="Doğalgaz Tesisatı" SectionName="@OfferSections.GasInstallation"
+                  AllItems="offer.Items" Products="ForSection(OfferSections.GasInstallation)" OnChanged="Recalc" />
+<OfferItemSection Title="Malzeme / Ekipman" SectionName="@OfferSections.Material"
+                  AllItems="offer.Items" Products="ForSection(OfferSections.Material)" ShowCheckbox="true" OnChanged="Recalc" />
+<RadiatorSection Items="offer.RadiatorItems" RadiatorProducts="radiatorProducts" OnChanged="Recalc" />
+<OfferItemSection Title="Tesisat Hizmetleri" SectionName="@OfferSections.Installation"
+                  AllItems="offer.Items" Products="ForSection(OfferSections.Installation)" OnChanged="Recalc" />
+<OfferItemSection Title="İşçilik" SectionName="@OfferSections.Labor"
+                  AllItems="offer.Items" Products="ForSection(OfferSections.Labor)" AllowFreeText="true" OnChanged="Recalc" />
+
+@* Özet *@
+<div class="card mb-3"><div class="card-body">
+    <div class="d-flex"><span>Ara Toplam</span><span class="ms-auto">@offer.SubTotal.ToString("#,##0.00") ₺</span></div>
+    <div class="row g-2 align-items-center my-1">
+        <div class="col-6">İskonto %</div>
+        <div class="col-6"><input type="number" class="form-control form-control-sm" @bind="offer.DiscountRate" @bind:after="Recalc" /></div>
+    </div>
+    <div class="d-flex"><span>KDV (%@offer.VatRate)</span><span class="ms-auto">@offer.VatAmount.ToString("#,##0.00") ₺</span></div>
+    <div class="d-flex fw-bold fs-5 border-top pt-2"><span>Genel Toplam</span><span class="ms-auto" style="color:#1a3a6b">@offer.GrandTotal.ToString("#,##0.00") ₺</span></div>
+</div></div>
+
+@if (!string.IsNullOrEmpty(error)) { <div class="alert alert-danger py-2">@error</div> }
+@if (!string.IsNullOrEmpty(info)) { <div class="alert alert-success py-2">@info</div> }
+
+<button class="btn btn-primary w-100 btn-lg-touch mb-3" @onclick="Save"><i class="bi bi-save"></i> Kaydet</button>
+
+@* İş akışı: İmza + (Siparişe Dönüştür / Yönetici Onayına Gönder) *@
+<div class="card mb-4"><div class="card-body">
+    <div class="d-flex align-items-center mb-2">
+        <span class="fw-semibold">Durum</span>
+        <span class="badge ms-2 @StatusClass">@StatusLabel</span>
+    </div>
+
+    @if (offer.Id == 0)
+    {
+        <div class="muted small">Önce teklifi <strong>Kaydet</strong>. Sonra müşteri imzası alıp siparişe dönüştürebilir veya yönetici onayına gönderebilirsiniz.</div>
+    }
+    else if (offer.IsOrder)
+    {
+        <div class="alert alert-success py-2 small mb-2"><i class="bi bi-check-circle-fill"></i> Sipariş oluşturuldu: <strong>@offer.OrderNumber</strong></div>
+        @if (!string.IsNullOrEmpty(offer.CustomerSignature))
+        {
+            <img src="@offer.CustomerSignature" class="border rounded" style="max-height:130px;background:#fff" />
+        }
+    }
+    else
+    {
+        @* Müşteri İmzası (sözleşme) — her zaman alınabilir *@
+        <label class="form-label fw-semibold"><i class="bi bi-pen"></i> Müşteri İmzası</label>
+        @if (!signing)
+        {
+            @if (!string.IsNullOrEmpty(offer.CustomerSignature))
+            {
+                <img src="@offer.CustomerSignature" class="border rounded d-block mb-1" style="max-height:140px;background:#fff" />
+                <button class="btn btn-sm btn-outline-primary" @onclick="StartSign">İmzayı Yenile</button>
+            }
+            else
+            {
+                <div><button class="btn btn-primary" @onclick="StartSign"><i class="bi bi-pen"></i> İmza Al</button></div>
+            }
+        }
+        else
+        {
+            <p class="small muted mb-1">Müşteri parmağıyla aşağıya imzalasın:</p>
+            <canvas id="sigCanvas" width="700" height="240"
+                    style="border:2px dashed #888;border-radius:10px;touch-action:none;width:100%;background:#fff"></canvas>
+            @if (!string.IsNullOrEmpty(signErr)) { <div class="text-danger small">@signErr</div> }
+            <div class="mt-2 d-flex gap-2">
+                <button class="btn btn-success" @onclick="SaveSign"><i class="bi bi-check-lg"></i> İmzayı Kaydet</button>
+                <button class="btn btn-outline-secondary" @onclick="ClearSign">Temizle</button>
+                <button class="btn btn-link" @onclick="@(() => signing = false)">Vazgeç</button>
+            </div>
+        }
+
+        @if (offer.Status == OfferStatus.Approved)
+        {
+            <div class="alert alert-success py-2 small mt-2 mb-0"><i class="bi bi-check-circle"></i> Yönetici onayladı.</div>
+        }
+
+        @* Aksiyonlar *@
+        <div class="d-flex flex-column gap-2 mt-3">
+            @{ var canConvert = !Login.RequiresApproval || isAdmin || offer.Status == OfferStatus.Approved; }
+
+            @if (canConvert)
+            {
+                @if (string.IsNullOrEmpty(offer.CustomerSignature))
+                {
+                    <button class="btn btn-success btn-lg-touch" disabled><i class="bi bi-pen"></i> Önce müşteri imzası alın</button>
+                }
+                else
+                {
+                    <button class="btn btn-success btn-lg-touch" @onclick="ConvertToOrder"><i class="bi bi-box-seam"></i> Siparişe Dönüştür</button>
+                }
+            }
+
+            @if (isAdmin && offer.Status is OfferStatus.Draft or OfferStatus.SentToCustomer)
+            {
+                <button class="btn btn-primary" @onclick="Approve"><i class="bi bi-check2-circle"></i> Yönetici Onayı Ver</button>
+            }
+            else if (offer.Status is OfferStatus.Draft)
+            {
+                <button class="btn btn-outline-primary" @onclick="SendToApproval"><i class="bi bi-send"></i> Yönetici Onayına Gönder</button>
+            }
+            else if (offer.Status == OfferStatus.SentToCustomer)
+            {
+                <div class="muted small text-center">Yönetici onayına gönderildi (senkronla iletilecek).</div>
+            }
+
+            @if (!canConvert)
+            {
+                <div class="muted small">Bu hesap için siparişe dönüştürme <strong>yönetici onayı</strong> gerektiriyor.</div>
+            }
+        </div>
+    }
+</div></div>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    private bool IsNew => Id is null;
+    private Offer offer = new() { OfferDate = DateTime.Today, VatRate = 20m };
+    private List<Product> allProducts = new();
+    private List<Product> radiatorProducts = new();
+    private List<Customer> customers = new();
+    private string? error;
+
+    private bool showNewCust;
+    private string ncFirst = "", ncLast = "", ncPhone = "";
+    private string? info;
+    private bool isAdmin => Login.CurrentRole == "Admin";
+
+    private string StatusLabel => offer.Status switch
+    {
+        OfferStatus.Draft => "Taslak",
+        OfferStatus.SentToCustomer => "Gönderildi",
+        OfferStatus.Approved => "Yönetici Onaylı",
+        OfferStatus.ConvertedToOrder => "Sipariş",
+        OfferStatus.WaitingSupply => "Bekleyen Tedarik",
+        OfferStatus.Completed => "Tamamlandı",
+        OfferStatus.Cancelled => "İptal",
+        _ => offer.Status.ToString()
+    };
+    private string StatusClass => offer.Status switch
+    {
+        OfferStatus.Approved => "bg-primary",
+        OfferStatus.ConvertedToOrder or OfferStatus.Completed => "bg-success",
+        OfferStatus.Cancelled => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        allProducts = await Data.GetProductsAsync();
+        radiatorProducts = allProducts.Where(p => p.Category == ProductCategories.Radyator).ToList();
+        customers = await Data.GetCustomersAsync();
+        if (Id is int id) offer = await Data.GetOfferAsync(id) ?? offer;
+    }
+
+    private List<Product> ForSection(string section)
+    {
+        var cats = SectionCategories.For(section);
+        return cats is null ? allProducts : allProducts.Where(p => cats.Contains(p.Category)).ToList();
+    }
+
+    private void Recalc() { Calc.RecalculateOfferTotals(offer); StateHasChanged(); }
+
+    // --- İmza ---
+    private bool signing, padInit;
+    private string? signErr;
+    private void StartSign() { signErr = null; signing = true; padInit = false; }
+    protected override async Task OnAfterRenderAsync(bool first)
+    {
+        if (signing && !padInit) { await JS.InvokeVoidAsync("signaturePad.init", "sigCanvas"); padInit = true; }
+    }
+    private async Task ClearSign() => await JS.InvokeVoidAsync("signaturePad.clear", "sigCanvas");
+    private async Task SaveSign()
+    {
+        if (await JS.InvokeAsync<bool>("signaturePad.isEmpty", "sigCanvas")) { signErr = "Lütfen önce imzalayın."; return; }
+        offer.CustomerSignature = await JS.InvokeAsync<string>("signaturePad.getData", "sigCanvas");
+        signing = false;
+    }
+
+    private async Task AddCustomer()
+    {
+        if (string.IsNullOrWhiteSpace(ncFirst)) return;
+        var c = new Customer { FirstName = ncFirst, LastName = ncLast, Phone = ncPhone };
+        await Data.AddCustomerAsync(c);
+        customers = await Data.GetCustomersAsync();
+        offer.CustomerId = c.Id;
+        showNewCust = false; ncFirst = ncLast = ncPhone = "";
+    }
+
+    private async Task Save()
+    {
+        error = null; info = null;
+        if (offer.CustomerId <= 0) { error = "Müşteri seçin."; return; }
+        if (string.IsNullOrEmpty(offer.CreatedBy)) offer.CreatedBy = Login.CurrentUser;
+        await Data.SaveOfferAsync(offer);
+        info = "Teklif kaydedildi. Sıradaki adım: yönetici onayı.";
+        StateHasChanged();
+    }
+
+    private async Task Approve()
+    {
+        offer.Status = OfferStatus.Approved;
+        await Data.SaveOfferAsync(offer);
+        info = "Teklif onaylandı.";
+    }
+
+    private async Task SendToApproval()
+    {
+        offer.Status = OfferStatus.SentToCustomer;   // yönetici onayına gönderildi (sync ile iletilir)
+        await Data.SaveOfferAsync(offer);
+        info = "Teklif yönetici onayına gönderildi.";
+    }
+
+    private async Task ConvertToOrder()
+    {
+        offer.Status = OfferStatus.ConvertedToOrder;
+        if (string.IsNullOrEmpty(offer.OrderNumber))
+            offer.OrderNumber = $"SPR-OFL-{DateTime.Now:yyMMddHHmmss}";
+        await Data.SaveOfferAsync(offer);
+        info = "Sipariş oluşturuldu.";
+    }
+}

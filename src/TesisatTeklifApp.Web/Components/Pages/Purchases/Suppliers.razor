@@ -1,0 +1,47 @@
+@page "/suppliers"
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
+@rendermode InteractiveServer
+@inject ISupplierService SupplierService
+
+<PageTitle>Tedarikçiler</PageTitle>
+
+<div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0">Tedarikçiler</h2>
+    <a href="suppliers/new" class="btn btn-primary ms-auto">➕ Yeni Tedarikçi</a>
+</div>
+
+<div class="card summary-box mb-3">
+    <div class="card-body row g-2">
+        <div class="col-md-9"><input class="form-control" placeholder="Ara: ad / telefon / vergi no" @bind="keyword" @bind:event="oninput" /></div>
+        <div class="col-md-3"><button class="btn btn-outline-primary w-100" @onclick="Load">Ara</button></div>
+    </div>
+</div>
+
+<div class="card summary-box">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead><tr><th>Ad</th><th>Telefon</th><th>E-posta</th><th>İl/İlçe</th><th>Vergi No</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var s in items)
+                {
+                    <tr>
+                        <td>@s.Name</td><td>@s.Phone</td><td>@s.Email</td>
+                        <td>@s.City / @s.District</td><td>@s.TaxNumber</td>
+                        <td class="text-end"><a href="suppliers/@s.Id" class="btn btn-sm btn-outline-secondary">Düzenle</a></td>
+                    </tr>
+                }
+                @if (items.Count == 0)
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">Tedarikçi yok.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private string? keyword;
+    private List<Supplier> items = new();
+    protected override async Task OnInitializedAsync() => await Load();
+    private async Task Load() => items = await SupplierService.SearchAsync(keyword);
+}

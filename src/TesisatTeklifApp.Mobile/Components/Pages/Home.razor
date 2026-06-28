@@ -1,0 +1,133 @@
+@page "/"
+@page "/offers"
+@inject LocalDataService Data
+@inject SyncService Sync
+@inject ConnectivityService Conn
+@inject NavigationManager Nav
+@implements IDisposable
+
+<div class="card mb-3">
+    <div class="card-body d-flex align-items-center">
+        <div class="sc-icon me-2" style="background:#eef3fb;color:#1a3a6b;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem">
+            <i class="bi bi-cloud-arrow-up"></i>
+        </div>
+        <div>
+            <div class="muted small">Senkron bekleyen</div>
+            <div class="h3 mb-0" style="color:#1a3a6b">@pending</div>
+        </div>
+        <button class="btn btn-primary ms-auto" @onclick="DoSync" disabled="@(!Conn.IsOnline)">
+            <i class="bi bi-arrow-repeat"></i> Senkronize Et
+        </button>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(syncMsg))
+{
+    <div class="alert alert-info py-2">@syncMsg</div>
+}
+
+<div class="mb-3">
+    <button class="btn btn-link btn-sm px-0" @onclick="@(() => showSettings = !showSettings)">
+        <i class="bi bi-gear"></i> Sunucu Ayarı
+    </button>
+    @if (showSettings)
+    {
+        <div class="card"><div class="card-body">
+            <label class="form-label small">Ofis sunucu adresi</label>
+            <input class="form-control" @bind="serverUrl" placeholder="http://192.168.1.36:5219" />
+            <div class="d-flex gap-2 mt-2">
+                <button class="btn btn-sm btn-primary" @onclick="SaveServer">Kaydet</button>
+                <button class="btn btn-sm btn-outline-secondary" @onclick="TestServer">Bağlantıyı Test Et</button>
+            </div>
+            @if (!string.IsNullOrEmpty(testMsg)) { <div class="small mt-2">@testMsg</div> }
+        </div></div>
+    }
+</div>
+
+<button class="btn btn-success w-100 btn-lg-touch mb-3" @onclick='() => Nav.NavigateTo("offer/new")'>
+    <i class="bi bi-plus-circle"></i> Yeni Teklif Oluştur
+</button>
+
+<div class="d-flex align-items-center mb-2">
+    <h5 class="mb-0">Yerel Teklifler</h5>
+    <span class="badge bg-secondary ms-2">@offers.Count</span>
+</div>
+
+@foreach (var o in offers)
+{
+    <div class="card mb-2" @onclick='() => Nav.NavigateTo($"offer/{o.Id}")'>
+        <div class="card-body py-2">
+            <div class="d-flex align-items-center">
+                <div>
+                    <strong>@o.OfferNumber</strong>
+                    <div class="muted small">@(o.Customer?.FullName ?? "-") • @o.OfferDate.ToString("dd.MM.yyyy")</div>
+                </div>
+                <div class="ms-auto text-end">
+                    <div class="fw-bold" style="color:#1a3a6b">@o.GrandTotal.ToString("#,##0") ₺</div>
+                    <i class="bi bi-cloud-slash muted small" title="Senkron bekliyor"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (offers.Count == 0)
+{
+    <div class="text-center muted py-4">
+        <i class="bi bi-inbox" style="font-size:2.5rem"></i>
+        <p class="mt-2">Henüz yerel teklif yok.<br />"Yeni Teklif Oluştur" ile başlayın.</p>
+    </div>
+}
+
+@code {
+    private int pending;
+    private List<Offer> offers = new();
+    private string? syncMsg;
+    private bool showSettings;
+    private string serverUrl = "";
+    private string? testMsg;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Conn.StateChanged += OnConn;
+        serverUrl = Sync.ServerBaseUrl;
+        await Refresh();
+        // Açılışta online ve bekleyen varsa otomatik senkron dene.
+        if (Conn.IsOnline && pending > 0) await DoSync();
+    }
+
+    private void OnConn() => InvokeAsync(async () =>
+    {
+        await Refresh();
+        if (Conn.IsOnline && pending > 0) await DoSync();   // internet gelince otomatik
+        StateHasChanged();
+    });
+
+    private async Task Refresh()
+    {
+        offers = await Data.GetOffersAsync();
+        pending = await Data.PendingCountAsync();
+    }
+
+    private async Task DoSync()
+    {
+        var r = await Sync.SyncAsync();
+        syncMsg = r.Message;
+        await Refresh();
+    }
+
+    private void SaveServer() { Sync.ServerBaseUrl = serverUrl.Trim(); testMsg = "Kaydedildi."; }
+
+    private async Task TestServer()
+    {
+        testMsg = "Test ediliyor...";
+        try
+        {
+            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(8) };
+            var r = await http.GetAsync(serverUrl.TrimEnd('/') + "/api/sync/ping");
+            testMsg = r.IsSuccessStatusCode ? "✓ Sunucuya ulaşıldı." : $"✗ Yanıt: {(int)r.StatusCode}";
+        }
+        catch (Exception ex) { testMsg = "✗ Ulaşılamadı: " + ex.Message; }
+    }
+
+    public void Dispose() => Conn.StateChanged -= OnConn;
+}

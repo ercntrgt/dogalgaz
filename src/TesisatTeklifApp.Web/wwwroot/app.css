@@ -49,6 +49,9 @@ h1:focus { outline: none; }
 }
 .sidebar .nav-link:hover { background: rgba(255,255,255,.12); color: #fff; }
 .sidebar .nav-link.active { background: #fff; color: var(--ozd-navy); font-weight: 600; }
+.sidebar .nav-link { display: flex; align-items: center; gap: .6rem; }
+.sidebar .nav-link i { font-size: 1.05rem; width: 1.2rem; text-align: center; opacity: .9; }
+.sidebar .nav-link.active i { opacity: 1; }
 .sidebar .nav-group-title {
     color: rgba(255,255,255,.5);
     font-size: .72rem;
@@ -84,6 +87,92 @@ tr.stock-sufficient td .stock-dot { color: #198754; }
 
 .table thead th { background: var(--ozd-navy); color: #fff; font-size: .85rem; }
 .summary-box { background: #fff; border: 1px solid #dde1e7; border-radius: .5rem; }
+
+/* --- Aylık takvim ızgarası --- */
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-head { text-align: center; font-weight: 600; color: var(--ozd-navy); padding: 4px 0; font-size: .85rem; }
+.cal-cell { min-height: 96px; border: 1px solid #e3e6ea; border-radius: 5px; padding: 4px; background: #fff; overflow: hidden; }
+.cal-cell.muted { background: #f6f7f9; }
+.cal-cell.muted .cal-daynum { color: #b8bcc2; }
+.cal-cell.today { border: 2px solid var(--ozd-navy); background: #eef3fb; }
+.cal-daynum { font-size: .8rem; font-weight: 600; color: #555; }
+.cal-event { font-size: .7rem; color: #fff; border-radius: 3px; padding: 1px 5px; margin-top: 2px; cursor: pointer;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-more { font-size: .68rem; color: var(--ozd-navy); cursor: pointer; margin-top: 2px; }
+
+/* --- Mobil / Basit görünüm yapısal kontrol --- */
+.app-bottomnav { display: none; }          /* varsayılan: gizli */
+.app-hamburger { display: none; }          /* masaüstünde gizli */
+.app-sidebar { display: block; }           /* masaüstünde görünür */
+.app-viewtoggle .simple-show { display: none; }   /* normalde "Basit" yazısı */
+
+/* Küçük ekran (telefon): otomatik basit yapı */
+@media (max-width: 767.98px) {
+    .app-sidebar { display: none; }
+    .app-bottomnav { display: flex; }
+    .app-hamburger { display: inline-block; }
+    main { padding-bottom: 76px !important; }
+}
+
+/* "Basit Görünüm" elle açıkken: ekran genişliğinden BAĞIMSIZ (tablet dahil) */
+body.simple-mode .app-sidebar { display: none !important; }
+body.simple-mode .app-bottomnav { display: flex !important; }
+body.simple-mode .app-hamburger { display: inline-block !important; }
+body.simple-mode main { padding-bottom: 76px !important; }
+body.simple-mode .summary-box .display-6 { font-size: 1.9rem; }
+body.simple-mode .app-viewtoggle .simple-hide { display: none; }
+body.simple-mode .app-viewtoggle .simple-show { display: inline; }
+
+/* --- Off-canvas çekmece menü (kayan animasyon) --- */
+.app-drawer {
+    position: fixed; inset: 0; z-index: 1045;
+    visibility: hidden;           /* kapalıyken tıklamayı engellemesin */
+}
+.app-drawer-backdrop {
+    position: absolute; inset: 0; background: rgba(0,0,0,.45);
+    opacity: 0; transition: opacity .25s ease;
+}
+.app-drawer-panel {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    width: 82%; max-width: 300px;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;   /* iOS akıcı kaydırma */
+    box-shadow: 2px 0 14px rgba(0,0,0,.35);
+    min-height: 0;                /* .sidebar 100vh'i ezsin, içerik kaysın */
+}
+body.drawer-open .app-drawer { visibility: visible; }
+body.drawer-open .app-drawer-backdrop { opacity: 1; }
+body.drawer-open .app-drawer-panel { transform: translateX(0); }
+body.drawer-open { overflow: hidden; }   /* arka plan kaymasın */
+
+/* --- Alt gezinme çubuğu görünüm --- */
+.mobile-bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 1040;
+    background: #fff; border-top: 1px solid #e0e0e0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.08);
+}
+.mobile-bottom-nav a {
+    flex: 1; text-align: center; padding: .45rem .2rem; color: #6c757d;
+    text-decoration: none; font-size: .66rem; line-height: 1.1;
+}
+.mobile-bottom-nav a .ico { display: block; font-size: 1.35rem; margin-bottom: 1px; }
+.mobile-bottom-nav a.active { color: var(--ozd-navy); font-weight: 600; }
+.mobile-bottom-nav a.fab .ico {
+    background: var(--ozd-navy); color: #fff; border-radius: 50%;
+    width: 38px; height: 38px; line-height: 38px; margin: -14px auto 0; box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+
+/* Mobilde içerik alt çubuğun altında kalmasın + daha ferah dokunma */
+@media (max-width: 767.98px) {
+    main { padding-bottom: 76px !important; }
+    .app-topbar .brand-logo { height: 34px; }
+    .btn { padding: .45rem .7rem; }
+    h2 { font-size: 1.35rem; }
+    .table-responsive { font-size: .9rem; }
+    .summary-box .display-6 { font-size: 1.8rem; }
+}
 
 .validation-message { color: #d33; font-size: .85rem; }
 .blazor-error-boundary {

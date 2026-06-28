@@ -1,0 +1,140 @@
+/* ÖZDEMİR Mühendislik — Kurumsal Tasarım Sistemi
+   app.css üzerine yüklenir; token'lar ve yeniden kullanılabilir bileşen stilleri. */
+
+:root {
+    /* Renk paleti */
+    --color-primary: #1a3a6b;
+    --color-primary-dark: #142d52;
+    --color-primary-50: #eef3fb;
+    --color-secondary: #5b6573;
+    --color-success: #198754;
+    --color-danger: #d33a3a;
+    --color-warning: #f0932b;
+    --color-info: #2f80ed;
+    --color-light-bg: #f4f6f9;
+    --color-border: #e3e7ee;
+    --color-text: #1f2733;
+    --color-muted: #6b7682;
+
+    /* Şekil */
+    --radius-card: 16px;
+    --radius-sm: 10px;
+    --shadow-soft: 0 2px 10px rgba(20, 45, 82, .06);
+    --shadow-hover: 0 6px 20px rgba(20, 45, 82, .12);
+
+    /* Yerleşim */
+    --sidebar-width: 248px;
+    --bottom-nav-height: 64px;
+    --touch-min: 44px;
+}
+
+body { color: var(--color-text); background: var(--color-light-bg); }
+
+/* --- Kartlar --- */
+.summary-box,
+.ds-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+    background: #fff;
+}
+.ds-card .card-header,
+.summary-box > .card-header { border-top-left-radius: var(--radius-card); border-top-right-radius: var(--radius-card); }
+
+/* --- Sayfa başlığı --- */
+.page-header { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
+.page-header .ph-title { display: flex; align-items: center; gap: .55rem; margin: 0; color: var(--color-primary); }
+.page-header .ph-title i { font-size: 1.3rem; }
+.page-header .ph-actions { margin-left: auto; display: flex; gap: .5rem; flex-wrap: wrap; }
+
+/* --- İstatistik kartı (StatCard) --- */
+.stat-card {
+    position: relative; display: flex; align-items: center; gap: .9rem;
+    padding: 1rem 1.15rem; background: #fff;
+    border: 1px solid var(--color-border); border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft); border-left: 4px solid var(--color-secondary);
+    transition: box-shadow .15s, transform .15s; height: 100%;
+}
+.stat-card.clickable { cursor: pointer; }
+.stat-card.clickable:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+.stat-card .sc-icon {
+    width: 46px; height: 46px; min-width: 46px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.35rem;
+    background: var(--color-primary-50); color: var(--color-primary);
+}
+.stat-card .sc-title { font-size: .8rem; color: var(--color-muted); }
+.stat-card .sc-value { font-size: 1.5rem; font-weight: 700; line-height: 1.1; color: var(--color-text); }
+.stat-card .sc-sub { font-size: .72rem; color: var(--color-muted); }
+
+.stat-card.tone-primary { border-left-color: var(--color-primary); }
+.stat-card.tone-primary .sc-icon { background: var(--color-primary-50); color: var(--color-primary); }
+.stat-card.tone-success { border-left-color: var(--color-success); }
+.stat-card.tone-success .sc-icon { background: #e6f4ec; color: var(--color-success); }
+.stat-card.tone-danger { border-left-color: var(--color-danger); }
+.stat-card.tone-danger .sc-icon { background: #fbe7e7; color: var(--color-danger); }
+.stat-card.tone-warning { border-left-color: var(--color-warning); }
+.stat-card.tone-warning .sc-icon { background: #fdeede; color: var(--color-warning); }
+.stat-card.tone-info { border-left-color: var(--color-info); }
+.stat-card.tone-info .sc-icon { background: #e7f0fd; color: var(--color-info); }
+
+/* --- Uyarı kutusu (AlertBox) --- */
+.alert-box { display: flex; align-items: flex-start; gap: .7rem; border-radius: var(--radius-sm);
+    padding: .8rem 1rem; border: 1px solid transparent; }
+.alert-box i { font-size: 1.15rem; margin-top: 1px; }
+.alert-box.ab-danger { background: #fbe7e7; border-color: #f3c2c2; color: #8f1f1f; }
+.alert-box.ab-warning { background: #fdf3e2; border-color: #f6dcab; color: #8a5512; }
+.alert-box.ab-info { background: #e9f1fd; border-color: #c4dbfa; color: #1c4e96; }
+.alert-box.ab-success { background: #e6f4ec; border-color: #b9e0c8; color: #176c41; }
+
+/* --- Durum rozetleri --- */
+.badge { font-weight: 600; letter-spacing: .2px; padding: .38em .6em; border-radius: 7px; }
+
+/* --- Tablolar --- */
+.table { --bs-table-bg: transparent; }
+.table thead th { background: var(--color-primary); color: #fff; font-size: .82rem; font-weight: 600;
+    border-color: var(--color-primary-dark); vertical-align: middle; }
+.table tbody td { vertical-align: middle; }
+.table-hover tbody tr:hover { background: var(--color-primary-50); }
+
+/* --- Sticky fiyat özeti --- */
+.sticky-summary { position: sticky; top: 1rem; }
+
+/* --- Butonlar / dokunma alanı --- */
+.btn { border-radius: 9px; }
+.btn-primary { background: var(--color-primary); border-color: var(--color-primary-dark); }
+.btn-primary:hover { background: var(--color-primary-dark); border-color: var(--color-primary-dark); }
+
+/* --- Onay/bilgi modalı --- */
+.ds-modal-backdrop { position: fixed; inset: 0; background: rgba(15,25,45,.5); z-index: 1060;
+    display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.ds-modal { background: #fff; border-radius: var(--radius-card); box-shadow: 0 16px 48px rgba(0,0,0,.3);
+    width: 100%; max-width: 440px; overflow: hidden; }
+.ds-modal-head { padding: 1rem 1.2rem; border-bottom: 1px solid var(--color-border); font-weight: 600; display: flex; align-items: center; gap: .5rem; }
+.ds-modal-body { padding: 1.2rem; }
+.ds-modal-foot { padding: .8rem 1.2rem; border-top: 1px solid var(--color-border); display: flex; gap: .5rem; justify-content: flex-end; }
+
+/* --- Toast --- */
+.ds-toast-host { position: fixed; right: 1rem; bottom: 1rem; z-index: 1080; display: flex; flex-direction: column; gap: .5rem; }
+.ds-toast { min-width: 240px; max-width: 360px; background: #fff; border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-hover); padding: .7rem .9rem; display: flex; align-items: center; gap: .6rem;
+    border-left: 4px solid var(--color-info); animation: dsToastIn .2s ease; }
+.ds-toast.t-success { border-left-color: var(--color-success); }
+.ds-toast.t-danger { border-left-color: var(--color-danger); }
+.ds-toast.t-warning { border-left-color: var(--color-warning); }
+@keyframes dsToastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* --- Mobil: tabloları kart görünümüne çevirme yardımcı sınıfı --- */
+@media (max-width: 575.98px) {
+    .table-cards thead { display: none; }
+    .table-cards tbody tr { display: block; margin-bottom: .6rem; border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm); padding: .5rem .7rem; box-shadow: var(--shadow-soft); }
+    .table-cards tbody td { display: flex; justify-content: space-between; border: 0; padding: .25rem 0; }
+    .table-cards tbody td::before { content: attr(data-label); font-weight: 600; color: var(--color-muted); margin-right: 1rem; }
+}
+
+/* Dokunma alanı: mobil/basit modda butonlar en az 44px */
+@media (max-width: 767.98px) {
+    .btn { min-height: var(--touch-min); }
+    .form-control, .form-select { min-height: var(--touch-min); }
+}
+body.simple-mode .btn { min-height: var(--touch-min); }

@@ -1,0 +1,59 @@
+@page "/purchases"
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
+@rendermode InteractiveServer
+@inject IPurchaseService PurchaseService
+@inject NavigationManager Nav
+
+<PageTitle>Satınalma</PageTitle>
+
+<div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0">Satınalma Siparişleri</h2>
+    <div class="ms-auto d-flex gap-2">
+        <a href="suppliers" class="btn btn-outline-secondary">🏢 Tedarikçiler</a>
+        <a href="purchases/new" class="btn btn-primary">➕ Yeni Satınalma</a>
+    </div>
+</div>
+
+@if (suggestionCount > 0)
+{
+    <div class="alert alert-warning d-flex align-items-center">
+        <span>📉 <strong>@suggestionCount</strong> ürün kritik/eksik stokta — satınalma önerisi mevcut.</span>
+        <a href="purchases/new" class="btn btn-sm btn-warning ms-auto">Öneriden Satınalma Oluştur</a>
+    </div>
+}
+
+<div class="card summary-box">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead><tr><th>Satınalma No</th><th>Tedarikçi</th><th>Tarih</th><th>Durum</th><th class="text-end">Tutar</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var p in items)
+                {
+                    <tr style="cursor:pointer" @onclick="@(() => Nav.NavigateTo($"purchases/{p.Id}"))">
+                        <td><strong>@p.PurchaseNumber</strong></td>
+                        <td>@p.Supplier?.Name</td>
+                        <td>@p.OrderDate.ToString("dd.MM.yyyy")</td>
+                        <td><span class="badge @PurchaseStatusText.Badge(p.Status)">@PurchaseStatusText.Label(p.Status)</span></td>
+                        <td class="text-end">@p.TotalAmount.ToString("#,##0.00") ₺</td>
+                        <td class="text-end" @onclick:stopPropagation="true"><a href="purchases/@p.Id" class="btn btn-sm btn-outline-secondary">Detay</a></td>
+                    </tr>
+                }
+                @if (items.Count == 0)
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">Satınalma siparişi yok.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private List<PurchaseOrder> items = new();
+    private int suggestionCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await PurchaseService.SearchAsync(null);
+        suggestionCount = (await PurchaseService.GetSuggestionsAsync()).Count;
+    }
+}

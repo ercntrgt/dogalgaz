@@ -40,6 +40,7 @@
                         <td>@c.Phone</td>
                         <td>@c.City / @c.District</td>
                         <td class="text-end">
+                            <a href="customers/@c.Id/tracking" class="btn btn-sm btn-outline-success">📊 Takip</a>
                             <AuthorizeView Roles="Admin,SalesPerson" Context="a">
                                 <a href="offers/new?customerId=@c.Id" class="btn btn-sm btn-outline-primary">Teklif</a>
                                 <a href="customers/@c.Id" class="btn btn-sm btn-outline-secondary">Düzenle</a>

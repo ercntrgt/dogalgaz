@@ -11,6 +11,15 @@ public class PaymentPlan : BaseEntity
 
     public PaymentType PaymentType { get; set; } = PaymentType.Cash;
     public decimal Amount { get; set; }
+
+    /// <summary>Ödemenin planlanan/vade tarihi.</summary>
     public DateTime? PaymentDate { get; set; }
+
+    /// <summary>Tahsil edildi mi?</summary>
+    public bool IsPaid { get; set; }
+
+    /// <summary>Tahsil edildiği gerçek tarih.</summary>
+    public DateTime? PaidDate { get; set; }
+
     public string? Description { get; set; }
 }

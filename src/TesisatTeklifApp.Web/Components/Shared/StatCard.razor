@@ -1,0 +1,30 @@
+@* Tekrar kullanılabilir istatistik kartı: ikon + başlık + değer + alt açıklama *@
+<div class="stat-card tone-@Tone @(OnClick.HasDelegate ? "clickable" : "")"
+     @onclick="HandleClick">
+    @if (!string.IsNullOrEmpty(Icon))
+    {
+        <div class="sc-icon"><i class="bi @Icon"></i></div>
+    }
+    <div>
+        <div class="sc-title">@Title</div>
+        <div class="sc-value">@Value</div>
+        @if (!string.IsNullOrEmpty(Sub))
+        {
+            <div class="sc-sub">@Sub</div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string Value { get; set; } = "";
+    [Parameter] public string? Sub { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public string Tone { get; set; } = "secondary"; // primary/success/danger/warning/info
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    private async Task HandleClick()
+    {
+        if (OnClick.HasDelegate) await OnClick.InvokeAsync();
+    }
+}

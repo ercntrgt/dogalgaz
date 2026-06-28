@@ -46,8 +46,19 @@ public class Offer : BaseEntity
     public string? EmployerName { get; set; }
     public string? ResponsiblePerson { get; set; }
 
-    // İmza (Android aşamasında müşteri imzası base64 olarak saklanacak)
+    /// <summary>Teklifi/siparişi oluşturan kullanıcı (e-posta). Satış personeli yalnızca kendi kayıtlarını görür.</summary>
+    public string? CreatedBy { get; set; }
+
+    /// <summary>Silme talebi (satış personeli ister, yönetici onaylar).</summary>
+    public bool DeleteRequested { get; set; }
+    public string? DeleteRequestedBy { get; set; }
+
+    // İmza (web/tablet veya Android'de müşteri imzası base64 olarak saklanır)
     public string? CustomerSignature { get; set; }
+
+    // Teslim bilgisi (sözleşme tamamlanıp iş teslim edildiğinde)
+    public DateTime? DeliveredDate { get; set; }
+    public string? DeliveredBy { get; set; }
 
     public ICollection<OfferItem> Items { get; set; } = new List<OfferItem>();
     public ICollection<RadiatorItem> RadiatorItems { get; set; } = new List<RadiatorItem>();

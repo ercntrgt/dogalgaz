@@ -35,7 +35,16 @@ else
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Birim</label>
-                        <InputText class="form-control" @bind-Value="model.Unit" />
+                        <InputSelect class="form-select" @bind-Value="model.Unit">
+                            @foreach (var u in Units.All)
+                            {
+                                <option value="@u">@u</option>
+                            }
+                            @if (!string.IsNullOrEmpty(model.Unit) && !Units.All.Contains(model.Unit))
+                            {
+                                <option value="@model.Unit">@model.Unit</option>
+                            }
+                        </InputSelect>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Marka</label>

@@ -75,7 +75,7 @@ public class PdfExportService : IPdfExportService
                     WorkProgramBlock(col, offer);
                     if (summary.InsufficientItems.Count > 0)
                         MissingProductsBlock(col, summary.InsufficientItems);
-                    SignatureBlock(col);
+                    SignatureBlock(col, offer.CustomerSignature);
                 });
 
                 page.Footer().AlignCenter().Text(t =>
@@ -140,7 +140,10 @@ public class PdfExportService : IPdfExportService
 
     private void SectionTable(ColumnDescriptor col, string title, Offer offer, string section)
     {
-        var items = offer.Items.Where(i => i.SectionName == section && (i.IsSelected || i.TotalPrice > 0)).ToList();
+        // 0 adet/metre olan kalemler PDF'e girmez.
+        var items = offer.Items
+            .Where(i => i.SectionName == section && i.IsSelected && (i.Quantity > 0 || i.TotalPrice > 0))
+            .ToList();
         if (items.Count == 0) return;
 
         Card(col, title, inner =>
@@ -173,7 +176,11 @@ public class PdfExportService : IPdfExportService
 
     private void RadiatorTable(ColumnDescriptor col, Offer offer)
     {
-        if (offer.RadiatorItems.Count == 0) return;
+        // Boş (0 panel ve 0 vana) radyatör satırları PDF'e girmez.
+        var radItems = offer.RadiatorItems
+            .Where(r => r.PanelLength > 0 || r.ValveQuantity > 0 || r.TotalPrice > 0)
+            .ToList();
+        if (radItems.Count == 0) return;
         Card(col, "Radyatör", inner =>
         {
             inner.Item().Table(table =>
@@ -185,19 +192,21 @@ public class PdfExportService : IPdfExportService
                 });
                 TableHeader(table, "Oda", "Marka/Ölçü", "Panel(m)", "Vana", "Metre F.", "Toplam");
                 var i = 0;
-                foreach (var r in offer.RadiatorItems)
+                foreach (var r in radItems)
                 {
                     var bg = r.IsStockInsufficient ? Red : (i++ % 2 == 0 ? LightGray : "#ffffff");
                     var fc = r.IsStockInsufficient ? "#ffffff" : "#000000";
                     Cell(table, bg, fc, r.RoomName ?? "-");
-                    Cell(table, bg, fc, $"{r.RadiatorBrand} {r.RadiatorSize}");
+                    var olcu = (r.RadiatorHeight.HasValue || r.RadiatorWidth.HasValue)
+                        ? $"{r.RadiatorHeight}*{r.RadiatorWidth}" : r.RadiatorSize;
+                    Cell(table, bg, fc, $"{r.RadiatorBrand} {olcu}");
                     Cell(table, bg, fc, Num(r.PanelLength));
                     Cell(table, bg, fc, Num(r.ValveQuantity));
                     Cell(table, bg, fc, Money(r.MeterPrice));
                     Cell(table, bg, fc, Money(r.TotalPrice));
                 }
             });
-            var totalPanel = offer.RadiatorItems.Sum(r => r.PanelLength);
+            var totalPanel = radItems.Sum(r => r.PanelLength);
             inner.Item().PaddingTop(3).AlignRight().Text($"Toplam panel uzunluğu: {Num(totalPanel)} m").Italic();
         });
     }
@@ -292,22 +301,41 @@ public class PdfExportService : IPdfExportService
     private void NotesBlock(ColumnDescriptor col, string notes) =>
         Card(col, "Genel Açıklamalar", inner => inner.Item().Text(notes));
 
-    private void SignatureBlock(ColumnDescriptor col)
+    private void SignatureBlock(ColumnDescriptor col, string? customerSignature)
     {
+        var sigBytes = DecodeSignature(customerSignature);
         col.Item().PaddingTop(20).Row(r =>
         {
             r.RelativeItem().Column(c =>
             {
+                if (sigBytes is not null)
+                    c.Item().Height(50).AlignCenter().Image(sigBytes).FitHeight();
+                else
+                    c.Item().Height(50);
                 c.Item().LineHorizontal(0.7f);
-                c.Item().AlignCenter().Text("İşveren İmza").FontColor(Gray);
+                c.Item().AlignCenter().Text("Müşteri İmza").FontColor(Gray);
             });
             r.ConstantItem(40);
             r.RelativeItem().Column(c =>
             {
+                c.Item().Height(50);
                 c.Item().LineHorizontal(0.7f);
                 c.Item().AlignCenter().Text("Firma Yetkilisi İmza").FontColor(Gray);
             });
         });
+    }
+
+    /// <summary>"data:image/png;base64,..." biçimindeki imzayı bayt dizisine çevirir.</summary>
+    private static byte[]? DecodeSignature(string? dataUrl)
+    {
+        if (string.IsNullOrWhiteSpace(dataUrl)) return null;
+        try
+        {
+            var idx = dataUrl.IndexOf("base64,", StringComparison.OrdinalIgnoreCase);
+            var b64 = idx >= 0 ? dataUrl[(idx + 7)..] : dataUrl;
+            return Convert.FromBase64String(b64);
+        }
+        catch { return null; }
     }
 
     // ---------------- yardımcılar ----------------

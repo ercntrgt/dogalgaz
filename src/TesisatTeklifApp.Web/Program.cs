@@ -9,6 +9,20 @@ using TesisatTeklifApp.Web.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// --- Bulut (Render): PORT ortam değişkenine bağlan ---
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+// Ters proxy (Render HTTPS sonlandırır) arkasında doğru şema/cookie için.
+builder.Services.Configure<Microsoft.AspNetCore.Builder.ForwardedHeadersOptions>(o =>
+{
+    o.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor
+                       | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+    o.KnownNetworks.Clear();
+    o.KnownProxies.Clear();
+});
+
 // --- Infrastructure (DbContext + tüm servisler + QuestPDF lisans) ---
 var logoPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "images", "logo.png");
 builder.Services.AddInfrastructure(builder.Configuration, logoPath);
@@ -61,13 +75,18 @@ using (var scope = app.Services.CreateScope())
     await DbSeeder.SeedAsync(db, userManager, roleManager);
 }
 
+// Ters proxy başlıklarını (X-Forwarded-Proto vb.) en başta uygula → Render HTTPS'i doğru görülür.
+app.UseForwardedHeaders();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
-app.UseHttpsRedirection();
+// Bulutta (PORT tanımlı) TLS'i proxy yapar; container içi HTTPS yönlendirmesi kapalı.
+if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")))
+    app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -80,5 +99,6 @@ app.MapRazorComponents<App>()
 // Identity yardımcı endpoint'leri (logout) ve dosya indirme (PDF/Excel).
 app.MapAccountEndpoints();
 app.MapDownloadEndpoints();
+app.MapSyncEndpoints();   // saha (MAUI) senkron uçları
 
 app.Run();

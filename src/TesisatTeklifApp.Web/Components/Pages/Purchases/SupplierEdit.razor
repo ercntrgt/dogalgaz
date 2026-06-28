@@ -1,0 +1,56 @@
+@page "/suppliers/new"
+@page "/suppliers/{Id:int}"
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
+@rendermode InteractiveServer
+@inject ISupplierService SupplierService
+@inject NavigationManager Nav
+
+<PageTitle>@(IsNew ? "Yeni Tedarikçi" : "Tedarikçi Düzenle")</PageTitle>
+
+<h2 class="mb-3">@(IsNew ? "Yeni Tedarikçi" : $"Tedarikçi: {model.Name}")</h2>
+
+<EditForm Model="model" OnValidSubmit="Save">
+    <div class="card summary-box">
+        <div class="card-body row g-3">
+            <div class="col-md-6"><label class="form-label">Ad / Firma *</label><InputText class="form-control" @bind-Value="model.Name" /></div>
+            <div class="col-md-3"><label class="form-label">Telefon</label><InputText class="form-control" @bind-Value="model.Phone" /></div>
+            <div class="col-md-3"><label class="form-label">E-posta</label><InputText class="form-control" @bind-Value="model.Email" /></div>
+            <div class="col-md-3"><label class="form-label">Vergi No</label><InputText class="form-control" @bind-Value="model.TaxNumber" /></div>
+            <div class="col-md-3"><label class="form-label">İl</label><InputText class="form-control" @bind-Value="model.City" /></div>
+            <div class="col-md-3"><label class="form-label">İlçe</label><InputText class="form-control" @bind-Value="model.District" /></div>
+            <div class="col-12"><label class="form-label">Adres</label><InputTextArea class="form-control" rows="2" @bind-Value="model.Address" /></div>
+            <div class="col-12"><label class="form-label">Açıklama</label><InputText class="form-control" @bind-Value="model.Description" /></div>
+        </div>
+        <div class="card-footer d-flex gap-2">
+            <button type="submit" class="btn btn-success">💾 Kaydet</button>
+            <a href="suppliers" class="btn btn-outline-secondary">İptal</a>
+            @if (!IsNew)
+            {
+                <button type="button" class="btn btn-outline-danger ms-auto" @onclick="Delete">🗑 Sil</button>
+            }
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    private bool IsNew => Id is null;
+    private Supplier model = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is int id) model = await SupplierService.GetByIdAsync(id) ?? model;
+    }
+
+    private async Task Save()
+    {
+        if (IsNew) await SupplierService.AddAsync(model);
+        else await SupplierService.UpdateAsync(model);
+        Nav.NavigateTo("suppliers");
+    }
+
+    private async Task Delete()
+    {
+        if (Id is int id) { await SupplierService.SoftDeleteAsync(id); Nav.NavigateTo("suppliers"); }
+    }
+}

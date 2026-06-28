@@ -1,0 +1,16 @@
+# Render Blueprint — ÖZDEMİR TesisatTeklifApp
+# Render panelinde "New + → Blueprint" ile bu repoyu seçince otomatik okunur.
+services:
+  - type: web
+    name: ozdemir-tesisat
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/sync/ping
+    envVars:
+      - key: DatabaseProvider
+        value: Postgres
+      - key: ConnectionStrings__DefaultConnection
+        sync: false   # Neon bağlantı dizesini panelden gir (gizli)
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
