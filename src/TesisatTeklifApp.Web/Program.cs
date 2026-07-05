@@ -76,6 +76,9 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 
+// Yanıt sıkıştırma (ilk yükleme + dinamik HTML daha küçük/hızlı).
+builder.Services.AddResponseCompression(o => o.EnableForHttps = true);
+
 // --- Blazor ---
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -94,6 +97,7 @@ using (var scope = app.Services.CreateScope())
 
 // Ters proxy başlıklarını (X-Forwarded-Proto vb.) en başta uygula → Render HTTPS'i doğru görülür.
 app.UseForwardedHeaders();
+app.UseResponseCompression();
 
 if (!app.Environment.IsDevelopment())
 {
