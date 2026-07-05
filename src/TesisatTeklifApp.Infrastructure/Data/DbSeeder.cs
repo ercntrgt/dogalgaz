@@ -29,8 +29,16 @@ public static class DbSeeder
             var creator = db.GetService<IRelationalDatabaseCreator>();
             if (!await creator.ExistsAsync())
                 await creator.CreateAsync();
-            if (!await creator.HasTablesAsync())
+
+            // Uygulama şeması kurulu mu? Anahtar tablo (AspNetRoles) yoksa şema eksik/kısmi
+            // (Neon DB'si zaten var + önceki denemelerden kalan parçalar olabilir).
+            // Bu durumda public şemayı temizleyip modelden tüm tabloları sıfırdan kur.
+            // (Bu aşamada henüz gerçek veri yoktur; AspNetRoles varsa bu blok atlanır.)
+            if (!await TableExistsAsync(db, "AspNetRoles"))
+            {
+                await db.Database.ExecuteSqlRawAsync("DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;");
                 await creator.CreateTablesAsync();
+            }
         }
 
         // --- Roller ---
@@ -103,6 +111,25 @@ public static class DbSeeder
         public double PurchasePrice { get; set; }
         public double SalePrice { get; set; }
         public double VatRate { get; set; }
+    }
+
+    /// <summary>PostgreSQL'de belirtilen tablo public şemada var mı? (to_regclass ile).</summary>
+    private static async Task<bool> TableExistsAsync(AppDbContext db, string table)
+    {
+        var conn = db.Database.GetDbConnection();
+        var wasClosed = conn.State != System.Data.ConnectionState.Open;
+        if (wasClosed) await conn.OpenAsync();
+        try
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = $"SELECT to_regclass('public.\"{table}\"') IS NOT NULL";
+            var result = await cmd.ExecuteScalarAsync();
+            return result is bool b && b;
+        }
+        finally
+        {
+            if (wasClosed) await conn.CloseAsync();
+        }
     }
 
     private static async Task EnsureUser(UserManager<ApplicationUser> userManager,
