@@ -1,6 +1,6 @@
 @page "/suppliers/new"
 @page "/suppliers/{Id:int}"
-@attribute [Authorize(Roles = "Admin,SalesPerson")]
+@attribute [Authorize(Roles = "Admin")]
 @rendermode InteractiveServer
 @inject ISupplierService SupplierService
 @inject NavigationManager Nav

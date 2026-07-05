@@ -16,10 +16,22 @@ public class NumberGeneratorService : INumberGeneratorService
 
     public NumberGeneratorService(AppDbContext db) => _db = db;
 
-    public Task<string> GenerateOfferNumberAsync() => GenerateAsync("TSF", isOrder: false);
-    public Task<string> GenerateOrderNumberAsync() => GenerateAsync("SPR", isOrder: true);
+    public Task<string> GenerateOfferNumberAsync() => GenerateAsync("TSF", async yp =>
+        await _db.Offers.IgnoreQueryFilters()
+            .Where(o => o.OfferNumber.StartsWith(yp))
+            .Select(o => o.OfferNumber).ToListAsync());
 
-    private async Task<string> GenerateAsync(string prefix, bool isOrder)
+    public Task<string> GenerateOrderNumberAsync() => GenerateAsync("SPR", async yp =>
+        await _db.Offers.IgnoreQueryFilters()
+            .Where(o => o.OrderNumber != null && o.OrderNumber.StartsWith(yp))
+            .Select(o => o.OrderNumber!).ToListAsync());
+
+    public Task<string> GenerateServiceNumberAsync() => GenerateAsync("SRV", async yp =>
+        await _db.ServiceRecords.IgnoreQueryFilters()
+            .Where(s => s.ServiceNumber.StartsWith(yp))
+            .Select(s => s.ServiceNumber).ToListAsync());
+
+    private async Task<string> GenerateAsync(string prefix, Func<string, Task<List<string>>> existingSelector)
     {
         var year = DateTime.Now.Year;
         var yearPrefix = $"{prefix}-{year}-";
@@ -27,20 +39,11 @@ public class NumberGeneratorService : INumberGeneratorService
         await Gate.WaitAsync();
         try
         {
-            // İlgili alanın bu yıl içindeki en büyük sıra numarasını bul.
-            var existing = isOrder
-                ? await _db.Offers.IgnoreQueryFilters()
-                    .Where(o => o.OrderNumber != null && o.OrderNumber.StartsWith(yearPrefix))
-                    .Select(o => o.OrderNumber!).ToListAsync()
-                : await _db.Offers.IgnoreQueryFilters()
-                    .Where(o => o.OfferNumber.StartsWith(yearPrefix))
-                    .Select(o => o.OfferNumber).ToListAsync();
-
+            var existing = await existingSelector(yearPrefix);
             var max = existing
                 .Select(n => int.TryParse(n.Substring(yearPrefix.Length), out var v) ? v : 0)
                 .DefaultIfEmpty(0)
                 .Max();
-
             return $"{yearPrefix}{(max + 1):D4}";
         }
         finally

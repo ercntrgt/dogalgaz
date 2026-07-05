@@ -48,7 +48,9 @@
                 <AuthorizeView Roles="Admin,SalesPerson" Context="m">
                     <NavLink class="nav-item-m fab" href="offers/new"><span class="ico"><i class="bi bi-plus-lg"></i></span>Yeni</NavLink>
                 </AuthorizeView>
-                <NavLink class="nav-item-m" href="customers"><span class="ico"><i class="bi bi-people"></i></span>Müşteri</NavLink>
+                <AuthorizeView Roles="Admin" Context="mc">
+                    <NavLink class="nav-item-m" href="customers"><span class="ico"><i class="bi bi-people"></i></span>Müşteri</NavLink>
+                </AuthorizeView>
                 <NavLink class="nav-item-m" href="schedule"><span class="ico"><i class="bi bi-calendar3"></i></span>Takvim</NavLink>
             </nav>
         </div>

@@ -28,36 +28,45 @@ a, .btn-link { color: var(--ozd-navy); }
 h1, h2, h3, h4, h5 { color: var(--ozd-navy); }
 h1:focus { outline: none; }
 
-/* --- Kurumsal başlık çubuğu --- */
+/* --- Modern başlık çubuğu --- */
 .app-topbar {
-    background: #fff;
-    border-bottom: 3px solid var(--ozd-navy);
-    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    background: rgba(255,255,255,.9);
+    backdrop-filter: saturate(160%) blur(6px);
+    border-bottom: 1px solid #e6ebf2;
+    box-shadow: 0 2px 10px rgba(16,33,64,.05);
+    position: sticky; top: 0; z-index: 1030; min-height: 60px;
 }
-.app-topbar .brand-logo { height: 42px; }
+.app-topbar .brand-logo { height: 40px; }
 
-/* --- Sol menü --- */
+/* --- Modern sol menü --- */
 .sidebar {
-    background: linear-gradient(180deg, var(--ozd-navy) 0%, var(--ozd-navy-dark) 100%);
+    background: linear-gradient(185deg, #17335f 0%, #0f2447 100%);
     min-height: 100vh;
 }
 .sidebar .nav-link {
-    color: rgba(255,255,255,.82);
-    border-radius: .4rem;
-    margin: 2px 8px;
-    padding: .5rem .8rem;
+    position: relative;
+    color: rgba(255,255,255,.78);
+    border-radius: 10px;
+    margin: 2px 10px;
+    padding: .55rem .85rem;
+    display: flex; align-items: center; gap: .65rem;
+    font-size: .93rem; transition: background .15s, color .15s;
 }
-.sidebar .nav-link:hover { background: rgba(255,255,255,.12); color: #fff; }
-.sidebar .nav-link.active { background: #fff; color: var(--ozd-navy); font-weight: 600; }
-.sidebar .nav-link { display: flex; align-items: center; gap: .6rem; }
-.sidebar .nav-link i { font-size: 1.05rem; width: 1.2rem; text-align: center; opacity: .9; }
+.sidebar .nav-link:hover { background: rgba(255,255,255,.10); color: #fff; }
+.sidebar .nav-link.active { background: rgba(255,255,255,.14); color: #fff; font-weight: 600; }
+.sidebar .nav-link.active::before {
+    content: ""; position: absolute; left: -2px; top: 8px; bottom: 8px;
+    width: 3px; border-radius: 3px; background: #6aa3ff;
+}
+.sidebar .nav-link i { font-size: 1.02rem; width: 1.25rem; text-align: center; opacity: .85; }
 .sidebar .nav-link.active i { opacity: 1; }
 .sidebar .nav-group-title {
-    color: rgba(255,255,255,.5);
-    font-size: .72rem;
+    color: rgba(255,255,255,.42);
+    font-size: .68rem;
     text-transform: uppercase;
-    letter-spacing: .06em;
-    padding: .8rem 1rem .2rem;
+    letter-spacing: .09em;
+    padding: 1rem 1.1rem .25rem;
+    font-weight: 700;
 }
 
 /* --- Kartlar --- */
@@ -76,34 +85,44 @@ tr.stock-critical, .stock-critical > td { background-color: #fff3cd !important; 
 tr.stock-sufficient td .stock-dot { color: #198754; }
 .stock-dot { font-size: .7rem; }
 
-/* --- Login --- */
+/* --- Modern Login --- */
 .login-wrap {
     min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, var(--ozd-navy) 0%, var(--ozd-navy-dark) 100%);
+    display: flex; align-items: center; justify-content: center; padding: 1rem;
+    background: radial-gradient(1200px 600px at 20% -10%, #23508f 0%, transparent 55%),
+                linear-gradient(135deg, #17335f 0%, #0f2447 100%);
 }
-.login-card { width: 100%; max-width: 410px; border: none; border-radius: .8rem; }
-.login-card .logo { max-width: 230px; margin: 0 auto 1rem; display: block; }
+.login-card { width: 100%; max-width: 420px; border: none; border-radius: 18px;
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,.55); }
+.login-card .logo { max-width: 220px; margin: 0 auto 1rem; display: block; }
 
-.table thead th { background: var(--ozd-navy); color: #fff; font-size: .85rem; }
-.summary-box { background: #fff; border: 1px solid #dde1e7; border-radius: .5rem; }
-
-/* --- Aylık takvim ızgarası --- */
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-.cal-head { text-align: center; font-weight: 600; color: var(--ozd-navy); padding: 4px 0; font-size: .85rem; }
-.cal-cell { min-height: 96px; border: 1px solid #e3e6ea; border-radius: 5px; padding: 4px; background: #fff; overflow: hidden; }
-.cal-cell.muted { background: #f6f7f9; }
+/* --- Modern aylık takvim --- */
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-head { text-align: center; font-weight: 700; color: var(--ozd-navy); padding: 6px 0; font-size: .78rem;
+    text-transform: uppercase; letter-spacing: .04em; }
+.cal-cell { min-height: 108px; border: 1px solid #e9edf3; border-radius: 12px; padding: 6px; background: #fff;
+    overflow: hidden; transition: box-shadow .15s; }
+.cal-cell:hover { box-shadow: 0 6px 16px -8px rgba(16,33,64,.25); }
+.cal-cell.muted { background: #f5f7fa; }
 .cal-cell.muted .cal-daynum { color: #b8bcc2; }
-.cal-cell.today { border: 2px solid var(--ozd-navy); background: #eef3fb; }
-.cal-daynum { font-size: .8rem; font-weight: 600; color: #555; }
-.cal-event { font-size: .7rem; color: #fff; border-radius: 3px; padding: 1px 5px; margin-top: 2px; cursor: pointer;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-cell.today { border: 2px solid #2f6bd8; background: #f2f7ff; }
+.cal-daynum { font-size: .82rem; font-weight: 700; color: #33477a; }
+.cal-event { font-size: .7rem; color: #fff; border-radius: 6px; padding: 2px 6px; margin-top: 3px; cursor: pointer;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
 .cal-more { font-size: .68rem; color: var(--ozd-navy); cursor: pointer; margin-top: 2px; }
 
 /* --- Mobil / Basit görünüm yapısal kontrol --- */
 .app-bottomnav { display: none; }          /* varsayılan: gizli */
 .app-hamburger { display: none; }          /* masaüstünde gizli */
-.app-sidebar { display: block; }           /* masaüstünde görünür */
+/* Sol menü sabit: içerik kayarken yerinde kalır */
+.app-sidebar {
+    display: block;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
+}
 .app-viewtoggle .simple-show { display: none; }   /* normalde "Basit" yazısı */
 
 /* Küçük ekran (telefon): otomatik basit yapı */
@@ -179,3 +198,25 @@ body.drawer-open { overflow: hidden; }   /* arka plan kaymasın */
     background: #b32121; padding: 1rem; color: white;
 }
 .blazor-error-boundary::after { content: "Bir hata oluştu."; }
+
+/* ===== Fiyat gizleme (teklif hazırlarken) ===== */
+.prices-hidden .price-cell { display: none !important; }
+
+/* ===== Grup akordeonu (teklif ürün seçimi) ===== */
+.group-acc { border: 1px solid #e3e7ee; border-radius: 12px; overflow: hidden; }
+.group-acc .group-head {
+    background: #f7f9fc; cursor: pointer; padding: .6rem .9rem; user-select: none;
+    border-bottom: 1px solid transparent;
+}
+.group-acc:not(.collapsed) .group-head { background: #eef3fb; border-bottom-color: #e3e7ee; }
+.group-acc .group-head:hover { background: #eef3fb; }
+.group-acc .toggle-ico { color: #1a3a6b; font-size: .9rem; }
+.group-picker { max-height: 260px; overflow-y: auto; border: 1px solid #eef0f4; border-radius: 8px; }
+.group-pick {
+    display: flex; align-items: center; width: 100%; gap: .4rem; text-align: left;
+    background: #fff; border: none; border-bottom: 1px solid #f1f3f7; padding: .45rem .7rem; font-size: .9rem;
+}
+.group-pick:last-child { border-bottom: none; }
+.group-pick:hover { background: #eef8f0; }
+.group-pick .pick-name { flex: 1; }
+.group-pick .pick-price { color: #198754; font-weight: 600; white-space: nowrap; }

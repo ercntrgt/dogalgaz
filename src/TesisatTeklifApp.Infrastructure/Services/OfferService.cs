@@ -131,6 +131,8 @@ public class OfferService : IOfferService
         {
             if (string.IsNullOrEmpty(offer.OfferNumber))
                 offer.OfferNumber = await _numbers.GenerateOfferNumberAsync();
+            if (string.IsNullOrEmpty(offer.PublicToken))
+                offer.PublicToken = GenToken();
             _db.Offers.Add(offer);
             await _db.SaveChangesAsync();
             return;
@@ -148,16 +150,22 @@ public class OfferService : IOfferService
         _db.RadiatorItems.RemoveRange(existing.RadiatorItems);
         _db.PaymentPlans.RemoveRange(existing.PaymentPlans);
 
-        // Skaler alanları kopyala (numara/oluşturma bilgisi korunur).
+        // Skaler alanları kopyala (numara/oluşturma/imza/token bilgisi korunur).
         var number = existing.OfferNumber;
         var orderNumber = existing.OrderNumber;
         var created = existing.CreatedDate;
         var createdBy = existing.CreatedBy;
+        var token = existing.PublicToken;
+        var signature = existing.CustomerSignature;
+        var approvedDate = existing.CustomerApprovedDate;
         _db.Entry(existing).CurrentValues.SetValues(offer);
         existing.OfferNumber = number;
         existing.OrderNumber = orderNumber;
         existing.CreatedDate = created;
         existing.CreatedBy = createdBy;
+        existing.PublicToken = token ?? GenToken();
+        existing.CustomerSignature = signature;
+        existing.CustomerApprovedDate = approvedDate;
 
         foreach (var it in offer.Items)
         {
@@ -324,6 +332,33 @@ public class OfferService : IOfferService
         offer.CustomerSignature = signatureBase64;
         await _db.SaveChangesAsync();
     }
+
+    // ===== Müşteri özel onay linki (anonim, token ile) =====
+    public Task<Offer?> GetByPublicTokenAsync(string token) =>
+        _db.Offers
+            .AsNoTracking()
+            .Include(o => o.Customer)
+            .Include(o => o.Items)
+            .Include(o => o.RadiatorItems)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(o => o.PublicToken == token);
+
+    public async Task<bool> ApproveByTokenAsync(string token, string signatureBase64)
+    {
+        var offer = await _db.Offers.FirstOrDefaultAsync(o => o.PublicToken == token);
+        if (offer is null) return false;
+        // Zaten onaylıysa tekrar imzalatmaz.
+        if (offer.CustomerApprovedDate is not null) return true;
+        offer.CustomerSignature = signatureBase64;
+        offer.CustomerApprovedDate = DateTime.Now;
+        if (offer.Status is OfferStatus.Draft or OfferStatus.SentToCustomer)
+            offer.Status = OfferStatus.Approved;
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    private static string GenToken() =>
+        Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N")[..8];
 
     public async Task MarkDeliveredAsync(int offerId, string? userName)
     {

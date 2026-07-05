@@ -43,8 +43,14 @@ public class Offer : BaseEntity
     // --- İş programı (J) ---
     public DateTime? WorkStartDate { get; set; }
     public DateTime? WorkEndDate { get; set; }
-    public string? EmployerName { get; set; }
+    public string? EmployerName { get; set; }          // (eski) — UI'da yerini Usta aldı
     public string? ResponsiblePerson { get; set; }
+
+    // --- İş bazlı usta + hakediş ---
+    public int? UstaId { get; set; }
+    public Usta? Usta { get; set; }
+    /// <summary>Bu iş için ustaya ödenecek hakediş (elle girilir). İç veridir; müşteri fiyatından bağımsız.</summary>
+    public decimal UstaEarning { get; set; }
 
     /// <summary>Teklifi/siparişi oluşturan kullanıcı (e-posta). Satış personeli yalnızca kendi kayıtlarını görür.</summary>
     public string? CreatedBy { get; set; }
@@ -53,8 +59,13 @@ public class Offer : BaseEntity
     public bool DeleteRequested { get; set; }
     public string? DeleteRequestedBy { get; set; }
 
-    // İmza (web/tablet veya Android'de müşteri imzası base64 olarak saklanır)
+    // İmza — müşteri özel onay linkinden imza atınca base64 saklanır
     public string? CustomerSignature { get; set; }
+
+    /// <summary>Müşteriye verilen özel onay linkinin token'ı (uzun, tahmin edilemez). Anonim erişim yalnızca bu teklife.</summary>
+    public string? PublicToken { get; set; }
+    /// <summary>Müşterinin linkten imzalayıp onayladığı tarih.</summary>
+    public DateTime? CustomerApprovedDate { get; set; }
 
     // Teslim bilgisi (sözleşme tamamlanıp iş teslim edildiğinde)
     public DateTime? DeliveredDate { get; set; }

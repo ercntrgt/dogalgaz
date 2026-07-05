@@ -55,3 +55,27 @@ public enum PurchaseStatus
     Received = 3,          // Teslim alındı
     Cancelled = 4          // İptal
 }
+
+/// <summary>Servis kaydı durumu.</summary>
+public enum ServiceStatus
+{
+    Yeni = 0,
+    RandevuVerildi = 1,
+    Tamamlandi = 2,
+    Iptal = 3
+}
+
+/// <summary>Servis nedeni (çoklu seçim — Servis Formu'ndaki kutucuklar).</summary>
+[Flags]
+public enum ServiceReason
+{
+    None = 0,
+    Servis = 1,
+    Bakim = 2,
+    ArizaOnarimi = 4,
+    Montaj = 8,
+    DevreyeAlma = 16,
+    YerindeOnarim = 32,
+    PetekTemizligi = 64,
+    AtolyeyeAlindi = 128
+}

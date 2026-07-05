@@ -44,6 +44,8 @@ public interface IOfferService
     Task<Offer> ConvertToOrderAsync(int offerId);   // siparişe dönüştür (+ stok kontrol)
     Task CancelAsync(int offerId);              // iptal + stok iadesi
     Task SaveSignatureAsync(int offerId, string? signatureBase64);   // müşteri imzası
+    Task<Offer?> GetByPublicTokenAsync(string token);                // müşteri onay linki (anonim)
+    Task<bool> ApproveByTokenAsync(string token, string signatureBase64);   // linkten imza + onay
     Task DeleteAsync(int offerId);              // kalıcı (soft) silme — yönetici
     Task RequestDeleteAsync(int offerId, string user);   // silme talebi — satış
     Task RejectDeleteAsync(int offerId);        // silme talebini reddet — yönetici
@@ -100,6 +102,40 @@ public interface INumberGeneratorService
 {
     Task<string> GenerateOfferNumberAsync();    // TSF-2026-0001
     Task<string> GenerateOrderNumberAsync();     // SPR-2026-0001
+    Task<string> GenerateServiceNumberAsync();   // SRV-2026-0001
+}
+
+public interface IUstaService
+{
+    Task<List<Usta>> SearchAsync(string? keyword);
+    Task<List<Usta>> GetActiveAsync();
+    Task<Usta?> GetByIdAsync(int id);
+    Task AddAsync(Usta usta);
+    Task UpdateAsync(Usta usta);
+    Task SoftDeleteAsync(int id);
+    /// <summary>Verilen ad ile aktif usta bulur, yoksa oluşturur (tablet senkron / hızlı ekleme).</summary>
+    Task<Usta> GetOrCreateByNameAsync(string name);
+}
+
+public interface IHakedisService
+{
+    /// <summary>Her usta için toplam hakediş − toplam ödeme = bakiye.</summary>
+    Task<List<UstaBalanceRow>> GetUstaBalancesAsync();
+    /// <summary>Haftalık hakediş tablosu (iş bazlı hakedişler, hafta gruplarıyla).</summary>
+    Task<List<HakedisWeekRow>> GetWeeklyScheduleAsync(HakedisFilter filter);
+    Task<HakedisSummary> GetSummaryAsync();
+    Task AddPaymentAsync(int ustaId, decimal amount, DateTime paidDate, string? note, string? user);
+    Task<List<UstaPayment>> GetPaymentsAsync(int ustaId);
+    Task DeletePaymentAsync(int paymentId);
+}
+
+public interface IServiceRecordService
+{
+    Task<List<ServiceRecord>> SearchAsync(ServiceRecordFilter filter);
+    Task<ServiceRecord?> GetByIdAsync(int id);
+    Task<List<ServiceRecord>> GetByCustomerAsync(int customerId);
+    Task SaveAsync(ServiceRecord record);       // ekle/güncelle (+ numara üret)
+    Task SoftDeleteAsync(int id);
 }
 
 public interface IStockControlService
@@ -124,8 +160,14 @@ public interface IStockControlService
 
 public interface IPdfExportService
 {
-    /// <summary>Teklif/sipariş PDF'i üretir. Dönen: (dosyaAdı, içerik).</summary>
-    Task<(string FileName, byte[] Content)> GenerateOfferPdfAsync(int offerId);
+    /// <summary>
+    /// Teklif/sipariş PDF'i üretir. <paramref name="includeLinePrices"/> false ise
+    /// müşteri PDF'i: kalem/satır fiyatları yazılmaz, yalnızca genel toplam görünür.
+    /// </summary>
+    Task<(string FileName, byte[] Content)> GenerateOfferPdfAsync(int offerId, bool includeLinePrices = true);
+
+    /// <summary>Servis Formu PDF'i üretir.</summary>
+    Task<(string FileName, byte[] Content)> GenerateServicePdfAsync(int serviceId);
 }
 
 public interface IExcelExportService

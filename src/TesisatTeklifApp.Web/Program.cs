@@ -42,6 +42,19 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.SlidingExpiration = true;
+    // Güvenli çerez: JS erişemez, HTTPS'te güvenli işaretlenir, CSRF için SameSite.
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+});
+
+// Kaba kuvvet denemelerine karşı hesap kilitleme.
+builder.Services.Configure<IdentityOptions>(o =>
+{
+    o.Lockout.MaxFailedAccessAttempts = 5;
+    o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+    o.Lockout.AllowedForNewUsers = true;
 });
 
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
@@ -72,7 +85,7 @@ using (var scope = app.Services.CreateScope())
     var db = sp.GetRequiredService<AppDbContext>();
     var userManager = sp.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = sp.GetRequiredService<RoleManager<IdentityRole>>();
-    await DbSeeder.SeedAsync(db, userManager, roleManager);
+    await DbSeeder.SeedAsync(db, userManager, roleManager, app.Environment.ContentRootPath);
 }
 
 // Ters proxy başlıklarını (X-Forwarded-Proto vb.) en başta uygula → Render HTTPS'i doğru görülür.
@@ -99,6 +112,8 @@ app.MapRazorComponents<App>()
 // Identity yardımcı endpoint'leri (logout) ve dosya indirme (PDF/Excel).
 app.MapAccountEndpoints();
 app.MapDownloadEndpoints();
-app.MapSyncEndpoints();   // saha (MAUI) senkron uçları
+
+// Sağlık kontrolü (bulut/Render için; kimlik gerektirmez).
+app.MapGet("/health", () => Results.Ok(new { ok = true })).AllowAnonymous();
 
 app.Run();

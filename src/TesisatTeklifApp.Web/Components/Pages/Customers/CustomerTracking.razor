@@ -1,9 +1,10 @@
 @page "/customers/{Id:int}/tracking"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin")]
 @rendermode InteractiveServer
 @inject ICustomerService CustomerService
 @inject IOfferService OfferService
 @inject IPaymentService PaymentService
+@inject IServiceRecordService ServiceService
 @inject NavigationManager Nav
 
 <PageTitle>Müşteri Takip</PageTitle>
@@ -179,6 +180,61 @@ else
             </table>
         </div>
     </div>
+
+    <div class="row g-3 mt-1">
+        @* Satın alınan ürünler *@
+        <div class="col-lg-6">
+            <div class="card summary-box">
+                <div class="card-header bg-white fw-semibold"><i class="bi bi-bag-check"></i> Satın Alınan Ürünler</div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead><tr><th>Ürün / Kalem</th><th class="text-end">Toplam Adet</th><th>Son Tarih</th></tr></thead>
+                        <tbody>
+                            @foreach (var p in soldProducts)
+                            {
+                                <tr><td>@p.Name</td><td class="text-end">@FormatQty(p.Qty) @p.Unit</td><td>@p.LastDate.ToString("dd.MM.yyyy")</td></tr>
+                            }
+                            @if (soldProducts.Count == 0)
+                            {
+                                <tr><td colspan="3" class="text-center text-muted py-3">Kayıt yok.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @* Servis geçmişi *@
+        <div class="col-lg-6">
+            <div class="card summary-box">
+                <div class="card-header bg-white fw-semibold d-flex align-items-center">
+                    <span><i class="bi bi-tools"></i> Servis Geçmişi</span>
+                    <a href="services/new" class="btn btn-sm btn-success ms-auto">Yeni Servis</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead><tr><th>Servis No</th><th>Tarih</th><th>Cihaz</th><th class="text-end">Tutar</th><th></th></tr></thead>
+                        <tbody>
+                            @foreach (var s in services)
+                            {
+                                <tr>
+                                    <td>@s.ServiceNumber</td>
+                                    <td>@s.ApplicationDate.ToString("dd.MM.yyyy")</td>
+                                    <td class="small">@($"{s.DeviceBrand} {s.DeviceModel}".Trim())</td>
+                                    <td class="text-end">@s.TotalAmount.ToString("#,##0") ₺</td>
+                                    <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="services/@s.Id">Aç</a></td>
+                                </tr>
+                            }
+                            @if (services.Count == 0)
+                            {
+                                <tr><td colspan="5" class="text-center text-muted py-3">Servis kaydı yok.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
@@ -192,7 +248,13 @@ else
 
     private decimal totalAmount, totalPaid, totalRemaining;
 
+    private record SoldRow(string Name, decimal Qty, string Unit, DateTime LastDate);
+    private List<SoldRow> soldProducts = new();
+    private List<ServiceRecord> services = new();
+
     protected override async Task OnParametersSetAsync() => await LoadData();
+
+    private static string FormatQty(decimal v) => v % 1 == 0 ? v.ToString("0") : v.ToString("0.##");
 
     private async Task LoadData()
     {
@@ -201,6 +263,27 @@ else
 
         orders = all.Where(o => o.IsOrder).ToList();
         offersOnly = all.Where(o => !o.IsOrder && o.Status != OfferStatus.Cancelled).ToList();
+
+        // Satın alınan ürünler: müşterinin siparişlerindeki kalemler toplulaştırılır.
+        var sold = new Dictionary<string, (decimal qty, string unit, DateTime last)>();
+        foreach (var o in orders)
+        {
+            var full = await OfferService.GetByIdAsync(o.Id);
+            if (full is null) continue;
+            foreach (var it in full.Items.Where(i => i.IsSelected && i.Quantity > 0))
+            {
+                var key = it.ItemName;
+                var d = o.WorkEndDate ?? o.OfferDate;
+                if (sold.TryGetValue(key, out var cur))
+                    sold[key] = (cur.qty + it.Quantity, cur.unit, d > cur.last ? d : cur.last);
+                else
+                    sold[key] = (it.Quantity, it.Unit, d);
+            }
+        }
+        soldProducts = sold.Select(kv => new SoldRow(kv.Key, kv.Value.qty, kv.Value.unit, kv.Value.last))
+                           .OrderByDescending(r => r.LastDate).ToList();
+
+        services = await ServiceService.GetByCustomerAsync(Id);
 
         totalAmount = orders.Sum(o => o.GrandTotal);
         totalPaid = orders.Sum(Paid);

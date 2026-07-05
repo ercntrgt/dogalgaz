@@ -32,10 +32,11 @@ public class PdfExportService : IPdfExportService
         _logoPath = logoPath;
     }
 
-    public async Task<(string FileName, byte[] Content)> GenerateOfferPdfAsync(int offerId)
+    public async Task<(string FileName, byte[] Content)> GenerateOfferPdfAsync(int offerId, bool includeLinePrices = true)
     {
         var offer = await _db.Offers
             .Include(o => o.Customer)
+            .Include(o => o.Usta)
             .Include(o => o.Items).ThenInclude(i => i.Product)
             .Include(o => o.RadiatorItems)
             .Include(o => o.PaymentPlans)
@@ -62,18 +63,19 @@ public class PdfExportService : IPdfExportService
                 {
                     col.Spacing(8);
                     CustomerBlock(col, offer);
-                    SectionTable(col, "Kombi / Kazan", offer, OfferSections.KombiKazan);
-                    SectionTable(col, "Doğalgaz Tesisatı", offer, OfferSections.GasInstallation);
-                    SectionTable(col, "Malzeme / Ekipman", offer, OfferSections.Material);
-                    RadiatorTable(col, offer);
-                    SectionTable(col, "Tesisat Hizmetleri", offer, OfferSections.Installation);
-                    SectionTable(col, "İşçilik", offer, OfferSections.Labor);
+                    SectionTable(col, "Kombi / Kazan", offer, OfferSections.KombiKazan, includeLinePrices);
+                    SectionTable(col, "Doğalgaz Tesisatı", offer, OfferSections.GasInstallation, includeLinePrices);
+                    SectionTable(col, "Malzeme / Ekipman", offer, OfferSections.Material, includeLinePrices);
+                    RadiatorTable(col, offer, includeLinePrices);
+                    SectionTable(col, "Tesisat Hizmetleri", offer, OfferSections.Installation, includeLinePrices);
+                    SectionTable(col, "İşçilik", offer, OfferSections.Labor, includeLinePrices);
                     if (!string.IsNullOrWhiteSpace(offer.GeneralNotes))
                         NotesBlock(col, offer.GeneralNotes!);
-                    PricingSummary(col, offer);
-                    PaymentPlanBlock(col, offer);
-                    WorkProgramBlock(col, offer);
-                    if (summary.InsufficientItems.Count > 0)
+                    PricingSummary(col, offer, includeLinePrices);
+                    if (includeLinePrices) PaymentPlanBlock(col, offer);
+                    WorkProgramBlock(col, offer, includeLinePrices);
+                    // Eksik ürünler yalnızca iç (fiyatlı) PDF'te; müşteri PDF'inde gösterilmez.
+                    if (includeLinePrices && summary.InsufficientItems.Count > 0)
                         MissingProductsBlock(col, summary.InsufficientItems);
                     SignatureBlock(col, offer.CustomerSignature);
                 });
@@ -138,7 +140,7 @@ public class PdfExportService : IPdfExportService
         });
     }
 
-    private void SectionTable(ColumnDescriptor col, string title, Offer offer, string section)
+    private void SectionTable(ColumnDescriptor col, string title, Offer offer, string section, bool prices)
     {
         // 0 adet/metre olan kalemler PDF'e girmez.
         var items = offer.Items
@@ -150,31 +152,47 @@ public class PdfExportService : IPdfExportService
         {
             inner.Item().Table(table =>
             {
-                table.ColumnsDefinition(c =>
+                if (prices)
                 {
-                    c.ConstantColumn(20); c.RelativeColumn(3); c.ConstantColumn(45);
-                    c.ConstantColumn(40); c.ConstantColumn(60); c.ConstantColumn(65); c.ConstantColumn(70);
-                });
-                TableHeader(table, "#", "Kalem", "Adet", "Birim", "B.Fiyat", "Toplam", "Stok");
+                    table.ColumnsDefinition(c =>
+                    {
+                        c.ConstantColumn(20); c.RelativeColumn(3); c.ConstantColumn(45);
+                        c.ConstantColumn(40); c.ConstantColumn(60); c.ConstantColumn(65); c.ConstantColumn(70);
+                    });
+                    TableHeader(table, "#", "Kalem", "Adet", "Birim", "B.Fiyat", "Toplam", "Stok");
+                }
+                else
+                {
+                    // Müşteri PDF'i: fiyat/stok sütunları yok.
+                    table.ColumnsDefinition(c =>
+                    {
+                        c.ConstantColumn(20); c.RelativeColumn(4); c.ConstantColumn(55); c.ConstantColumn(50);
+                    });
+                    TableHeader(table, "#", "Kalem", "Adet", "Birim");
+                }
 
                 var i = 1;
                 foreach (var it in items)
                 {
-                    var bg = it.IsStockInsufficient ? Red : (i % 2 == 0 ? LightGray : "#ffffff");
-                    var fc = it.IsStockInsufficient ? "#ffffff" : "#000000";
+                    // Müşteri PDF'inde stok/kırmızı bilgisi de gizlidir.
+                    var bg = (prices && it.IsStockInsufficient) ? Red : (i % 2 == 0 ? LightGray : "#ffffff");
+                    var fc = (prices && it.IsStockInsufficient) ? "#ffffff" : "#000000";
                     Cell(table, bg, fc, (i++).ToString());
                     Cell(table, bg, fc, it.ItemName);
                     Cell(table, bg, fc, Num(it.Quantity));
                     Cell(table, bg, fc, it.Unit);
-                    Cell(table, bg, fc, Money(it.UnitPrice));
-                    Cell(table, bg, fc, Money(it.TotalPrice));
-                    Cell(table, bg, fc, it.IsStockInsufficient ? $"Eksik {Num(it.MissingQuantity)}" : "-");
+                    if (prices)
+                    {
+                        Cell(table, bg, fc, Money(it.UnitPrice));
+                        Cell(table, bg, fc, Money(it.TotalPrice));
+                        Cell(table, bg, fc, it.IsStockInsufficient ? $"Eksik {Num(it.MissingQuantity)}" : "-");
+                    }
                 }
             });
         });
     }
 
-    private void RadiatorTable(ColumnDescriptor col, Offer offer)
+    private void RadiatorTable(ColumnDescriptor col, Offer offer, bool prices)
     {
         // Boş (0 panel ve 0 vana) radyatör satırları PDF'e girmez.
         var radItems = offer.RadiatorItems
@@ -185,25 +203,39 @@ public class PdfExportService : IPdfExportService
         {
             inner.Item().Table(table =>
             {
-                table.ColumnsDefinition(c =>
+                if (prices)
                 {
-                    c.RelativeColumn(2); c.RelativeColumn(2); c.ConstantColumn(55);
-                    c.ConstantColumn(45); c.ConstantColumn(60); c.ConstantColumn(70);
-                });
-                TableHeader(table, "Oda", "Marka/Ölçü", "Panel(m)", "Vana", "Metre F.", "Toplam");
+                    table.ColumnsDefinition(c =>
+                    {
+                        c.RelativeColumn(2); c.RelativeColumn(2); c.ConstantColumn(55);
+                        c.ConstantColumn(45); c.ConstantColumn(60); c.ConstantColumn(70);
+                    });
+                    TableHeader(table, "Oda", "Marka/Ölçü", "Panel(m)", "Vana", "Metre F.", "Toplam");
+                }
+                else
+                {
+                    table.ColumnsDefinition(c =>
+                    {
+                        c.RelativeColumn(2); c.RelativeColumn(2); c.ConstantColumn(55); c.ConstantColumn(45);
+                    });
+                    TableHeader(table, "Oda", "Marka/Ölçü", "Panel(m)", "Vana");
+                }
                 var i = 0;
                 foreach (var r in radItems)
                 {
-                    var bg = r.IsStockInsufficient ? Red : (i++ % 2 == 0 ? LightGray : "#ffffff");
-                    var fc = r.IsStockInsufficient ? "#ffffff" : "#000000";
+                    var bg = (prices && r.IsStockInsufficient) ? Red : (i++ % 2 == 0 ? LightGray : "#ffffff");
+                    var fc = (prices && r.IsStockInsufficient) ? "#ffffff" : "#000000";
                     Cell(table, bg, fc, r.RoomName ?? "-");
                     var olcu = (r.RadiatorHeight.HasValue || r.RadiatorWidth.HasValue)
                         ? $"{r.RadiatorHeight}*{r.RadiatorWidth}" : r.RadiatorSize;
                     Cell(table, bg, fc, $"{r.RadiatorBrand} {olcu}");
                     Cell(table, bg, fc, Num(r.PanelLength));
                     Cell(table, bg, fc, Num(r.ValveQuantity));
-                    Cell(table, bg, fc, Money(r.MeterPrice));
-                    Cell(table, bg, fc, Money(r.TotalPrice));
+                    if (prices)
+                    {
+                        Cell(table, bg, fc, Money(r.MeterPrice));
+                        Cell(table, bg, fc, Money(r.TotalPrice));
+                    }
                 }
             });
             var totalPanel = radItems.Sum(r => r.PanelLength);
@@ -211,33 +243,39 @@ public class PdfExportService : IPdfExportService
         });
     }
 
-    private void PricingSummary(ColumnDescriptor col, Offer offer)
+    private void PricingSummary(ColumnDescriptor col, Offer offer, bool prices)
     {
-        Card(col, "Fiyatlandırma Özeti", inner =>
+        Card(col, prices ? "Fiyatlandırma Özeti" : "Tutar", inner =>
         {
             inner.Item().Row(r =>
             {
                 r.RelativeItem();
                 r.ConstantItem(240).Column(c =>
                 {
-                    Line(c, "Kombi / Kazan", offer.KombiKazanTotal);
-                    Line(c, "Doğalgaz Tesisatı", offer.GasInstallationTotal);
-                    Line(c, "Malzeme / Ekipman", offer.MaterialTotal);
-                    Line(c, "Radyatör", offer.RadiatorTotal);
-                    Line(c, "Tesisat Hizmetleri", offer.InstallationTotal);
-                    Line(c, "İşçilik", offer.LaborTotal);
-                    c.Item().PaddingVertical(2).LineHorizontal(0.5f);
-                    Line(c, "Ara Toplam", offer.SubTotal);
-                    Line(c, $"İskonto (%{offer.DiscountRate})", offer.DiscountAmount);
-                    Line(c, $"KDV (%{offer.VatRate}){(offer.IsVatIncluded ? " - dahil" : "")}", offer.VatAmount);
-                    c.Item().PaddingVertical(2).LineHorizontal(0.5f);
+                    if (prices)
+                    {
+                        Line(c, "Kombi / Kazan", offer.KombiKazanTotal);
+                        Line(c, "Doğalgaz Tesisatı", offer.GasInstallationTotal);
+                        Line(c, "Malzeme / Ekipman", offer.MaterialTotal);
+                        Line(c, "Radyatör", offer.RadiatorTotal);
+                        Line(c, "Tesisat Hizmetleri", offer.InstallationTotal);
+                        Line(c, "İşçilik", offer.LaborTotal);
+                        c.Item().PaddingVertical(2).LineHorizontal(0.5f);
+                        Line(c, "Ara Toplam", offer.SubTotal);
+                        Line(c, $"İskonto (%{offer.DiscountRate})", offer.DiscountAmount);
+                        Line(c, $"KDV (%{offer.VatRate}){(offer.IsVatIncluded ? " - dahil" : "")}", offer.VatAmount);
+                        c.Item().PaddingVertical(2).LineHorizontal(0.5f);
+                    }
                     c.Item().Row(rr =>
                     {
                         rr.RelativeItem().Text("GENEL TOPLAM").Bold().FontColor(Navy);
                         rr.ConstantItem(90).AlignRight().Text(Money(offer.GrandTotal)).Bold().FontColor(Navy);
                     });
-                    Line(c, "Peşinat", offer.AdvancePayment);
-                    Line(c, "Kalan Ödeme", offer.RemainingPayment);
+                    if (prices)
+                    {
+                        Line(c, "Peşinat", offer.AdvancePayment);
+                        Line(c, "Kalan Ödeme", offer.RemainingPayment);
+                    }
                 });
             });
         });
@@ -255,15 +293,19 @@ public class PdfExportService : IPdfExportService
         });
     }
 
-    private void WorkProgramBlock(ColumnDescriptor col, Offer offer)
+    private void WorkProgramBlock(ColumnDescriptor col, Offer offer, bool prices)
     {
         Card(col, "İş Programı", inner =>
         {
             inner.Item().Row(r =>
             {
-                r.RelativeItem().Text($"Başlangıç: {offer.WorkStartDate:dd.MM.yyyy}");
-                r.RelativeItem().Text($"Teslim: {offer.WorkEndDate:dd.MM.yyyy}");
-                r.RelativeItem().Text($"İşveren: {offer.EmployerName ?? "-"}");
+                r.RelativeItem().Text($"Başlangıç: {(offer.WorkStartDate.HasValue ? offer.WorkStartDate.Value.ToString("dd.MM.yyyy") : "-")}");
+                r.RelativeItem().Text($"Teslim: {(offer.WorkEndDate.HasValue ? offer.WorkEndDate.Value.ToString("dd.MM.yyyy") : "-")}");
+                // Usta ve hakediş iç bilgidir — yalnızca ofis (fiyatlı) PDF'inde görünür.
+                if (prices)
+                    r.RelativeItem().Text($"Usta: {offer.Usta?.Name ?? "-"}");
+                else
+                    r.RelativeItem().Text("");
             });
         });
     }
@@ -376,4 +418,119 @@ public class PdfExportService : IPdfExportService
         PaymentType.CreditCard => "Kredi Kartı",
         _ => "Diğer"
     };
+
+    // ==================== SERVİS FORMU PDF ====================
+    public async Task<(string FileName, byte[] Content)> GenerateServicePdfAsync(int serviceId)
+    {
+        var s = await _db.ServiceRecords
+            .Include(x => x.Customer)
+            .Include(x => x.ServicedProduct)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == serviceId)
+            ?? throw new InvalidOperationException("Servis kaydı bulunamadı.");
+
+        byte[] logo = _logoPath is not null && File.Exists(_logoPath)
+            ? await File.ReadAllBytesAsync(_logoPath) : Array.Empty<byte>();
+
+        var custName = s.Customer?.FullName ?? s.CustomerName ?? "-";
+        var phone = s.Customer?.Phone ?? s.Phone ?? "-";
+        var address = s.Customer?.Address ?? s.Address ?? "-";
+
+        var doc = Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(28);
+                page.DefaultTextStyle(t => t.FontSize(9).FontFamily("Helvetica"));
+
+                page.Header().Row(row =>
+                {
+                    if (logo.Length > 0)
+                        row.ConstantItem(150).AlignMiddle().Image(logo).FitWidth();
+                    else
+                        row.ConstantItem(150).AlignMiddle().Text("ÖZDEMİR").FontSize(20).Bold().FontColor(Navy);
+                    row.RelativeItem().AlignRight().Column(c =>
+                    {
+                        c.Item().Text("SERVİS FORMU").FontSize(16).Bold().FontColor(Navy);
+                        c.Item().Text("Kombi / Klima / Isıtma Sistemleri").FontSize(9).FontColor(Gray);
+                        c.Item().PaddingTop(4).Text($"Servis No: {s.ServiceNumber}").Bold();
+                        c.Item().Text($"Başvuru: {s.ApplicationDate:dd.MM.yyyy}");
+                    });
+                });
+
+                page.Content().PaddingVertical(8).Column(col =>
+                {
+                    col.Spacing(8);
+
+                    Card(col, "Müşteri Bilgileri", inner =>
+                    {
+                        inner.Item().Text($"Ad Soyad: {custName}");
+                        inner.Item().Text($"Telefon: {phone}");
+                        inner.Item().Text($"Adres: {address}");
+                    });
+
+                    Card(col, "Servis Bilgileri", inner =>
+                    {
+                        inner.Item().Row(r =>
+                        {
+                            r.RelativeItem().Text($"Randevu: {(s.AppointmentDate.HasValue ? s.AppointmentDate.Value.ToString("dd.MM.yyyy") : "-")}");
+                            r.RelativeItem().Text($"Onarım: {(s.RepairDate.HasValue ? s.RepairDate.Value.ToString("dd.MM.yyyy") : "-")}");
+                        });
+                        inner.Item().Text($"Servis Nedeni: {ServiceReasonLabels.Text(s.ServiceReasons)}");
+                        var cihaz = s.ServicedProduct?.Name
+                            ?? $"{s.DeviceBrand} {s.DeviceModel} {s.DeviceType}".Trim();
+                        inner.Item().Text($"Cihaz: {(string.IsNullOrWhiteSpace(cihaz) ? "-" : cihaz)}");
+                    });
+
+                    Card(col, "Şikayetin Konusu", inner =>
+                        inner.Item().Text(string.IsNullOrWhiteSpace(s.ComplaintSubject) ? "-" : s.ComplaintSubject));
+
+                    Card(col, "Yapılan İşlem", inner =>
+                        inner.Item().Text(string.IsNullOrWhiteSpace(s.WorkDone) ? "-" : s.WorkDone));
+
+                    Card(col, "Ödenecek Genel Toplam", inner =>
+                        inner.Item().AlignRight().Text(Money(s.TotalAmount)).Bold().FontColor(Navy).FontSize(12));
+
+                    if (!string.IsNullOrWhiteSpace(s.SpecialNote))
+                        Card(col, "Özel Not", inner => inner.Item().Text(s.SpecialNote!));
+
+                    // İmzalar
+                    var techSig = DecodeSignature(s.TechnicianSignature);
+                    var custSig = DecodeSignature(s.CustomerSignature);
+                    col.Item().PaddingTop(16).Row(r =>
+                    {
+                        r.RelativeItem().Column(c =>
+                        {
+                            if (techSig is not null) c.Item().Height(50).AlignCenter().Image(techSig).FitHeight();
+                            else c.Item().Height(50);
+                            c.Item().LineHorizontal(0.7f);
+                            c.Item().AlignCenter().Text($"Teknisyen{(string.IsNullOrWhiteSpace(s.TechnicianName) ? "" : " - " + s.TechnicianName)}").FontColor(Gray);
+                        });
+                        r.ConstantItem(40);
+                        r.RelativeItem().Column(c =>
+                        {
+                            if (custSig is not null) c.Item().Height(50).AlignCenter().Image(custSig).FitHeight();
+                            else c.Item().Height(50);
+                            c.Item().LineHorizontal(0.7f);
+                            c.Item().AlignCenter().Text("Müşteri İmza").FontColor(Gray);
+                        });
+                    });
+
+                    col.Item().PaddingTop(8).Text(
+                        "Cihaz üzerinde değiştirilen parçalar 1 (bir) yıl garanti kapsamındadır.")
+                        .Italic().FontColor(Gray).FontSize(8);
+                });
+
+                page.Footer().AlignCenter().Text(t =>
+                {
+                    t.Span("ÖZDEMİR Mühendislik Mekanik Tesisat").FontColor(Gray);
+                });
+            });
+        });
+
+        var bytes = doc.GeneratePdf();
+        var safe = custName.Replace(" ", "_");
+        return ($"Servis_Formu_{safe}_{s.ApplicationDate:yyyyMMdd}.pdf", bytes);
+    }
 }

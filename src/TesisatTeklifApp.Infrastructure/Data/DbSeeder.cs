@@ -12,7 +12,8 @@ namespace TesisatTeklifApp.Infrastructure.Data;
 public static class DbSeeder
 {
     public static async Task SeedAsync(AppDbContext db,
-        UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
+        string? contentRootPath = null)
     {
         // SQLite: migration geçmişiyle; diğer sağlayıcılar (Postgres): modelden şema oluştur.
         if (db.Database.IsSqlite())
@@ -25,10 +26,13 @@ public static class DbSeeder
             if (!await roleManager.RoleExistsAsync(role))
                 await roleManager.CreateAsync(new IdentityRole(role));
 
-        // --- Demo kullanıcılar (her rol için bir hesap) ---
+        // --- Kullanıcılar. Yönetici + Satış. (Görüntüleyici hesabı yok; müşteri onayı özel link ile.) ---
         await EnsureUser(userManager, "admin@ozdemir.local", "Admin!123", "Sistem Yöneticisi", AppRoles.Admin);
         await EnsureUser(userManager, "satis@ozdemir.local", "Satis!123", "Satış Personeli", AppRoles.SalesPerson);
-        await EnsureUser(userManager, "gozlemci@ozdemir.local", "Gozlem!123", "Görüntüleyici", AppRoles.Viewer);
+
+        // Görüntüleyici hesabı artık kullanılmıyor — mevcut kurulumlarda varsa temizle.
+        foreach (var v in await userManager.GetUsersInRoleAsync(AppRoles.Viewer))
+            await userManager.DeleteAsync(v);
 
         // --- Stok ayarı (tek satır) ---
         if (!await db.StockSettings.AnyAsync())
@@ -37,12 +41,56 @@ public static class DbSeeder
             await db.SaveChangesAsync();
         }
 
-        // --- Örnek ürünler ---
-        if (!await db.Products.AnyAsync())
+        // --- Örnek ustalar ---
+        if (!await db.Ustalar.AnyAsync())
         {
-            db.Products.AddRange(SampleProducts());
+            db.Ustalar.AddRange(
+                new Usta { Name = "Ahmet Usta", Specialty = "Tesisatçı", IsActive = true },
+                new Usta { Name = "Mehmet Usta", Specialty = "Kombici", IsActive = true });
             await db.SaveChangesAsync();
         }
+
+        // --- Ürünler: mevcut katalog (165) yoksa dosyadan yükle, o da yoksa örnekler ---
+        if (await db.Products.CountAsync() < 15)
+        {
+            var seeded = LoadCatalog(contentRootPath);
+            db.Products.AddRange(seeded.Count > 0 ? seeded : SampleProducts());
+            await db.SaveChangesAsync();
+        }
+    }
+
+    /// <summary>Web/Data/catalog.json (165 ürün) — yeni/temiz veritabanları için.</summary>
+    private static List<Product> LoadCatalog(string? contentRootPath)
+    {
+        try
+        {
+            var path = Path.Combine(contentRootPath ?? ".", "Data", "catalog.json");
+            if (!File.Exists(path)) return new();
+            var json = File.ReadAllText(path);
+            var items = System.Text.Json.JsonSerializer.Deserialize<List<CatalogItem>>(json,
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+            return items.Where(c => !string.IsNullOrWhiteSpace(c.Name)).Select(c => new Product
+            {
+                Name = c.Name!, Category = string.IsNullOrWhiteSpace(c.Category) ? ProductCategories.Diger : c.Category!,
+                Brand = c.Brand, Model = c.Model, Unit = string.IsNullOrWhiteSpace(c.Unit) ? "Adet" : c.Unit!,
+                PurchasePrice = (decimal)c.PurchasePrice, SalePrice = (decimal)c.SalePrice,
+                VatRate = c.VatRate == 0 ? 20m : (decimal)c.VatRate,
+                IsActive = true, IsStockTracked = false
+            }).ToList();
+        }
+        catch { return new(); }
+    }
+
+    private class CatalogItem
+    {
+        public string? Name { get; set; }
+        public string? Category { get; set; }
+        public string? Brand { get; set; }
+        public string? Model { get; set; }
+        public string? Unit { get; set; }
+        public double PurchasePrice { get; set; }
+        public double SalePrice { get; set; }
+        public double VatRate { get; set; }
     }
 
     private static async Task EnsureUser(UserManager<ApplicationUser> userManager,

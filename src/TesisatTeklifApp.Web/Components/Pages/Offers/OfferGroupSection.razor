@@ -1,0 +1,128 @@
+@* Grup akordeonu: başlığa basınca açılır, ürün aranır/seçilerek eklenir. Fiyat hücreleri .price-cell ile gizlenebilir. *@
+@using TesisatTeklifApp.Domain.Constants
+
+<div class="card group-acc mb-2 @(collapsed ? "collapsed" : "")">
+    <div class="card-header group-head d-flex align-items-center" @onclick="Toggle" role="button">
+        <i class="bi @Group.Icon me-2"></i>
+        <span class="fw-semibold">@Group.Name</span>
+        @if (GroupItems.Count > 0)
+        {
+            <span class="ms-2 badge rounded-pill bg-primary">@GroupItems.Count</span>
+        }
+        <span class="ms-auto toggle-ico">@(collapsed ? "▸" : "▾")</span>
+    </div>
+    @if (!collapsed)
+    {
+        <div class="card-body pt-2">
+            @if (Products.Count > 0)
+            {
+                <input class="form-control form-control-sm mb-2" placeholder="🔍 @Group.Name içinde ürün ara..."
+                       @bind="search" @bind:event="oninput" />
+                <div class="group-picker mb-2">
+                    @foreach (var p in Filtered.Take(200))
+                    {
+                        <button type="button" class="group-pick" @onclick="() => AddProduct(p)">
+                            <i class="bi bi-plus-circle text-success me-1"></i>
+                            <span class="pick-name">@p.Name</span>
+                            <span class="pick-price price-cell ms-auto">@p.SalePrice.ToString("#,##0") ₺</span>
+                        </button>
+                    }
+                    @if (Filtered.Count == 0)
+                    {
+                        <div class="text-muted small p-2">Eşleşen ürün yok.</div>
+                    }
+                </div>
+            }
+            <button type="button" class="btn btn-sm btn-outline-secondary mb-2" @onclick="AddFreeRow">
+                <i class="bi bi-pencil-square"></i> Manuel kalem ekle
+            </button>
+
+            @if (GroupItems.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th style="min-width:160px">Kalem</th>
+                                <th style="width:84px">Adet</th>
+                                <th style="width:88px">Birim</th>
+                                <th style="width:110px" class="price-cell">Birim Fiyat</th>
+                                <th style="width:120px" class="text-end price-cell">Toplam</th>
+                                <th style="width:36px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in GroupItems)
+                            {
+                                <tr>
+                                    <td><input class="form-control form-control-sm" @bind="item.ItemName" @bind:after="Changed" placeholder="Kalem adı" /></td>
+                                    <td><input type="number" step="any" class="form-control form-control-sm" @bind="item.Quantity" @bind:after="Changed" /></td>
+                                    <td>
+                                        <select class="form-select form-select-sm" @bind="item.Unit" @bind:after="Changed">
+                                            @foreach (var u in Units.All)
+                                            {
+                                                <option value="@u">@u</option>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.Unit) && !Units.All.Contains(item.Unit))
+                                            {
+                                                <option value="@item.Unit">@item.Unit</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td class="price-cell"><input type="number" step="any" class="form-control form-control-sm" @bind="item.UnitPrice" @bind:after="Changed" /></td>
+                                    <td class="text-end fw-semibold price-cell">@item.TotalPrice.ToString("#,##0.00") ₺</td>
+                                    <td><button type="button" class="btn btn-sm btn-outline-danger" @onclick="() => Remove(item)">×</button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-muted small">Bu gruptan henüz kalem eklenmedi.</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public OfferGroup Group { get; set; } = default!;
+    [Parameter] public ICollection<OfferItem> AllItems { get; set; } = new List<OfferItem>();
+    [Parameter] public List<Product> Products { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private bool collapsed = true;
+    private string search = "";
+
+    private void Toggle() => collapsed = !collapsed;
+
+    private List<OfferItem> GroupItems => AllItems.Where(i => i.GroupName == Group.Name).ToList();
+
+    private List<Product> Filtered => string.IsNullOrWhiteSpace(search)
+        ? Products
+        : Products.Where(p => p.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    private void AddProduct(Product p)
+    {
+        // Listeden bilerek eklenen ürün 1 adet gelir (duruma göre değiştirilir).
+        AllItems.Add(new OfferItem
+        {
+            SectionName = Group.Section, GroupName = Group.Name, ProductId = p.Id,
+            ItemName = p.Name, Unit = p.Unit, UnitPrice = p.SalePrice, Quantity = 1, IsSelected = true
+        });
+        Changed();
+    }
+
+    private void AddFreeRow()
+    {
+        AllItems.Add(new OfferItem
+        {
+            SectionName = Group.Section, GroupName = Group.Name, Unit = "Adet", Quantity = 0, IsSelected = true
+        });
+        Changed();
+    }
+
+    private void Remove(OfferItem item) { AllItems.Remove(item); Changed(); }
+    private void Changed() => OnChanged.InvokeAsync();
+}

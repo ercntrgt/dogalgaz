@@ -1,5 +1,5 @@
 @page "/payments"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin")]
 @rendermode InteractiveServer
 @inject IPaymentService PaymentService
 @inject IAuditService Audit

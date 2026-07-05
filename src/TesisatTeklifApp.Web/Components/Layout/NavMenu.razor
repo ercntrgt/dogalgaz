@@ -5,25 +5,31 @@
     <NavLink class="nav-link" href="offers"><i class="bi bi-file-earmark-text"></i><span>Teklifler</span></NavLink>
     <NavLink class="nav-link" href="orders"><i class="bi bi-box-seam"></i><span>Siparişler</span></NavLink>
     <NavLink class="nav-link" href="schedule"><i class="bi bi-calendar3"></i><span>İş / Montaj Takvimi</span></NavLink>
-    <AuthorizeView Roles="Admin,SalesPerson" Context="a">
+    <AuthorizeView Roles="Admin,SalesPerson" Context="ns">
         <NavLink class="nav-link" href="offers/new"><i class="bi bi-plus-square"></i><span>Yeni Teklif</span></NavLink>
     </AuthorizeView>
 
-    <AuthorizeView Roles="Admin,SalesPerson" Context="p">
+    @* Aşağıdaki her şey yalnızca yöneticiye görünür. Satış personeli sadece teklif/sipariş + takvim görür. *@
+    <AuthorizeView Roles="Admin" Context="adm">
+        <div class="nav-group-title">Servis</div>
+        <NavLink class="nav-link" href="services"><i class="bi bi-tools"></i><span>Servis Kayıtları</span></NavLink>
+
+        <div class="nav-group-title">Usta &amp; Hakediş</div>
+        <NavLink class="nav-link" href="hakedis"><i class="bi bi-cash-stack"></i><span>Hakediş</span></NavLink>
+        <NavLink class="nav-link" href="ustalar"><i class="bi bi-person-badge"></i><span>Ustalar</span></NavLink>
+
         <div class="nav-group-title">Satınalma</div>
         <NavLink class="nav-link" href="purchases"><i class="bi bi-cart3"></i><span>Satınalma</span></NavLink>
         <NavLink class="nav-link" href="suppliers"><i class="bi bi-building"></i><span>Tedarikçiler</span></NavLink>
-    </AuthorizeView>
 
-    <div class="nav-group-title">Tanımlar</div>
-    <NavLink class="nav-link" href="customers"><i class="bi bi-people"></i><span>Müşteriler</span></NavLink>
-    <NavLink class="nav-link" href="products"><i class="bi bi-wrench-adjustable"></i><span>Ürünler</span></NavLink>
+        <div class="nav-group-title">Tanımlar</div>
+        <NavLink class="nav-link" href="customers"><i class="bi bi-people"></i><span>Müşteriler</span></NavLink>
+        <NavLink class="nav-link" href="products"><i class="bi bi-wrench-adjustable"></i><span>Ürünler</span></NavLink>
 
-    <div class="nav-group-title">Ödeme &amp; Raporlar</div>
-    <NavLink class="nav-link" href="payments"><i class="bi bi-cash-coin"></i><span>Ödeme Takvimi</span></NavLink>
-    <NavLink class="nav-link" href="reports"><i class="bi bi-bar-chart-line"></i><span>Raporlar</span></NavLink>
+        <div class="nav-group-title">Ödeme &amp; Raporlar</div>
+        <NavLink class="nav-link" href="payments"><i class="bi bi-cash-coin"></i><span>Ödeme Takvimi</span></NavLink>
+        <NavLink class="nav-link" href="reports"><i class="bi bi-bar-chart-line"></i><span>Raporlar</span></NavLink>
 
-    <AuthorizeView Roles="Admin" Context="b">
         <div class="nav-group-title">Yönetim</div>
         <NavLink class="nav-link" href="admin/stock-settings"><i class="bi bi-gear"></i><span>Stok Ayarları</span></NavLink>
         <NavLink class="nav-link" href="admin/stock-movements"><i class="bi bi-arrow-left-right"></i><span>Stok Hareketleri</span></NavLink>

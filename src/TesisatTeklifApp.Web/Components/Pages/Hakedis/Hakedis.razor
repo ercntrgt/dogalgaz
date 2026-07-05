@@ -1,0 +1,156 @@
+@page "/hakedis"
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+@inject IHakedisService HakedisSvc
+
+<PageTitle>Hakediş</PageTitle>
+
+<div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0">Usta Hakedişleri</h2>
+    <a href="ustalar" class="btn btn-outline-primary ms-auto"><i class="bi bi-person-badge"></i> Ustalar</a>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-lg-3"><StatCard Tone="info" Icon="bi-cash-stack" Title="Toplam Hakediş" Value="@Money(summary.TotalEarned)" /></div>
+    <div class="col-6 col-lg-3"><StatCard Tone="success" Icon="bi-check2-circle" Title="Ödenen" Value="@Money(summary.TotalPaid)" /></div>
+    <div class="col-6 col-lg-3"><StatCard Tone="danger" Icon="bi-wallet2" Title="Kalan Bakiye" Value="@Money(summary.TotalBalance)" /></div>
+    <div class="col-6 col-lg-3"><StatCard Tone="primary" Icon="bi-calendar-week" Title="Bu Hafta" Value="@Money(summary.ThisWeekEarned)" /></div>
+</div>
+
+<div class="row g-3">
+    @* Sol: usta bakiyeleri *@
+    <div class="col-lg-5">
+        <div class="card summary-box">
+            <div class="card-header bg-white fw-semibold">Usta Bakiyeleri</div>
+            <div class="card-body">
+                @if (balances.Count == 0)
+                {
+                    <p class="text-muted mb-0">Henüz hakediş kaydı yok. Teklif/sipariş formunda ustaya hakediş girin.</p>
+                }
+                @foreach (var b in balances)
+                {
+                    <div class="usta-row @(payUstaId == b.UstaId ? "active" : "")">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <div class="fw-semibold">@b.UstaName <span class="text-muted small">@b.Specialty</span></div>
+                                <div class="small text-muted">@b.JobCount iş • Hakediş @Money(b.TotalEarned) • Ödenen @Money(b.TotalPaid)</div>
+                            </div>
+                            <div class="ms-auto text-end">
+                                <div class="fw-bold @(b.Balance > 0 ? "text-danger" : "text-success")">@Money(b.Balance)</div>
+                                <button class="btn btn-sm btn-outline-success mt-1" @onclick="() => StartPay(b)">Ödeme Ekle</button>
+                            </div>
+                        </div>
+                        @if (payUstaId == b.UstaId)
+                        {
+                            <div class="pay-form mt-2">
+                                <div class="row g-2 align-items-end">
+                                    <div class="col-5">
+                                        <label class="form-label small mb-0">Tutar (₺)</label>
+                                        <input type="number" step="any" class="form-control form-control-sm" @bind="payAmount" />
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="form-label small mb-0">Tarih</label>
+                                        <input type="date" class="form-control form-control-sm" @bind="payDate" />
+                                    </div>
+                                    <div class="col-3 d-flex gap-1">
+                                        <button class="btn btn-sm btn-success" @onclick="() => SavePay(b.UstaId)">Kaydet</button>
+                                    </div>
+                                    <div class="col-12">
+                                        <input class="form-control form-control-sm mt-1" placeholder="Açıklama (isteğe bağlı)" @bind="payNote" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Sağ: haftalık hakediş tablosu *@
+    <div class="col-lg-7">
+        <div class="card summary-box">
+            <div class="card-header bg-white fw-semibold d-flex align-items-center">
+                <span>Haftalık Yapılan İşler</span>
+                <select class="form-select form-select-sm ms-auto" style="width:auto" @bind="ustaFilter" @bind:after="Load">
+                    <option value="0">Tüm ustalar</option>
+                    @foreach (var b in balances)
+                    {
+                        <option value="@b.UstaId">@b.UstaName</option>
+                    }
+                </select>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead><tr><th>Hafta</th><th>Form No</th><th>Müşteri</th><th>Usta</th><th>Tarih</th><th class="text-end">Hakediş</th></tr></thead>
+                    <tbody>
+                        @foreach (var grp in weekly.GroupBy(w => w.WeekLabel))
+                        {
+                            <tr class="table-light"><td colspan="5" class="fw-semibold">@grp.Key</td><td class="text-end fw-semibold">@Money(grp.Sum(x => x.Earning))</td></tr>
+                            @foreach (var w in grp)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td>@w.FormNumber</td>
+                                    <td>@w.CustomerName</td>
+                                    <td>@w.UstaName</td>
+                                    <td>@w.WorkDate.ToString("dd.MM.yyyy")</td>
+                                    <td class="text-end">@Money(w.Earning)</td>
+                                </tr>
+                            }
+                        }
+                        @if (weekly.Count == 0)
+                        {
+                            <tr><td colspan="6" class="text-center text-muted py-4">Kayıt yok.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .usta-row { border: 1px solid #eef0f4; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+    .usta-row.active { border-color: #b6e0c2; background: #f7fdf9; }
+    .pay-form { border-top: 1px dashed #d6dce6; padding-top: 8px; }
+</style>
+
+@code {
+    private HakedisSummary summary = new();
+    private List<UstaBalanceRow> balances = new();
+    private List<HakedisWeekRow> weekly = new();
+    private int ustaFilter;
+
+    private int payUstaId;
+    private decimal payAmount;
+    private DateTime payDate = DateTime.Today;
+    private string? payNote;
+
+    protected override async Task OnInitializedAsync() => await Load();
+
+    private async Task Load()
+    {
+        summary = await HakedisSvc.GetSummaryAsync();
+        balances = await HakedisSvc.GetUstaBalancesAsync();
+        weekly = await HakedisSvc.GetWeeklyScheduleAsync(new HakedisFilter { UstaId = ustaFilter == 0 ? null : ustaFilter });
+    }
+
+    private void StartPay(UstaBalanceRow b)
+    {
+        payUstaId = payUstaId == b.UstaId ? 0 : b.UstaId;
+        payAmount = b.Balance > 0 ? b.Balance : 0;
+        payDate = DateTime.Today;
+        payNote = null;
+    }
+
+    private async Task SavePay(int ustaId)
+    {
+        if (payAmount <= 0) return;
+        await HakedisSvc.AddPaymentAsync(ustaId, payAmount, payDate, payNote, null);
+        payUstaId = 0;
+        await Load();
+    }
+
+    private static string Money(decimal v) => v.ToString("#,##0.00") + " ₺";
+}

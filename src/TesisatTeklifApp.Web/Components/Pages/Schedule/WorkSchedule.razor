@@ -1,8 +1,9 @@
 @page "/schedule"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
 @rendermode InteractiveServer
 @inject IOfferService OfferService
 @inject IPaymentService PaymentService
+@inject IServiceRecordService ServiceService
 @inject NavigationManager Nav
 
 <PageTitle>İş / Montaj Takvimi</PageTitle>
@@ -65,15 +66,32 @@
                         {
                             <div class="cal-more">+@(pays.Count - 2) ödeme</div>
                         }
+                        @{ var svcs = svcByDate.TryGetValue(day.Date, out var sl) ? sl : new List<ServiceRecord>(); }
+                        @foreach (var s in svcs.Take(2))
+                        {
+                            <div class="cal-event" style="background:#0d9488"
+                                 title="Servis randevusu — @(s.Customer?.FullName ?? s.CustomerName)"
+                                 @onclick="@(() => Nav.NavigateTo($"services/{s.Id}"))">
+                                🔧 @(s.Customer?.FullName ?? s.CustomerName ?? "Servis")
+                            </div>
+                        }
+                        @if (svcs.Count > 2)
+                        {
+                            <div class="cal-more">+@(svcs.Count - 2) servis</div>
+                        }
                     </div>
                 }
             </div>
             <div class="mt-3 small text-muted d-flex gap-3 flex-wrap">
-                <span><span class="badge" style="background:#1a3a6b">&nbsp;</span> Sipariş</span>
+                <span><span class="badge" style="background:#17335f">&nbsp;</span> Sipariş / Montaj</span>
                 <span><span class="badge bg-warning text-dark">&nbsp;</span> Bekleyen tedarik</span>
                 <span><span class="badge bg-success">&nbsp;</span> Tamamlandı</span>
                 <span><span class="badge bg-secondary">&nbsp;</span> Onaylı teklif</span>
-                <span>💰 <span class="badge bg-info text-dark">&nbsp;</span> Ödeme vadesi</span>
+                @if (isAdmin)
+                {
+                    <span>🔧 <span class="badge" style="background:#0d9488">&nbsp;</span> Servis randevusu</span>
+                    <span>💰 <span class="badge bg-info text-dark">&nbsp;</span> Ödeme vadesi</span>
+                }
             </div>
         </div>
     </div>
@@ -150,8 +168,17 @@ else
     private List<DateTime> gridDays = new();
     private Dictionary<DateTime, List<Offer>> byDate = new();
     private Dictionary<DateTime, List<PaymentScheduleRow>> payByDate = new();
+    private Dictionary<DateTime, List<ServiceRecord>> svcByDate = new();
 
-    protected override async Task OnInitializedAsync() => await LoadCalendar();
+    private bool isAdmin;
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthState is not null)
+            isAdmin = (await AuthState).User.IsInRole(AppRoles.Admin);
+        await LoadCalendar();
+    }
 
     private async Task SetView(string v)
     {
@@ -170,15 +197,28 @@ else
         gridDays = Enumerable.Range(0, 42).Select(i => gridStart.AddDays(i)).ToList();
         var gridEnd = gridDays.Last();
 
+        // Montaj takvimi tüm işleri gösterir (saha planı). Satış da montaj tarihlerini görür.
         var list = await OfferService.GetWorkScheduleAsync(gridStart, gridEnd);
         byDate = list.GroupBy(o => (o.WorkStartDate ?? o.OfferDate).Date)
                      .ToDictionary(g => g.Key, g => g.ToList());
 
-        // Ödeme vadeleri de takvime düşsün (tutarıyla).
-        var pays = await PaymentService.GetScheduleAsync(new PaymentScheduleFilter { FromDate = gridStart, ToDate = gridEnd });
-        payByDate = pays.Where(p => p.PaymentDate.HasValue)
-                        .GroupBy(p => p.PaymentDate!.Value.Date)
-                        .ToDictionary(g => g.Key, g => g.ToList());
+        // Ödemeler ve servisler yalnızca yöneticiye (satış ödemeleri görmez).
+        payByDate = new();
+        svcByDate = new();
+        if (isAdmin)
+        {
+            var pays = await PaymentService.GetScheduleAsync(new PaymentScheduleFilter { FromDate = gridStart, ToDate = gridEnd });
+            payByDate = pays.Where(p => p.PaymentDate.HasValue)
+                            .GroupBy(p => p.PaymentDate!.Value.Date)
+                            .ToDictionary(g => g.Key, g => g.ToList());
+
+            // Servis randevuları takvime düşer (randevu tarihi ızgara aralığında).
+            var svc = await ServiceService.SearchAsync(new ServiceRecordFilter());
+            svcByDate = svc.Where(s => s.AppointmentDate.HasValue && s.Status != ServiceStatus.Iptal
+                                       && s.AppointmentDate.Value.Date >= gridStart && s.AppointmentDate.Value.Date <= gridEnd)
+                           .GroupBy(s => s.AppointmentDate!.Value.Date)
+                           .ToDictionary(g => g.Key, g => g.ToList());
+        }
     }
 
     private static string PayColor(PaymentScheduleStatus s) => s switch

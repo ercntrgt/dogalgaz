@@ -1,5 +1,5 @@
 @page "/purchases"
-@attribute [Authorize(Roles = "Admin,SalesPerson")]
+@attribute [Authorize(Roles = "Admin")]
 @rendermode InteractiveServer
 @inject IPurchaseService PurchaseService
 @inject NavigationManager Nav

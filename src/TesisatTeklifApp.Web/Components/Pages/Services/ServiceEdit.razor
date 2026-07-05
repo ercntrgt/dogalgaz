@@ -1,0 +1,333 @@
+@page "/services/new"
+@page "/services/{Id:int}"
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+@using TesisatTeklifApp.Domain.Constants
+@inject IServiceRecordService ServiceService
+@inject ICustomerService CustomerService
+@inject IOfferService OfferService
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<PageTitle>@(IsNew ? "Yeni Servis" : rec.ServiceNumber)</PageTitle>
+
+@if (loading)
+{
+    <p>Yükleniyor...</p>
+}
+else
+{
+    <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+        <h2 class="mb-0">@(IsNew ? "Yeni Servis Formu" : $"Servis — {rec.ServiceNumber}")</h2>
+        @if (!IsNew)
+        {
+            <a class="btn btn-outline-danger ms-auto" href="download/service/@rec.Id/pdf" target="_blank"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+        }
+    </div>
+
+    @* Servis aşamaları *@
+    <div class="svc-stepper mb-3">
+        @{
+            var stages = new (ServiceStatus st, string label, string icon)[]
+            {
+                (ServiceStatus.Yeni, "Başvuru", "bi-clipboard-plus"),
+                (ServiceStatus.RandevuVerildi, "Randevu", "bi-calendar-check"),
+                (ServiceStatus.Tamamlandi, "Tamamlandı", "bi-check2-circle"),
+            };
+        }
+        @foreach (var s in stages)
+        {
+            var active = (int)rec.Status >= (int)s.st && rec.Status != ServiceStatus.Iptal;
+            <div class="svc-step @(active ? "active" : "") @(rec.Status == s.st ? "current" : "")">
+                <span class="svc-dot"><i class="bi @s.icon"></i></span>
+                <span class="svc-lbl">@s.label</span>
+            </div>
+        }
+        @if (rec.Status == ServiceStatus.Iptal)
+        {
+            <div class="svc-step current" style="--c:#e0413a"><span class="svc-dot"><i class="bi bi-x-circle"></i></span><span class="svc-lbl">İptal</span></div>
+        }
+        <div class="ms-auto align-self-center d-flex gap-2 align-items-center flex-wrap">
+            <div class="d-flex align-items-center gap-1">
+                <span class="small text-muted">Randevu:</span>
+                <input type="date" class="form-control form-control-sm" style="width:160px" @bind="rec.AppointmentDate" />
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="GiveAppointment"><i class="bi bi-calendar-check"></i> Randevu Ver</button>
+            <button type="button" class="btn btn-sm btn-outline-success" @onclick="() => rec.Status = ServiceStatus.Tamamlandi"><i class="bi bi-check2"></i> Tamamlandı</button>
+        </div>
+    </div>
+    <div class="alert-box ab-info mb-3"><i class="bi bi-info-circle"></i>
+        <div>Randevu tarihi girip durumu <strong>Randevu Verildi</strong> yaptığınızda servis <a href="schedule">Montaj Takvimi</a>'ne otomatik düşer.</div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-6">
+            @* Müşteri *@
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">Müşteri</div>
+                <div class="card-body row g-2">
+                    <div class="col-12">
+                        <label class="form-label">Kayıtlı müşteri</label>
+                        <select class="form-select" @bind="rec.CustomerId" @bind:after="OnCustomerChanged">
+                            <option value="">-- müşteri seç (opsiyonel) --</option>
+                            @foreach (var c in customers)
+                            {
+                                <option value="@c.Id">@c.FullName — @c.Phone</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6"><label class="form-label">Ad Soyad</label><input class="form-control" @bind="rec.CustomerName" /></div>
+                    <div class="col-md-6"><label class="form-label">Telefon</label><input class="form-control" @bind="rec.Phone" /></div>
+                    <div class="col-12"><label class="form-label">Adres</label><input class="form-control" @bind="rec.Address" /></div>
+                </div>
+            </div>
+
+            @* Cihaz *@
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">Cihaz</div>
+                <div class="card-body row g-2">
+                    @if (customerDevices.Count > 0)
+                    {
+                        <div class="col-12">
+                            <label class="form-label">Müşterinin aldığı ürünlerden seç</label>
+                            <select class="form-select" @onchange="OnDevicePicked">
+                                <option value="">-- satın alınan üründen seç --</option>
+                                @foreach (var d in customerDevices)
+                                {
+                                    <option value="@d">@d</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                    <div class="col-md-4"><label class="form-label">Marka</label><input class="form-control" @bind="rec.DeviceBrand" /></div>
+                    <div class="col-md-4"><label class="form-label">Model</label><input class="form-control" @bind="rec.DeviceModel" /></div>
+                    <div class="col-md-4"><label class="form-label">Tür</label><input class="form-control" @bind="rec.DeviceType" placeholder="Kombi, Klima..." /></div>
+                </div>
+            </div>
+
+            @* Tarihler + Nedeni *@
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">Servis Bilgileri</div>
+                <div class="card-body">
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-4"><label class="form-label">Başvuru Tarihi</label><input type="date" class="form-control" @bind="rec.ApplicationDate" /></div>
+                        <div class="col-md-4"><label class="form-label">Randevu Tarihi</label><input type="date" class="form-control" @bind="rec.AppointmentDate" /></div>
+                        <div class="col-md-4"><label class="form-label">Onarım Tarihi</label><input type="date" class="form-control" @bind="rec.RepairDate" /></div>
+                    </div>
+                    <label class="form-label">Servis Nedeni</label>
+                    <div class="reason-grid">
+                        @foreach (var r in ServiceReasonLabels.All)
+                        {
+                            <label class="reason-item">
+                                <input type="checkbox" checked="@rec.ServiceReasons.HasFlag(r.Value)"
+                                       @onchange="e => ToggleReason(r.Value, (bool)(e.Value ?? false))" />
+                                <span>@r.Label</span>
+                            </label>
+                        }
+                    </div>
+                    <div class="row g-2 mt-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Durum</label>
+                            <select class="form-select" @bind="rec.Status">
+                                <option value="@ServiceStatus.Yeni">Yeni</option>
+                                <option value="@ServiceStatus.RandevuVerildi">Randevu Verildi</option>
+                                <option value="@ServiceStatus.Tamamlandi">Tamamlandı</option>
+                                <option value="@ServiceStatus.Iptal">İptal</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ödenecek Genel Toplam (₺)</label>
+                            <input type="number" step="any" class="form-control" @bind="rec.TotalAmount" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">Şikayet & Yapılan İşlem</div>
+                <div class="card-body">
+                    <label class="form-label">Şikayetin Konusu</label>
+                    <textarea class="form-control mb-2" rows="2" @bind="rec.ComplaintSubject"></textarea>
+                    <label class="form-label">Yapılan İşlem</label>
+                    <textarea class="form-control mb-2" rows="3" @bind="rec.WorkDone"></textarea>
+                    <label class="form-label">Özel Not</label>
+                    <textarea class="form-control" rows="2" @bind="rec.SpecialNote"></textarea>
+                </div>
+            </div>
+
+            <div class="card summary-box mb-3">
+                <div class="card-header bg-white fw-semibold">İmzalar</div>
+                <div class="card-body">
+                    <label class="form-label">Teknisyen Adı</label>
+                    <input class="form-control mb-2" @bind="rec.TechnicianName" />
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small">Teknisyen İmza</label>
+                            @if (!string.IsNullOrEmpty(rec.TechnicianSignature) && !resignTech)
+                            {
+                                <div><img src="@rec.TechnicianSignature" class="sig-preview" /></div>
+                                <button class="btn btn-sm btn-outline-secondary mt-1" @onclick="() => resignTech = true">Yeniden imzala</button>
+                            }
+                            else
+                            {
+                                <div class="sig-box"><canvas id="techCanvas" class="sig-canvas-sm"></canvas></div>
+                                <button class="btn btn-sm btn-outline-secondary mt-1" @onclick='() => Clear("techCanvas")'>Temizle</button>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small">Müşteri İmza</label>
+                            @if (!string.IsNullOrEmpty(rec.CustomerSignature) && !resignCust)
+                            {
+                                <div><img src="@rec.CustomerSignature" class="sig-preview" /></div>
+                                <button class="btn btn-sm btn-outline-secondary mt-1" @onclick="() => resignCust = true">Yeniden imzala</button>
+                            }
+                            else
+                            {
+                                <div class="sig-box"><canvas id="custCanvas" class="sig-canvas-sm"></canvas></div>
+                                <button class="btn btn-sm btn-outline-secondary mt-1" @onclick='() => Clear("custCanvas")'>Temizle</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(error)) { <div class="alert alert-danger">@error</div> }
+
+    <div class="d-flex gap-2 mb-5 sticky-bottom bg-light py-2">
+        <button class="btn btn-success" @onclick="Save">💾 Kaydet</button>
+        <a href="services" class="btn btn-outline-secondary">İptal</a>
+    </div>
+}
+
+<style>
+    .svc-stepper { display: flex; align-items: center; gap: .5rem; background: #fff; border: 1px solid var(--color-border, #e6ebf2); border-radius: 14px; padding: .6rem .9rem; flex-wrap: wrap; }
+    .svc-step { display: flex; align-items: center; gap: .45rem; color: #9aa4b4; --c: #17335f; }
+    .svc-step .svc-dot { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #eef1f6; color: #9aa4b4; }
+    .svc-step.active { color: #33477a; }
+    .svc-step.active .svc-dot { background: var(--c); color: #fff; }
+    .svc-step.current .svc-lbl { font-weight: 700; }
+    .svc-step:not(:last-of-type)::after { content: "›"; color: #c3cbd8; margin-left: .3rem; }
+    .reason-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+    .reason-item { display: flex; align-items: center; gap: 6px; background: #f7f9fc; border: 1px solid #e6ebf3; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: .9rem; }
+    .sig-box { border: 2px dashed #b9c4d6; border-radius: 10px; background: #fcfdff; }
+    .sig-canvas-sm { width: 100%; height: 120px; touch-action: none; display: block; }
+    .sig-preview { max-height: 90px; border: 1px solid #e3e7ee; border-radius: 8px; background:#fff; }
+</style>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    private bool IsNew => Id is null;
+    private bool loading = true;
+    private string? error;
+
+    private ServiceRecord rec = new();
+    private List<Customer> customers = new();
+    private List<string> customerDevices = new();
+    private bool resignTech, resignCust;
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await CustomerService.SearchAsync(new CustomerSearchFilter());
+        if (Id is int id)
+        {
+            rec = await ServiceService.GetByIdAsync(id) ?? new ServiceRecord();
+            if (rec.CustomerId is int cid) await LoadDevices(cid);
+        }
+        else
+        {
+            rec = new ServiceRecord { ApplicationDate = DateTime.Today, Status = ServiceStatus.Yeni };
+        }
+        loading = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Canvas'lar görünürse imza pad'lerini başlat.
+        if (string.IsNullOrEmpty(rec.TechnicianSignature) || resignTech)
+            await JS.InvokeVoidAsync("signaturePad.init", "techCanvas");
+        if (string.IsNullOrEmpty(rec.CustomerSignature) || resignCust)
+            await JS.InvokeVoidAsync("signaturePad.init", "custCanvas");
+    }
+
+    private void ToggleReason(ServiceReason r, bool on)
+    {
+        if (on) rec.ServiceReasons |= r;
+        else rec.ServiceReasons &= ~r;
+    }
+
+    // "Randevu Ver": durumu Randevu Verildi yapar; tarih boşsa bugünü koyar (takvime düşsün).
+    private void GiveAppointment()
+    {
+        rec.Status = ServiceStatus.RandevuVerildi;
+        rec.AppointmentDate ??= DateTime.Today;
+    }
+
+    private async Task OnCustomerChanged()
+    {
+        if (rec.CustomerId is int cid)
+        {
+            var c = customers.FirstOrDefault(x => x.Id == cid);
+            if (c is not null)
+            {
+                rec.CustomerName = c.FullName;
+                rec.Phone = c.Phone;
+                rec.Address = c.Address;
+            }
+            await LoadDevices(cid);
+        }
+        else { customerDevices = new(); }
+    }
+
+    private async Task LoadDevices(int customerId)
+    {
+        var offers = await OfferService.GetByCustomerAsync(customerId);
+        // Müşterinin sipariş/tekliflerindeki kalemleri getir (cihaz seçimi için).
+        var names = new List<string>();
+        foreach (var o in offers)
+        {
+            var full = await OfferService.GetByIdAsync(o.Id);
+            if (full is not null)
+                names.AddRange(full.Items.Where(i => i.IsSelected && !string.IsNullOrWhiteSpace(i.ItemName)).Select(i => i.ItemName));
+        }
+        customerDevices = names.Distinct().OrderBy(n => n).ToList();
+    }
+
+    private void OnDevicePicked(ChangeEventArgs e)
+    {
+        var val = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(val)) rec.DeviceModel = val;
+    }
+
+    private async Task Clear(string canvasId) => await JS.InvokeVoidAsync("signaturePad.clear", canvasId);
+
+    private async Task Save()
+    {
+        error = null;
+        if (rec.CustomerId is null && string.IsNullOrWhiteSpace(rec.CustomerName))
+        {
+            error = "Müşteri seçin veya ad girin.";
+            return;
+        }
+        // İmzaları canvas'tan al (varsa).
+        if (string.IsNullOrEmpty(rec.TechnicianSignature) || resignTech)
+        {
+            var d = await JS.InvokeAsync<string?>("signaturePad.getData", "techCanvas");
+            if (!string.IsNullOrEmpty(d)) rec.TechnicianSignature = d;
+        }
+        if (string.IsNullOrEmpty(rec.CustomerSignature) || resignCust)
+        {
+            var d = await JS.InvokeAsync<string?>("signaturePad.getData", "custCanvas");
+            if (!string.IsNullOrEmpty(d)) rec.CustomerSignature = d;
+        }
+        try
+        {
+            await ServiceService.SaveAsync(rec);
+            Nav.NavigateTo("services");
+        }
+        catch (Exception ex) { error = "Kayıt hatası: " + ex.Message; }
+    }
+}

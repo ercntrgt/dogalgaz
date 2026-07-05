@@ -1,0 +1,108 @@
+@page "/ustalar/{Id:int}"
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+@inject IUstaService UstaService
+@inject IHakedisService HakedisSvc
+@inject NavigationManager Nav
+
+<PageTitle>@(usta?.Name ?? "Usta")</PageTitle>
+
+@if (usta is null)
+{
+    <p>Yükleniyor...</p>
+}
+else
+{
+    <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+        <a href="ustalar" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+        <h2 class="mb-0">@usta.Name</h2>
+        @if (!string.IsNullOrEmpty(usta.Specialty)) { <span class="badge bg-secondary">@usta.Specialty</span> }
+        <span class="text-muted ms-2">@usta.Phone</span>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-lg-3"><StatCard Tone="info" Icon="bi-briefcase" Title="Toplam İş" Value="@jobs.Count.ToString()" /></div>
+        <div class="col-6 col-lg-3"><StatCard Tone="primary" Icon="bi-cash-stack" Title="Toplam Hakediş" Value="@Money(bal?.TotalEarned ?? 0)" /></div>
+        <div class="col-6 col-lg-3"><StatCard Tone="success" Icon="bi-check2-circle" Title="Ödenen" Value="@Money(bal?.TotalPaid ?? 0)" /></div>
+        <div class="col-6 col-lg-3"><StatCard Tone="danger" Icon="bi-wallet2" Title="Kalan Bakiye" Value="@Money(bal?.Balance ?? 0)" /></div>
+    </div>
+
+    <div class="row g-3">
+        @* Yaptığı işler *@
+        <div class="col-lg-7">
+            <div class="card summary-box">
+                <div class="card-header fw-semibold"><i class="bi bi-briefcase"></i> Yaptığı İşler</div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead><tr><th>Form No</th><th>Müşteri</th><th>Tarih</th><th>Durum</th><th class="text-end">Hakediş</th></tr></thead>
+                        <tbody>
+                            @foreach (var j in jobs)
+                            {
+                                <tr style="cursor:pointer" @onclick="@(() => Nav.NavigateTo($"offers/{j.OfferId}"))">
+                                    <td class="fw-semibold">@j.FormNumber</td>
+                                    <td>@j.CustomerName</td>
+                                    <td>@j.WorkDate.ToString("dd.MM.yyyy")</td>
+                                    <td><span class="badge bg-light text-dark">@j.StatusText</span></td>
+                                    <td class="text-end fw-semibold">@Money(j.Earning)</td>
+                                </tr>
+                            }
+                            @if (jobs.Count == 0)
+                            {
+                                <tr><td colspan="5" class="text-center text-muted py-4">Bu ustaya atanmış iş yok.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @* Ödemeler *@
+        <div class="col-lg-5">
+            <div class="card summary-box">
+                <div class="card-header fw-semibold d-flex align-items-center">
+                    <span><i class="bi bi-cash-coin"></i> Ödemeler</span>
+                    <a href="hakedis" class="btn btn-sm btn-outline-success ms-auto">Ödeme Ekle</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead><tr><th>Tarih</th><th>Açıklama</th><th class="text-end">Tutar</th></tr></thead>
+                        <tbody>
+                            @foreach (var p in payments)
+                            {
+                                <tr>
+                                    <td>@p.PaidDate.ToString("dd.MM.yyyy")</td>
+                                    <td class="small">@p.Description</td>
+                                    <td class="text-end">@Money(p.Amount)</td>
+                                </tr>
+                            }
+                            @if (payments.Count == 0)
+                            {
+                                <tr><td colspan="3" class="text-center text-muted py-3">Ödeme yok.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Usta? usta;
+    private UstaBalanceRow? bal;
+    private List<HakedisWeekRow> jobs = new();
+    private List<UstaPayment> payments = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        usta = await UstaService.GetByIdAsync(Id);
+        if (usta is null) return;
+        jobs = await HakedisSvc.GetWeeklyScheduleAsync(new HakedisFilter { UstaId = Id });
+        payments = await HakedisSvc.GetPaymentsAsync(Id);
+        bal = (await HakedisSvc.GetUstaBalancesAsync()).FirstOrDefault(b => b.UstaId == Id);
+    }
+
+    private static string Money(decimal v) => v.ToString("#,##0.00") + " ₺";
+}

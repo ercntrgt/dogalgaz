@@ -16,8 +16,11 @@ public class OfferItem : BaseEntity
     public int? ProductId { get; set; }
     public Product? Product { get; set; }
 
-    /// <summary>Bölüm: KombiKazan / GasInstallation / Material / Installation / Labor.</summary>
+    /// <summary>Bölüm: KombiKazan / GasInstallation / Material / Installation / Labor. Toplamları belirler.</summary>
     public string SectionName { get; set; } = string.Empty;
+
+    /// <summary>Kalemin eklendiği grup başlığı (Excel grup adı, örn. "KOMBİ / KAZAN"). Sadece gösterim/gruplama içindir.</summary>
+    public string? GroupName { get; set; }
 
     /// <summary>Kalem adı (örn. "Ocak tesisatı", "Radyatör vanası").</summary>
     public string ItemName { get; set; } = string.Empty;

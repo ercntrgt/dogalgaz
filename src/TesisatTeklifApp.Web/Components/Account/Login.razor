@@ -39,10 +39,9 @@
 
         <hr />
         <div class="small text-muted">
-            <strong>Demo hesaplar:</strong><br />
-            Admin: admin@ozdemir.local / Admin!123<br />
-            Satış: satis@ozdemir.local / Satis!123<br />
-            Görüntüleyici: gozlemci@ozdemir.local / Gozlem!123
+            <strong>Hesaplar:</strong><br />
+            Yönetici: admin@ozdemir.local / Admin!123<br />
+            Satış: satis@ozdemir.local / Satis!123
         </div>
     </div>
 </div>
@@ -55,10 +54,12 @@
     private async Task LoginUser()
     {
         var result = await SignInManager.PasswordSignInAsync(
-            Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+            Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
 
         if (result.Succeeded)
             Nav.NavigateTo(ReturnUrl ?? "/");
+        else if (result.IsLockedOut)
+            error = "Çok fazla hatalı deneme. Hesap geçici olarak kilitlendi, birkaç dakika sonra tekrar deneyin.";
         else
             error = "E-posta veya şifre hatalı.";
     }

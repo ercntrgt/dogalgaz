@@ -6,7 +6,7 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /api/sync/ping
+    healthCheckPath: /health
     envVars:
       - key: DatabaseProvider
         value: Postgres

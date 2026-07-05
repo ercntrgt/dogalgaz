@@ -27,6 +27,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<PurchaseOrderItem> PurchaseOrderItems => Set<PurchaseOrderItem>();
     public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
     public DbSet<OfferPhoto> OfferPhotos => Set<OfferPhoto>();
+    public DbSet<Usta> Ustalar => Set<Usta>();
+    public DbSet<UstaPayment> UstaPayments => Set<UstaPayment>();
+    public DbSet<ServiceRecord> ServiceRecords => Set<ServiceRecord>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -95,8 +98,29 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(m => m.Product).WithMany()
             .HasForeignKey(m => m.ProductId).OnDelete(DeleteBehavior.Restrict);
 
+        // --- Usta + Hakediş ---
+        builder.Entity<Usta>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<UstaPayment>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<UstaPayment>()
+            .HasOne(p => p.Usta).WithMany(u => u.Payments)
+            .HasForeignKey(p => p.UstaId).OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<Offer>()
+            .HasOne(o => o.Usta).WithMany(u => u.Offers)
+            .HasForeignKey(o => o.UstaId).OnDelete(DeleteBehavior.Restrict);
+
+        // --- Servis kayıtları ---
+        builder.Entity<ServiceRecord>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<ServiceRecord>()
+            .HasOne(s => s.Customer).WithMany()
+            .HasForeignKey(s => s.CustomerId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<ServiceRecord>()
+            .HasOne(s => s.ServicedProduct).WithMany()
+            .HasForeignKey(s => s.ServicedProductId).OnDelete(DeleteBehavior.SetNull);
+
         // Uniq index'ler
         builder.Entity<Offer>().HasIndex(o => o.OfferNumber).IsUnique();
+        builder.Entity<Offer>().HasIndex(o => o.PublicToken).IsUnique();
+        builder.Entity<ServiceRecord>().HasIndex(s => s.ServiceNumber).IsUnique();
         builder.Entity<Product>().HasIndex(p => new { p.Name, p.Category });
     }
 

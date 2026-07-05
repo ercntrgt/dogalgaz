@@ -25,10 +25,10 @@
                         <th style="width:75px">Yükseklik</th>
                         <th style="width:75px">En</th>
                         <th style="width:90px">Panel (m)</th>
-                        <th style="width:90px">Metre ₺</th>
+                        <th style="width:90px" class="price-cell">Metre ₺</th>
                         <th style="width:70px">Vana</th>
-                        <th style="width:90px">Vana ₺</th>
-                        <th style="width:110px" class="text-end">Toplam</th>
+                        <th style="width:90px" class="price-cell">Vana ₺</th>
+                        <th style="width:110px" class="text-end price-cell">Toplam</th>
                         <th style="width:100px">Stok</th>
                         <th style="width:40px"></th>
                     </tr>
@@ -55,10 +55,10 @@
                             <td><input type="number" class="form-control form-control-sm" @bind="r.RadiatorHeight" @bind:after="Changed" placeholder="mm" /></td>
                             <td><input type="number" class="form-control form-control-sm" @bind="r.RadiatorWidth" @bind:after="Changed" placeholder="mm" /></td>
                             <td><input type="number" step="any" class="form-control form-control-sm" @bind="r.PanelLength" @bind:after="Changed" /></td>
-                            <td><input type="number" step="any" class="form-control form-control-sm" @bind="r.MeterPrice" @bind:after="Changed" /></td>
+                            <td class="price-cell"><input type="number" step="any" class="form-control form-control-sm" @bind="r.MeterPrice" @bind:after="Changed" /></td>
                             <td><input type="number" step="any" class="form-control form-control-sm" @bind="r.ValveQuantity" @bind:after="Changed" /></td>
-                            <td><input type="number" step="any" class="form-control form-control-sm" @bind="r.ValveUnitPrice" @bind:after="Changed" /></td>
-                            <td class="text-end fw-semibold">@r.TotalPrice.ToString("#,##0.00") ₺</td>
+                            <td class="price-cell"><input type="number" step="any" class="form-control form-control-sm" @bind="r.ValveUnitPrice" @bind:after="Changed" /></td>
+                            <td class="text-end fw-semibold price-cell">@r.TotalPrice.ToString("#,##0.00") ₺</td>
                             <td><span class="badge @StockStatusStyles.BadgeClass(r.StockStatus)">@StockStatusStyles.Label(r.StockStatus)</span></td>
                             <td><button type="button" class="btn btn-sm btn-outline-danger" @onclick="@(() => Remove(r))">×</button></td>
                         </tr>

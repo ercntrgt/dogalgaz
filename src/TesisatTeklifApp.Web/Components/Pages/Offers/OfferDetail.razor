@@ -1,5 +1,5 @@
 @page "/offers/{Id:int}"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
 @rendermode InteractiveServer
 @inject IOfferService OfferService
 @inject IStockControlService StockService
@@ -31,7 +31,14 @@ else
         }
         <StatusBadge Status="offer.Status" />
         <div class="ms-auto d-flex gap-2 flex-wrap">
-            <a class="btn btn-outline-danger" href="/download/offer/@offer.Id/pdf" target="_blank"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+            <a class="btn btn-outline-danger" href="/download/offer/@offer.Id/pdf" target="_blank" title="Müşteriye verilecek — fiyatsız"><i class="bi bi-file-earmark-pdf"></i> Müşteri PDF</a>
+            <AuthorizeView Roles="Admin" Context="ip">
+                <a class="btn btn-outline-dark" href="/download/offer/@offer.Id/pdf-internal" target="_blank" title="Ofis — fiyatlı"><i class="bi bi-file-earmark-lock"></i> Ofis PDF</a>
+            </AuthorizeView>
+            @if (!string.IsNullOrEmpty(offer.PublicToken))
+            {
+                <button class="btn btn-outline-primary" @onclick="CopyLink"><i class="bi bi-link-45deg"></i> Müşteri Onay Linki</button>
+            }
             <AuthorizeView Roles="Admin,SalesPerson" Context="a">
                 <a class="btn btn-outline-secondary" href="offers/@offer.Id/edit"><i class="bi bi-pencil"></i> Düzenle</a>
                 <button class="btn btn-outline-primary" @onclick="Copy"><i class="bi bi-files"></i> Kopyala</button>
@@ -88,6 +95,28 @@ else
             </AuthorizeView>
         </div>
     </div>
+
+    @* Müşteri onay linki / onay durumu *@
+    @if (offer.CustomerApprovedDate is not null)
+    {
+        <div class="alert-box ab-success mb-3"><i class="bi bi-check-circle"></i>
+            <div><strong>Müşteri onayladı</strong> — @offer.CustomerApprovedDate.Value.ToString("dd.MM.yyyy HH:mm") tarihinde imzalandı.</div>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(offer.PublicToken))
+    {
+        <div class="alert-box ab-info mb-3"><i class="bi bi-link-45deg"></i>
+            <div>
+                <strong>Müşteri onay linki</strong> — bu linki müşteriye gönderin; teklifi <em>fiyatsız</em> görür, imzalayınca onaylamış olur.
+                <div class="input-group input-group-sm mt-2" style="max-width:640px">
+                    <input class="form-control" readonly value="@PublicLink" />
+                    <button class="btn btn-primary" @onclick="CopyLink"><i class="bi bi-clipboard"></i> Kopyala</button>
+                    <a class="btn btn-outline-secondary" href="@PublicLink" target="_blank">Aç</a>
+                </div>
+                @if (!string.IsNullOrEmpty(linkMsg)) { <span class="text-success small">@linkMsg</span> }
+            </div>
+        </div>
+    }
 
     @* Yönetici: bekleyen silme talebi *@
     <AuthorizeView Roles="Admin" Context="dr">
@@ -409,6 +438,15 @@ else
     private OfferStockSummary? stockSummary;
     private List<ActivityLog> activity = new();
     private string? message;
+    private string? linkMsg;
+
+    private string PublicLink => offer is null ? "" : $"{Nav.BaseUri}teklif/{offer.PublicToken}";
+
+    private async Task CopyLink()
+    {
+        try { await JS.InvokeVoidAsync("navigator.clipboard.writeText", PublicLink); linkMsg = "Link kopyalandı."; }
+        catch { linkMsg = "Kopyalanamadı, linki elle seçip kopyalayın."; }
+    }
 
     protected override async Task OnParametersSetAsync() => await Reload();
 

@@ -1,6 +1,26 @@
-﻿<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+@using Microsoft.AspNetCore.Components.Authorization
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                @if (context.User.Identity?.IsAuthenticated != true)
+                {
+                    <RedirectToLogin />
+                }
+                else
+                {
+                    <LayoutView Layout="typeof(Layout.MainLayout)">
+                        <div class="alert alert-danger m-4">
+                            <i class="bi bi-shield-lock"></i> Bu sayfaya erişim yetkiniz yok.
+                            <a href="/" class="alert-link">Ana sayfaya dön</a>
+                        </div>
+                    </LayoutView>
+                }
+            </NotAuthorized>
+            <Authorizing>
+                <p class="p-4 text-muted">Yetki kontrol ediliyor...</p>
+            </Authorizing>
+        </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>

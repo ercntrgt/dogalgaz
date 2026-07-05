@@ -1,0 +1,99 @@
+@page "/ustalar"
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+@inject IUstaService UstaService
+
+<PageTitle>Ustalar</PageTitle>
+
+<div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0">Ustalar</h2>
+    <button class="btn btn-success ms-auto" @onclick="StartAdd"><i class="bi bi-plus-circle"></i> Yeni Usta</button>
+</div>
+
+@if (editing is not null)
+{
+    <div class="card summary-box mb-3">
+        <div class="card-header bg-white fw-semibold">@(editing.Id == 0 ? "Yeni Usta" : "Usta Düzenle")</div>
+        <div class="card-body row g-2">
+            <div class="col-md-4"><label class="form-label">Ad Soyad *</label><input class="form-control" @bind="editing.Name" /></div>
+            <div class="col-md-3"><label class="form-label">Telefon</label><input class="form-control" @bind="editing.Phone" /></div>
+            <div class="col-md-3"><label class="form-label">Uzmanlık</label><input class="form-control" @bind="editing.Specialty" placeholder="Tesisatçı, Kombici..." /></div>
+            <div class="col-md-2 d-flex align-items-end">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="uact" @bind="editing.IsActive" />
+                    <label class="form-check-label" for="uact">Aktif</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-success btn-sm" @onclick="SaveEdit">💾 Kaydet</button>
+                <button class="btn btn-outline-secondary btn-sm" @onclick="() => editing = null">Vazgeç</button>
+                @if (!string.IsNullOrEmpty(err)) { <span class="text-danger ms-2 small">@err</span> }
+            </div>
+        </div>
+    </div>
+}
+
+<div class="card summary-box">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>Ad Soyad</th><th>Uzmanlık</th><th>Telefon</th><th>Durum</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var u in list)
+                {
+                    <tr>
+                        <td class="fw-semibold"><a href="ustalar/@u.Id">@u.Name</a></td>
+                        <td>@u.Specialty</td>
+                        <td>@u.Phone</td>
+                        <td>
+                            @if (u.IsActive)
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Pasif</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-secondary" href="ustalar/@u.Id"><i class="bi bi-briefcase"></i> İşleri</a>
+                            <button class="btn btn-sm btn-outline-primary" @onclick="() => StartEdit(u)">Düzenle</button>
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => Delete(u.Id)">Sil</button>
+                        </td>
+                    </tr>
+                }
+                @if (list.Count == 0)
+                {
+                    <tr><td colspan="5" class="text-center text-muted py-4">Henüz usta yok.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private List<Usta> list = new();
+    private Usta? editing;
+    private string? err;
+
+    protected override async Task OnInitializedAsync() => await Load();
+    private async Task Load() => list = await UstaService.SearchAsync(null);
+
+    private void StartAdd() { editing = new Usta { IsActive = true }; err = null; }
+    private void StartEdit(Usta u) { editing = new Usta { Id = u.Id, Name = u.Name, Phone = u.Phone, Specialty = u.Specialty, IsActive = u.IsActive }; err = null; }
+
+    private async Task SaveEdit()
+    {
+        err = null;
+        if (string.IsNullOrWhiteSpace(editing!.Name)) { err = "Ad soyad zorunludur."; return; }
+        if (editing.Id == 0) await UstaService.AddAsync(editing);
+        else await UstaService.UpdateAsync(editing);
+        editing = null;
+        await Load();
+    }
+
+    private async Task Delete(int id)
+    {
+        await UstaService.SoftDeleteAsync(id);
+        await Load();
+    }
+}
