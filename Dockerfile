@@ -6,9 +6,12 @@ RUN dotnet publish src/TesisatTeklifApp.Web/TesisatTeklifApp.Web.csproj -c Relea
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
-# QuestPDF (SkiaSharp) PDF üretimi için font kütüphaneleri (Türkçe karakter dahil).
+# Sistem kütüphaneleri:
+#  - libfontconfig1 + fonts: QuestPDF (SkiaSharp) PDF üretimi (Türkçe karakter dahil)
+#  - libgssapi-krb5-2: Npgsql (PostgreSQL) çalışma zamanı bağımlılığı (libgssapi_krb5.so.2)
 RUN apt-get update \
- && apt-get install -y --no-install-recommends libfontconfig1 fonts-dejavu fonts-liberation \
+ && apt-get install -y --no-install-recommends \
+      libfontconfig1 fonts-dejavu fonts-liberation libgssapi-krb5-2 \
  && rm -rf /var/lib/apt/lists/*
 COPY --from=build /app .
 ENV ASPNETCORE_ENVIRONMENT=Production
