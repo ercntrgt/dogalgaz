@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using TesisatTeklifApp.Domain.Constants;
 using TesisatTeklifApp.Domain.Entities;
 using TesisatTeklifApp.Infrastructure.Identity;
@@ -15,11 +17,21 @@ public static class DbSeeder
         UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
         string? contentRootPath = null)
     {
-        // SQLite: migration geçmişiyle; diğer sağlayıcılar (Postgres): modelden şema oluştur.
+        // SQLite: migration geçmişiyle.
+        // Postgres/SQL Server: Neon vb. veritabanını önceden oluşturur; EnsureCreated bu durumda
+        // tabloları KURMAZ. Bu yüzden DB'yi (yoksa) oluştur + tablo yoksa modelden tabloları kur.
         if (db.Database.IsSqlite())
+        {
             await db.Database.MigrateAsync();
+        }
         else
-            await db.Database.EnsureCreatedAsync();
+        {
+            var creator = db.GetService<IRelationalDatabaseCreator>();
+            if (!await creator.ExistsAsync())
+                await creator.CreateAsync();
+            if (!await creator.HasTablesAsync())
+                await creator.CreateTablesAsync();
+        }
 
         // --- Roller ---
         foreach (var role in AppRoles.All)

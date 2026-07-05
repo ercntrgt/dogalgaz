@@ -7,6 +7,10 @@ using TesisatTeklifApp.Web.Components;
 using TesisatTeklifApp.Web.Endpoints;
 using TesisatTeklifApp.Web.Identity;
 
+// Npgsql: uygulama yerel (Local/Unspecified) DateTime kullanıyor. PostgreSQL'de
+// bunları "timestamp without time zone" olarak sakla (SQLite ile aynı davranış).
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // --- Bulut (Render): PORT ortam değişkenine bağlan ---
