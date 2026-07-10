@@ -65,6 +65,36 @@
     </div>
 </div>
 
+<div class="card summary-box mt-3">
+    <div class="card-header bg-white fw-semibold"><i class="bi bi-vector-pen"></i> İmza-Kaşe (Teklif PDF'inde "Firma Yetkilisi İmza")</div>
+    <div class="card-body row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label">Kullanıcı</label>
+            <select class="form-select" @bind="stampUserId" @bind:after="LoadStamp">
+                <option value="">-- kullanıcı seç --</option>
+                @foreach (var u in users)
+                {
+                    <option value="@u.User.Id">@u.User.FullName (@u.User.Email)</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">İmza-Kaşe PNG/JPG</label>
+            <InputFile class="form-control" OnChange="OnStampFile" accept="image/png,image/jpeg" />
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success" @onclick="SaveStamp" disabled="@(string.IsNullOrEmpty(stampUserId))">💾 Kaydet</button>
+        </div>
+        <div class="col-md-2 text-center">
+            @if (!string.IsNullOrEmpty(stampData))
+            {
+                <img src="@stampData" style="max-height:60px;max-width:100%;border:1px solid #e3e7ee;border-radius:6px" />
+            }
+        </div>
+        @if (!string.IsNullOrEmpty(stampMsg)) { <div class="col-12 small text-success">@stampMsg</div> }
+    </div>
+</div>
+
 @code {
     private record UserRow(ApplicationUser User, string Role);
     private List<UserRow> users = new();
@@ -72,6 +102,10 @@
     private string newFullName = "", newEmail = "", newPassword = "", newRole = AppRoles.SalesPerson;
     private string? msg;
     private bool ok;
+
+    private string stampUserId = "";
+    private string? stampData;
+    private string? stampMsg;
 
     protected override async Task OnInitializedAsync() => await Load();
 
@@ -83,6 +117,33 @@
             var roles = await UserManager.GetRolesAsync(u);
             users.Add(new UserRow(u, roles.FirstOrDefault() ?? "-"));
         }
+    }
+
+    private async Task LoadStamp()
+    {
+        stampMsg = null; stampData = null;
+        if (string.IsNullOrEmpty(stampUserId)) return;
+        var u = await UserManager.FindByIdAsync(stampUserId);
+        stampData = u?.SignatureStamp;
+    }
+
+    private async Task OnStampFile(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null) return;
+        using var ms = new MemoryStream();
+        await file.OpenReadStream(3 * 1024 * 1024).CopyToAsync(ms);   // maks 3 MB
+        stampData = $"data:{file.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}";
+    }
+
+    private async Task SaveStamp()
+    {
+        stampMsg = null;
+        var u = await UserManager.FindByIdAsync(stampUserId);
+        if (u is null) return;
+        u.SignatureStamp = stampData;
+        await UserManager.UpdateAsync(u);
+        stampMsg = "İmza-kaşe kaydedildi.";
     }
 
     private async Task Create()

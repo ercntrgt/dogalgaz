@@ -33,9 +33,17 @@
                     }
                 </div>
             }
-            <button type="button" class="btn btn-sm btn-outline-secondary mb-2" @onclick="AddFreeRow">
-                <i class="bi bi-pencil-square"></i> Manuel kalem ekle
-            </button>
+            <div class="d-flex gap-2 mb-2 flex-wrap">
+                @if (Products.Count > 0)
+                {
+                    <button type="button" class="btn btn-sm btn-success" @onclick="AddAll">
+                        <i class="bi bi-list-check"></i> Grubu Ekle (@Products.Count kalem)
+                    </button>
+                }
+                <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="AddFreeRow">
+                    <i class="bi bi-pencil-square"></i> Manuel kalem ekle
+                </button>
+            </div>
 
             @if (GroupItems.Count > 0)
             {
@@ -120,6 +128,23 @@
         {
             SectionName = Group.Section, GroupName = Group.Name, Unit = "Adet", Quantity = 0, IsSelected = true
         });
+        Changed();
+    }
+
+    // Grubun tüm ürünlerini toplu ekler (adet 0). Zaten ekli olan ürünleri atlar.
+    private void AddAll()
+    {
+        var existingIds = AllItems.Where(i => i.GroupName == Group.Name && i.ProductId != null)
+                                  .Select(i => i.ProductId!.Value).ToHashSet();
+        foreach (var p in Products)
+        {
+            if (existingIds.Contains(p.Id)) continue;
+            AllItems.Add(new OfferItem
+            {
+                SectionName = Group.Section, GroupName = Group.Name, ProductId = p.Id,
+                ItemName = p.Name, Unit = p.Unit, UnitPrice = p.SalePrice, Quantity = 0, IsSelected = true
+            });
+        }
         Changed();
     }
 

@@ -55,12 +55,21 @@
             @if (Radiators.Any())
             {
                 <div class="pub-group">
-                    <div class="pub-group-head">RADYATÖR</div>
+                    <div class="pub-group-head">RADYATÖR & VANA</div>
                     @foreach (var r in Radiators)
                     {
                         <div class="pub-line">
-                            <span>@r.RoomName @($"{r.RadiatorHeight}x{r.RadiatorWidth}")</span>
-                            <span class="text-muted">@FormatQty(r.PanelLength) m panel</span>
+                            <span>
+                                @if (r.IsValve)
+                                {
+                                    @(r.ItemName ?? "Vana")
+                                }
+                                else
+                                {
+                                    @($"{r.RoomName} {r.RadiatorHeight}x{r.RadiatorWidth}".Trim())
+                                }
+                            </span>
+                            <span class="text-muted">@FormatQty(r.Quantity) @(r.IsValve ? "adet" : "adet panel")</span>
                         </div>
                     }
                 </div>
@@ -139,7 +148,7 @@
             .Select(g => new KeyValuePair<string, List<OfferItem>>(g.Key, g.ToList()));
 
     private IEnumerable<RadiatorItem> Radiators =>
-        (offer?.RadiatorItems ?? new List<RadiatorItem>()).Where(r => r.PanelLength > 0 || r.ValveQuantity > 0);
+        (offer?.RadiatorItems ?? new List<RadiatorItem>()).Where(r => r.Quantity > 0);
 
     protected override async Task OnInitializedAsync()
     {

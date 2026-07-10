@@ -19,13 +19,8 @@ public class OfferCalculationService : IOfferCalculationService
         return Round(item.Quantity * item.UnitPrice);
     }
 
-    /// <summary>SatırToplam = (PanelUzunluğu x MetreFiyatı) + (VanaAdedi x VanaBirimFiyatı).</summary>
-    public decimal CalculateRadiatorTotal(RadiatorItem item)
-    {
-        var panelTotal = item.PanelLength * item.MeterPrice;
-        var valveTotal = item.ValveQuantity * item.ValveUnitPrice;
-        return Round(panelTotal + valveTotal);
-    }
+    /// <summary>SatırToplam = Adet × BirimFiyat (hem panel hem vana için ortak).</summary>
+    public decimal CalculateRadiatorTotal(RadiatorItem item) => Round(item.Quantity * item.UnitPrice);
 
     public decimal CalculateKombiKazanTotal(Offer offer) => SectionTotal(offer, OfferSections.KombiKazan);
     public decimal CalculateGasInstallationTotal(Offer offer) => SectionTotal(offer, OfferSections.GasInstallation);

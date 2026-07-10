@@ -47,6 +47,11 @@ public class PdfExportService : IPdfExportService
         var summary = await _stock.CheckOfferStockAvailabilityAsync(offer);
         var isOrder = offer.IsOrder;
 
+        // Teklifi hazırlayan satışçının imza-kaşesi → "Firma Yetkilisi İmza" alanına.
+        var firmaStamp = string.IsNullOrEmpty(offer.CreatedBy) ? null
+            : await _db.Users.Where(u => u.Email == offer.CreatedBy)
+                .Select(u => u.SignatureStamp).FirstOrDefaultAsync();
+
         byte[] logo = _logoPath is not null && File.Exists(_logoPath)
             ? await File.ReadAllBytesAsync(_logoPath) : Array.Empty<byte>();
 
@@ -77,14 +82,10 @@ public class PdfExportService : IPdfExportService
                     // Eksik ürünler yalnızca iç (fiyatlı) PDF'te; müşteri PDF'inde gösterilmez.
                     if (includeLinePrices && summary.InsufficientItems.Count > 0)
                         MissingProductsBlock(col, summary.InsufficientItems);
-                    SignatureBlock(col, offer.CustomerSignature);
+                    SignatureBlock(col, offer.CustomerSignature, firmaStamp);
                 });
 
-                page.Footer().AlignCenter().Text(t =>
-                {
-                    t.Span("ÖZDEMİR Mühendislik Mekanik Tesisat  •  ").FontColor(Gray);
-                    t.CurrentPageNumber(); t.Span(" / "); t.TotalPages();
-                });
+                page.Footer().Element(CompanyFooter);
             });
         });
 
@@ -194,12 +195,9 @@ public class PdfExportService : IPdfExportService
 
     private void RadiatorTable(ColumnDescriptor col, Offer offer, bool prices)
     {
-        // Boş (0 panel ve 0 vana) radyatör satırları PDF'e girmez.
-        var radItems = offer.RadiatorItems
-            .Where(r => r.PanelLength > 0 || r.ValveQuantity > 0 || r.TotalPrice > 0)
-            .ToList();
+        var radItems = offer.RadiatorItems.Where(r => r.Quantity > 0 || r.TotalPrice > 0).ToList();
         if (radItems.Count == 0) return;
-        Card(col, "Radyatör", inner =>
+        Card(col, "Radyatör & Vana", inner =>
         {
             inner.Item().Table(table =>
             {
@@ -207,38 +205,34 @@ public class PdfExportService : IPdfExportService
                 {
                     table.ColumnsDefinition(c =>
                     {
-                        c.RelativeColumn(2); c.RelativeColumn(2); c.ConstantColumn(55);
-                        c.ConstantColumn(45); c.ConstantColumn(60); c.ConstantColumn(70);
+                        c.RelativeColumn(4); c.ConstantColumn(55); c.ConstantColumn(45);
+                        c.ConstantColumn(65); c.ConstantColumn(70);
                     });
-                    TableHeader(table, "Oda", "Marka/Ölçü", "Panel(m)", "Vana", "Metre F.", "Toplam");
+                    TableHeader(table, "Kalem", "Panel(m)", "Adet", "B.Fiyat", "Toplam");
                 }
                 else
                 {
-                    table.ColumnsDefinition(c =>
-                    {
-                        c.RelativeColumn(2); c.RelativeColumn(2); c.ConstantColumn(55); c.ConstantColumn(45);
-                    });
-                    TableHeader(table, "Oda", "Marka/Ölçü", "Panel(m)", "Vana");
+                    table.ColumnsDefinition(c => { c.RelativeColumn(4); c.ConstantColumn(55); c.ConstantColumn(45); });
+                    TableHeader(table, "Kalem", "Panel(m)", "Adet");
                 }
                 var i = 0;
                 foreach (var r in radItems)
                 {
-                    var bg = (prices && r.IsStockInsufficient) ? Red : (i++ % 2 == 0 ? LightGray : "#ffffff");
-                    var fc = (prices && r.IsStockInsufficient) ? "#ffffff" : "#000000";
-                    Cell(table, bg, fc, r.RoomName ?? "-");
-                    var olcu = (r.RadiatorHeight.HasValue || r.RadiatorWidth.HasValue)
-                        ? $"{r.RadiatorHeight}*{r.RadiatorWidth}" : r.RadiatorSize;
-                    Cell(table, bg, fc, $"{r.RadiatorBrand} {olcu}");
-                    Cell(table, bg, fc, Num(r.PanelLength));
-                    Cell(table, bg, fc, Num(r.ValveQuantity));
+                    var bg = i++ % 2 == 0 ? LightGray : "#ffffff";
+                    var kalem = r.IsValve
+                        ? (r.ItemName ?? "Vana")
+                        : $"{r.RoomName} {r.RadiatorBrand} {r.RadiatorHeight}*{r.RadiatorWidth}".Trim();
+                    Cell(table, bg, "#000000", kalem);
+                    Cell(table, bg, "#000000", r.IsValve ? "-" : Num(r.PanelLength));
+                    Cell(table, bg, "#000000", Num(r.Quantity));
                     if (prices)
                     {
-                        Cell(table, bg, fc, Money(r.MeterPrice));
-                        Cell(table, bg, fc, Money(r.TotalPrice));
+                        Cell(table, bg, "#000000", Money(r.UnitPrice));
+                        Cell(table, bg, "#000000", Money(r.TotalPrice));
                     }
                 }
             });
-            var totalPanel = radItems.Sum(r => r.PanelLength);
+            var totalPanel = radItems.Where(r => !r.IsValve).Sum(r => r.PanelLength * (r.Quantity > 0 ? r.Quantity : 1));
             inner.Item().PaddingTop(3).AlignRight().Text($"Toplam panel uzunluğu: {Num(totalPanel)} m").Italic();
         });
     }
@@ -343,9 +337,10 @@ public class PdfExportService : IPdfExportService
     private void NotesBlock(ColumnDescriptor col, string notes) =>
         Card(col, "Genel Açıklamalar", inner => inner.Item().Text(notes));
 
-    private void SignatureBlock(ColumnDescriptor col, string? customerSignature)
+    private void SignatureBlock(ColumnDescriptor col, string? customerSignature, string? firmaStamp)
     {
         var sigBytes = DecodeSignature(customerSignature);
+        var stampBytes = DecodeSignature(firmaStamp);
         col.Item().PaddingTop(20).Row(r =>
         {
             r.RelativeItem().Column(c =>
@@ -360,7 +355,10 @@ public class PdfExportService : IPdfExportService
             r.ConstantItem(40);
             r.RelativeItem().Column(c =>
             {
-                c.Item().Height(50);
+                if (stampBytes is not null)
+                    c.Item().Height(50).AlignCenter().Image(stampBytes).FitHeight();
+                else
+                    c.Item().Height(50);
                 c.Item().LineHorizontal(0.7f);
                 c.Item().AlignCenter().Text("Firma Yetkilisi İmza").FontColor(Gray);
             });
@@ -381,6 +379,20 @@ public class PdfExportService : IPdfExportService
     }
 
     // ---------------- yardımcılar ----------------
+    /// <summary>PDF alt künyesi — firma iletişim bilgileri.</summary>
+    private void CompanyFooter(IContainer f)
+    {
+        f.BorderTop(0.5f).BorderColor(Gray).PaddingTop(4).AlignCenter().Text(t =>
+        {
+            t.DefaultTextStyle(s => s.FontSize(8).FontColor(Gray));
+            t.Span("Tel: 0 (242) 226 37 16");
+            t.Span("   •   ");
+            t.Span("No:18/B Konyaaltı / ANTALYA");
+            t.Span("   •   ");
+            t.Span("info@ozdemirmuhendislik.com");
+        });
+    }
+
     private void Card(ColumnDescriptor col, string title, Action<ColumnDescriptor> body)
     {
         col.Item().Column(c =>
@@ -522,10 +534,7 @@ public class PdfExportService : IPdfExportService
                         .Italic().FontColor(Gray).FontSize(8);
                 });
 
-                page.Footer().AlignCenter().Text(t =>
-                {
-                    t.Span("ÖZDEMİR Mühendislik Mekanik Tesisat").FontColor(Gray);
-                });
+                page.Footer().Element(CompanyFooter);
             });
         });
 

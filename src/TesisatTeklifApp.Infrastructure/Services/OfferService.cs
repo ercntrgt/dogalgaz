@@ -234,10 +234,11 @@ public class OfferService : IOfferService
             }).ToList(),
             RadiatorItems = source.RadiatorItems.Select(r => new RadiatorItem
             {
+                IsValve = r.IsValve, ItemName = r.ItemName, Quantity = r.Quantity, UnitPrice = r.UnitPrice,
                 RadiatorProductId = r.RadiatorProductId, ValveProductId = r.ValveProductId,
                 RoomName = r.RoomName, RadiatorBrand = r.RadiatorBrand, RadiatorSize = r.RadiatorSize,
-                PanelLength = r.PanelLength, ValveQuantity = r.ValveQuantity,
-                MeterPrice = r.MeterPrice, ValveUnitPrice = r.ValveUnitPrice, Description = r.Description
+                RadiatorHeight = r.RadiatorHeight, RadiatorWidth = r.RadiatorWidth,
+                PanelLength = r.PanelLength, Description = r.Description
             }).ToList()
         };
 

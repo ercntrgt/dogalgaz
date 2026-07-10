@@ -39,6 +39,9 @@ public static class DbSeeder
                 await db.Database.ExecuteSqlRawAsync("DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;");
                 await creator.CreateTablesAsync();
             }
+
+            // Şema yamaları: mevcut canlı DB'ye yeni kolonları ekle (idempotent, veri kaybı yok).
+            await PatchPostgresSchemaAsync(db);
         }
 
         // --- Roller ---
@@ -70,13 +73,48 @@ public static class DbSeeder
             await db.SaveChangesAsync();
         }
 
-        // --- Ürünler: mevcut katalog (165) yoksa dosyadan yükle, o da yoksa örnekler ---
-        if (await db.Products.CountAsync() < 15)
+        // --- Katalog senkronu (sürümlü, veri kaybı yok) ---
+        // Boş DB: baştan yükle. Mevcut DB: sürüm eskiyse eksik kalemleri EKLE (fiyat düzenlemeleri korunur).
+        var settings = await db.StockSettings.FirstOrDefaultAsync();
+        if (settings is not null && settings.CatalogVersion < CatalogVersion)
         {
-            var seeded = LoadCatalog(contentRootPath);
-            db.Products.AddRange(seeded.Count > 0 ? seeded : SampleProducts());
+            var catalog = LoadCatalog(contentRootPath);
+            if (catalog.Count == 0 && await db.Products.CountAsync() < 15)
+                catalog = SampleProducts();
+
+            if (catalog.Count > 0)
+            {
+                var existing = await db.Products.IgnoreQueryFilters()
+                    .Select(p => new { p.Name, p.Category }).ToListAsync();
+                var have = new HashSet<string>(existing.Select(e => Key(e.Name, e.Category)));
+                var toAdd = catalog.Where(c => have.Add(Key(c.Name, c.Category))).ToList();
+                if (toAdd.Count > 0) db.Products.AddRange(toAdd);
+            }
+            settings.CatalogVersion = CatalogVersion;
             await db.SaveChangesAsync();
         }
+    }
+
+    /// <summary>Katalog sürümü — catalog.json değişince artır; seeder eksik kalemleri bir kez ekler.</summary>
+    private const int CatalogVersion = 2;
+
+    private static string Key(string? name, string? category) =>
+        System.Text.RegularExpressions.Regex.Replace((name ?? "").Trim(), @"\s+", " ").ToLowerInvariant()
+        + "|" + (category ?? "").Trim().ToLowerInvariant();
+
+    /// <summary>Postgres canlı DB'ye yeni kolonları ekler (idempotent). SQLite migration ile halledilir.</summary>
+    private static async Task PatchPostgresSchemaAsync(AppDbContext db)
+    {
+        var sql = string.Join("\n", new[]
+        {
+            "ALTER TABLE \"RadiatorItems\" ADD COLUMN IF NOT EXISTS \"IsValve\" boolean NOT NULL DEFAULT false;",
+            "ALTER TABLE \"RadiatorItems\" ADD COLUMN IF NOT EXISTS \"Quantity\" numeric(18,2) NOT NULL DEFAULT 0;",
+            "ALTER TABLE \"RadiatorItems\" ADD COLUMN IF NOT EXISTS \"UnitPrice\" numeric(18,2) NOT NULL DEFAULT 0;",
+            "ALTER TABLE \"RadiatorItems\" ADD COLUMN IF NOT EXISTS \"ItemName\" text;",
+            "ALTER TABLE \"AspNetUsers\" ADD COLUMN IF NOT EXISTS \"SignatureStamp\" text;",
+            "ALTER TABLE \"StockSettings\" ADD COLUMN IF NOT EXISTS \"CatalogVersion\" integer NOT NULL DEFAULT 0;",
+        });
+        await db.Database.ExecuteSqlRawAsync(sql);
     }
 
     /// <summary>Web/Data/catalog.json (165 ürün) — yeni/temiz veritabanları için.</summary>

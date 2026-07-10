@@ -175,24 +175,27 @@ else
             @SectionCard("C) Doğalgaz Tesisatı", OfferSections.GasInstallation)
             @SectionCard("D) Malzeme / Ekipman", OfferSections.Material)
 
-            @* Radyatör *@
+            @* Radyatör & Vana *@
             @if (offer.RadiatorItems.Count > 0)
             {
                 <div class="card summary-box mb-3">
-                    <div class="card-header bg-white fw-semibold">E) Radyatör</div>
+                    <div class="card-header bg-white fw-semibold">E) Radyatör & Vana</div>
                     <div class="table-responsive">
                         <table class="table table-sm mb-0">
-                            <thead><tr><th>Oda</th><th>Marka/Ölçü</th><th>Panel(m)</th><th>Vana</th><th class="text-end">Toplam</th><th>Stok</th></tr></thead>
+                            <thead><tr><th>Tür</th><th>Kalem / Ölçü</th><th>Panel(m)</th><th>Adet</th><th class="text-end">Birim</th><th class="text-end">Toplam</th></tr></thead>
                             <tbody>
                                 @foreach (var r in offer.RadiatorItems)
                                 {
-                                    <tr class="@(r.IsStockInsufficient ? "stock-insufficient" : "")">
-                                        <td>@r.RoomName</td>
-                                        <td>@r.RadiatorBrand @(r.RadiatorHeight.HasValue || r.RadiatorWidth.HasValue ? $"{r.RadiatorHeight}*{r.RadiatorWidth}" : r.RadiatorSize)</td>
-                                        <td>@r.PanelLength</td>
-                                        <td>@r.ValveQuantity</td>
+                                    <tr>
+                                        <td>@(r.IsValve ? "Vana" : "Radyatör")</td>
+                                        <td>
+                                            @if (r.IsValve) { @(r.ItemName ?? "-") }
+                                            else { @($"{r.RoomName} {r.RadiatorBrand} {r.RadiatorHeight}*{r.RadiatorWidth}".Trim()) }
+                                        </td>
+                                        <td>@(r.IsValve ? "-" : r.PanelLength.ToString("0.##"))</td>
+                                        <td>@r.Quantity</td>
+                                        <td class="text-end">@Money(r.UnitPrice)</td>
                                         <td class="text-end">@Money(r.TotalPrice)</td>
-                                        <td><span class="badge @StockStatusStyles.BadgeClass(r.StockStatus)">@StockStatusStyles.Label(r.StockStatus)</span></td>
                                     </tr>
                                 }
                             </tbody>

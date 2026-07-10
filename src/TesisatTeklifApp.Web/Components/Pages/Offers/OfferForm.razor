@@ -108,7 +108,7 @@ else
             {
                 @if (g.IsRadiator)
                 {
-                    <RadiatorSection Items="offer.RadiatorItems" RadiatorProducts="radiatorProducts" OnChanged="Recalc" />
+                    <RadiatorSection Items="offer.RadiatorItems" RadiatorProducts="radiatorProducts" ValveProducts="valveProducts" OnChanged="Recalc" />
                 }
                 else
                 {
@@ -334,13 +334,14 @@ else
 
     private bool IsNew => Id is null;
     private bool loading = true;
-    private bool pricesHidden = true;   // hazırlıkta fiyatlar gizli
+    private bool pricesHidden = false;  // satışçı kalem fiyatlarını görür (müşteri PDF/link fiyatsız)
     private string? error;
 
     private Offer offer = new();
     private List<Customer> customers = new();
     private List<Product> allProducts = new();
     private List<Product> radiatorProducts = new();
+    private List<Product> valveProducts = new();
     private List<Usta> ustalar = new();
     private Customer? selectedCustomer;
 
@@ -359,6 +360,7 @@ else
     {
         allProducts = await ProductService.GetActiveAsync();
         radiatorProducts = allProducts.Where(p => p.Category == ProductCategories.Radyator).ToList();
+        valveProducts = allProducts.Where(p => OfferGroups.ValveCategories.Contains(p.Category)).ToList();
         customers = await CustomerService.SearchAsync(new CustomerSearchFilter());
         ustalar = await UstaService.GetActiveAsync();
 
@@ -393,17 +395,8 @@ else
     }
 
     private Offer NewDraft()
-    {
-        var o = new Offer { OfferDate = DateTime.Today, Status = OfferStatus.Draft, VatRate = 20m };
-        // Doğalgaz tesisatı standart (serbest) kalemleri — grup akordeonunda hazır gelir.
-        foreach (var n in new[] { "Ocak tesisatı", "Kombi tesisatı", "Yeni tesisat", "Tadilat" })
-            o.Items.Add(new OfferItem
-            {
-                SectionName = OfferSections.GasInstallation, GroupName = "DOĞALGAZ TESİSATI",
-                ItemName = n, Unit = "Adet", Quantity = 1, IsSelected = true
-            });
-        return o;
-    }
+        // Boş taslak; kalemler grup akordeonundan ("Grubu Ekle" / tek tek) eklenir.
+        => new() { OfferDate = DateTime.Today, Status = OfferStatus.Draft, VatRate = 20m };
 
     private void Recalc()
     {

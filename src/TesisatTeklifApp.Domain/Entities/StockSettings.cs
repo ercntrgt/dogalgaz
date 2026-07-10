@@ -15,4 +15,7 @@ public class StockSettings : BaseEntity
 
     /// <summary>Teklif ekranında bilgilendirme amaçlı stok uyarısı gösterilsin mi?</summary>
     public bool ShowStockWarningOnOffer { get; set; } = true;
+
+    /// <summary>Uygulanmış katalog sürümü. catalog.json güncellenince artırılır; seeder yeni kalemleri bir kez ekler.</summary>
+    public int CatalogVersion { get; set; }
 }
