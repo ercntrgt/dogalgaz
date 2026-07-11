@@ -47,10 +47,13 @@ public class PdfExportService : IPdfExportService
         var summary = await _stock.CheckOfferStockAvailabilityAsync(offer);
         var isOrder = offer.IsOrder;
 
-        // Teklifi hazırlayan satışçının imza-kaşesi → "Firma Yetkilisi İmza" alanına.
-        var firmaStamp = string.IsNullOrEmpty(offer.CreatedBy) ? null
+        // Teklifi hazırlayan satışçının adı + imza-kaşesi → "Firma Yetkilisi" alanı
+        // teklif oluşturulduğu anda otomatik dolar (ad daima, kaşe varsa üstünde).
+        var firma = string.IsNullOrEmpty(offer.CreatedBy) ? null
             : await _db.Users.Where(u => u.Email == offer.CreatedBy)
-                .Select(u => u.SignatureStamp).FirstOrDefaultAsync();
+                .Select(u => new { u.FullName, u.SignatureStamp }).FirstOrDefaultAsync();
+        var firmaStamp = firma?.SignatureStamp;
+        var firmaName = !string.IsNullOrWhiteSpace(firma?.FullName) ? firma!.FullName : offer.CreatedBy;
 
         byte[] logo = _logoPath is not null && File.Exists(_logoPath)
             ? await File.ReadAllBytesAsync(_logoPath) : Array.Empty<byte>();
@@ -82,7 +85,7 @@ public class PdfExportService : IPdfExportService
                     // Eksik ürünler yalnızca iç (fiyatlı) PDF'te; müşteri PDF'inde gösterilmez.
                     if (includeLinePrices && summary.InsufficientItems.Count > 0)
                         MissingProductsBlock(col, summary.InsufficientItems);
-                    SignatureBlock(col, offer.CustomerSignature, firmaStamp);
+                    SignatureBlock(col, offer.CustomerSignature, firmaStamp, firmaName);
                 });
 
                 page.Footer().Element(CompanyFooter);
@@ -337,7 +340,7 @@ public class PdfExportService : IPdfExportService
     private void NotesBlock(ColumnDescriptor col, string notes) =>
         Card(col, "Genel Açıklamalar", inner => inner.Item().Text(notes));
 
-    private void SignatureBlock(ColumnDescriptor col, string? customerSignature, string? firmaStamp)
+    private void SignatureBlock(ColumnDescriptor col, string? customerSignature, string? firmaStamp, string? firmaName = null)
     {
         var sigBytes = DecodeSignature(customerSignature);
         var stampBytes = DecodeSignature(firmaStamp);
@@ -361,6 +364,9 @@ public class PdfExportService : IPdfExportService
                     c.Item().Height(50);
                 c.Item().LineHorizontal(0.7f);
                 c.Item().AlignCenter().Text("Firma Yetkilisi İmza").FontColor(Gray);
+                // Teklifi hazırlayan kişi otomatik olarak firma yetkilisi olarak yazılır.
+                if (!string.IsNullOrWhiteSpace(firmaName))
+                    c.Item().AlignCenter().Text(firmaName).FontSize(9).SemiBold();
             });
         });
     }
