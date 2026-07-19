@@ -14,5 +14,7 @@ services:
         value: Postgres
       - key: ConnectionStrings__DefaultConnection
         sync: false   # Neon bağlantı dizesini panelden gir (gizli)
+      - key: SEED_ADMIN_PASSWORD
+        sync: false   # Yönetici ilk şifresi — panelden gir. ASLA repoya yazma (depo herkese açık).
       - key: ASPNETCORE_ENVIRONMENT
         value: Production

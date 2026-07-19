@@ -14,9 +14,17 @@ namespace TesisatTeklifApp.Infrastructure.Data;
 /// </summary>
 public static class DbSeeder
 {
+    /// <summary>Yönetici hesabı. Satış personelini bu hesap oluşturur.</summary>
+    public const string AdminEmail = "sakir@ozdemirgaz.com";
+    private const string AdminFullName = "Şakir Özdemir";
+
+    /// <summary>Artık kullanılmayan demo hesaplar (şifreleri kaynak kodda geçtiği için temizlenir).</summary>
+    private const string LegacyAdminEmail = "admin@ozdemir.local";
+    private const string LegacySalesEmail = "satis@ozdemir.local";
+
     public static async Task SeedAsync(AppDbContext db,
         UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
-        string? contentRootPath = null)
+        string? contentRootPath = null, string? adminPassword = null)
     {
         // SQLite: migration geçmişiyle.
         // Postgres/SQL Server: Neon vb. veritabanını önceden oluşturur; EnsureCreated bu durumda
@@ -50,9 +58,11 @@ public static class DbSeeder
             if (!await roleManager.RoleExistsAsync(role))
                 await roleManager.CreateAsync(new IdentityRole(role));
 
-        // --- Kullanıcılar. Yönetici + Satış. (Görüntüleyici hesabı yok; müşteri onayı özel link ile.) ---
-        await EnsureUser(userManager, "admin@ozdemir.local", "Admin!123", "Sistem Yöneticisi", AppRoles.Admin);
-        await EnsureUser(userManager, "satis@ozdemir.local", "Satis!123", "Satış Personeli", AppRoles.SalesPerson);
+        // --- Kullanıcılar ---
+        // Tek yönetici hesabı seed edilir; satış personelini yönetici kendi oluşturur.
+        // Şifre KODA YAZILMAZ (depo herkese açık) — SEED_ADMIN_PASSWORD ortam değişkeninden gelir.
+        await MigrateLegacyAccountsAsync(db, userManager);
+        await EnsureAdminAsync(userManager, adminPassword);
 
         // Görüntüleyici hesabı artık kullanılmıyor — mevcut kurulumlarda varsa temizle.
         foreach (var v in await userManager.GetUsersInRoleAsync(AppRoles.Viewer))
@@ -275,19 +285,93 @@ public static class DbSeeder
         }
     }
 
-    private static async Task EnsureUser(UserManager<ApplicationUser> userManager,
-        string email, string password, string fullName, string role)
+    /// <summary>
+    /// Eski demo hesapları temizler. Yönetici hesabı YENİDEN ADLANDIRILIR (silinmez):
+    /// imza-kaşesi, rolleri ve tekliflerdeki "hazırlayan" bağı korunur.
+    /// Demo satış hesabı silinir — satış personelini yönetici kendi oluşturacak.
+    /// </summary>
+    private static async Task MigrateLegacyAccountsAsync(AppDbContext db, UserManager<ApplicationUser> userManager)
     {
-        if (await userManager.FindByEmailAsync(email) is not null) return;
-
-        var user = new ApplicationUser
+        // 1) Eski yönetici hesabını yeni e-postaya taşı (yenisi henüz yoksa).
+        var legacyAdmin = await userManager.FindByEmailAsync(LegacyAdminEmail);
+        if (legacyAdmin is not null && await userManager.FindByEmailAsync(AdminEmail) is null)
         {
-            UserName = email, Email = email, EmailConfirmed = true,
-            FullName = fullName, IsActive = true
-        };
-        var result = await userManager.CreateAsync(user, password);
-        if (result.Succeeded)
-            await userManager.AddToRoleAsync(user, role);
+            legacyAdmin.Email = AdminEmail;
+            legacyAdmin.UserName = AdminEmail;
+            legacyAdmin.NormalizedEmail = userManager.NormalizeEmail(AdminEmail);
+            legacyAdmin.NormalizedUserName = userManager.NormalizeName(AdminEmail);
+            legacyAdmin.FullName = AdminFullName;
+            await userManager.UpdateAsync(legacyAdmin);
+
+            // Tekliflerdeki/servislerdeki "hazırlayan" alanı e-posta ile eşleştiği için birlikte taşınır
+            // (yoksa PDF'teki "Firma Yetkilisi" adı/kaşesi eski kayıtlarda kaybolur).
+            await ReassignCreatedByAsync(db, LegacyAdminEmail, AdminEmail);
+        }
+
+        // 2) Demo satış hesabını kaldır (şifresi kaynak kodda geçiyordu).
+        var legacySales = await userManager.FindByEmailAsync(LegacySalesEmail);
+        if (legacySales is not null) await userManager.DeleteAsync(legacySales);
+    }
+
+    /// <summary>Teklif/servis kayıtlarındaki oluşturan e-postasını yeni adrese taşır.</summary>
+    private static async Task ReassignCreatedByAsync(AppDbContext db, string oldEmail, string newEmail)
+    {
+        foreach (var o in await db.Offers.IgnoreQueryFilters().Where(x => x.CreatedBy == oldEmail).ToListAsync())
+            o.CreatedBy = newEmail;
+        foreach (var s in await db.ServiceRecords.IgnoreQueryFilters().Where(x => x.CreatedBy == oldEmail).ToListAsync())
+            s.CreatedBy = newEmail;
+        await db.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Yönetici hesabını oluşturur/şifresini uygular. Şifre SEED_ADMIN_PASSWORD ortam
+    /// değişkeninden gelir; verilmezse rastgele üretilip bir kez log'a yazılır — böylece
+    /// herkese açık depoda çalışan bir şifre asla bulunmaz.
+    /// </summary>
+    private static async Task EnsureAdminAsync(UserManager<ApplicationUser> userManager, string? adminPassword)
+    {
+        var generated = false;
+        if (string.IsNullOrWhiteSpace(adminPassword))
+        {
+            adminPassword = GenerateStrongPassword();
+            generated = true;
+        }
+
+        var user = await userManager.FindByEmailAsync(AdminEmail);
+        if (user is null)
+        {
+            user = new ApplicationUser
+            {
+                UserName = AdminEmail, Email = AdminEmail, EmailConfirmed = true,
+                FullName = AdminFullName, IsActive = true
+            };
+            var result = await userManager.CreateAsync(user, adminPassword);
+            if (!result.Succeeded) return;
+            await userManager.AddToRoleAsync(user, AppRoles.Admin);
+
+            if (generated)
+                Console.WriteLine($"[KURULUM] Yönetici hesabı oluşturuldu: {AdminEmail} / {adminPassword}  " +
+                                  "(SEED_ADMIN_PASSWORD tanımlı değildi. Giriş yapıp şifreyi değiştirin.)");
+            return;
+        }
+
+        // Hesap var: yalnızca şifre AÇIKÇA verilmişse (ortam değişkeni) uygulanır.
+        // Aksi halde yöneticinin panelden değiştirdiği şifre her açılışta ezilirdi.
+        if (!generated)
+        {
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            await userManager.ResetPasswordAsync(user, token, adminPassword!);
+        }
+        if (!await userManager.IsInRoleAsync(user, AppRoles.Admin))
+            await userManager.AddToRoleAsync(user, AppRoles.Admin);
+    }
+
+    private static string GenerateStrongPassword()
+    {
+        const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+        var bytes = System.Security.Cryptography.RandomNumberGenerator.GetBytes(18);
+        var body = new string(bytes.Select(b => chars[b % chars.Length]).ToArray());
+        return body + "!7Aa";   // Identity karmaşıklık kuralları için
     }
 
     private static List<Product> SampleProducts() => new()

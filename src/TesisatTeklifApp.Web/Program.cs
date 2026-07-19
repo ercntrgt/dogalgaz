@@ -96,7 +96,10 @@ using (var scope = app.Services.CreateScope())
     var db = sp.GetRequiredService<AppDbContext>();
     var userManager = sp.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = sp.GetRequiredService<RoleManager<IdentityRole>>();
-    await DbSeeder.SeedAsync(db, userManager, roleManager, app.Environment.ContentRootPath);
+    // Yönetici şifresi koda yazılmaz (depo herkese açık) — Render'da gizli ortam değişkeni.
+    // Tanımlı değilse seeder rastgele üretip bir kez log'a yazar.
+    var adminPassword = app.Configuration["SEED_ADMIN_PASSWORD"];
+    await DbSeeder.SeedAsync(db, userManager, roleManager, app.Environment.ContentRootPath, adminPassword);
 }
 
 // Ters proxy başlıklarını (X-Forwarded-Proto vb.) en başta uygula → Render HTTPS'i doğru görülür.
