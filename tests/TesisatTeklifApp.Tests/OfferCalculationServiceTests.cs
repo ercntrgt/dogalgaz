@@ -27,11 +27,15 @@ public class OfferCalculationServiceTests
     }
 
     [Fact]
-    public void RadiatorTotal_Is_Panel_Plus_Valve()
+    public void RadiatorTotal_Is_Quantity_Times_UnitPrice()
     {
-        var r = new RadiatorItem { PanelLength = 4m, MeterPrice = 2500m, ValveQuantity = 2m, ValveUnitPrice = 450m };
-        // 4*2500 + 2*450 = 10000 + 900 = 10900
-        Assert.Equal(10900m, _calc.CalculateRadiatorTotal(r));
+        // Panel: adet × panel fiyatı (PanelLength yalnızca bilgi amaçlı, fiyata girmez).
+        var panel = new RadiatorItem { IsValve = false, Quantity = 4m, UnitPrice = 2500m, PanelLength = 1.4m };
+        Assert.Equal(10000m, _calc.CalculateRadiatorTotal(panel));
+
+        // Vana: adet × birim fiyat (aynı formül).
+        var valve = new RadiatorItem { IsValve = true, Quantity = 2m, UnitPrice = 450m };
+        Assert.Equal(900m, _calc.CalculateRadiatorTotal(valve));
     }
 
     [Fact]
@@ -90,7 +94,7 @@ public class OfferCalculationServiceTests
         offer.Items.Add(Item(OfferSections.Material, 1, 450m, selected: true)); // 450
         offer.Items.Add(Item(OfferSections.Installation, 1, 5000m));     // 5000
         offer.Items.Add(Item(OfferSections.Labor, 1, 3000m));           // 3000
-        offer.RadiatorItems.Add(new RadiatorItem { PanelLength = 2m, MeterPrice = 2500m }); // 5000
+        offer.RadiatorItems.Add(new RadiatorItem { Quantity = 2m, UnitPrice = 2500m }); // 5000
         _calc.RecalculateOfferTotals(offer);
 
         // 1000 + 200 + 450 + 5000 + 3000 + 5000 = 14650

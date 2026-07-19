@@ -38,12 +38,21 @@ public enum MovementType
     Restore = 3   // İptal iadesi
 }
 
-/// <summary>Ödeme türü.</summary>
+/// <summary>Ödeme türü. (Other yalnızca eski kayıtların görüntülenmesi için tutulur.)</summary>
 public enum PaymentType
 {
     Cash = 0,
     CreditCard = 1,
-    Other = 2
+    Other = 2,
+    BankTransfer = 3,
+    Check = 4
+}
+
+/// <summary>Teklifte seçilebilen ödeme yöntemleri (Other listede yok).</summary>
+public static class PaymentTypes
+{
+    public static readonly PaymentType[] Selectable =
+        { PaymentType.Cash, PaymentType.CreditCard, PaymentType.BankTransfer, PaymentType.Check };
 }
 
 /// <summary>Satınalma siparişi durumu.</summary>

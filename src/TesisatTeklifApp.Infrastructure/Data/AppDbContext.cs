@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TesisatTeklifApp.Domain.Common;
+using TesisatTeklifApp.Domain.Constants;
 using TesisatTeklifApp.Domain.Entities;
 using TesisatTeklifApp.Infrastructure.Identity;
 
@@ -124,17 +125,31 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Product>().HasIndex(p => new { p.Name, p.Category });
     }
 
-    /// <summary>Kaydederken UpdatedDate alanını otomatik günceller.</summary>
+    /// <summary>Kaydederken UpdatedDate alanını günceller ve metinleri büyük harfe çevirir.</summary>
     public override int SaveChanges()
     {
-        StampTimestamps();
+        BeforeSave();
         return base.SaveChanges();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        StampTimestamps();
+        BeforeSave();
         return base.SaveChangesAsync(cancellationToken);
+    }
+
+    // Bu overload override edilmezse bu yoldan kaydeden kod normalizasyonu atlar.
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default)
+    {
+        BeforeSave();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void BeforeSave()
+    {
+        StampTimestamps();
+        NormalizeStrings();
     }
 
     private void StampTimestamps()
@@ -145,6 +160,27 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 entry.Entity.CreatedDate = DateTime.Now;
             else if (entry.State == EntityState.Modified)
                 entry.Entity.UpdatedDate = DateTime.Now;
+        }
+    }
+
+    /// <summary>
+    /// Kullanıcı girdisi metinleri Türkçe büyük harfe çevirir (TextCasing.UpperFields listesi).
+    /// E-posta, imza/kaşe base64, token, üretilen numaralar ve sabitle eşleşen alanlar hariçtir.
+    /// </summary>
+    private void NormalizeStrings()
+    {
+        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+        {
+            if (entry.State is not (EntityState.Added or EntityState.Modified)) continue;
+            if (!TextCasing.UpperFields.TryGetValue(entry.Metadata.ClrType.Name, out var fields)) continue;
+
+            foreach (var name in fields)
+            {
+                var prop = entry.Properties.FirstOrDefault(p => p.Metadata.Name == name);
+                if (prop?.CurrentValue is not string s || string.IsNullOrWhiteSpace(s)) continue;
+                var upper = TextCasing.TrUpper(s);
+                if (!string.Equals(upper, s, StringComparison.Ordinal)) prop.CurrentValue = upper;
+            }
         }
     }
 }

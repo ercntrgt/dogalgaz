@@ -1,6 +1,7 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using TesisatTeklifApp.Application.DTOs;
 using TesisatTeklifApp.Application.Interfaces;
 using TesisatTeklifApp.Domain.Constants;
 using TesisatTeklifApp.Domain.Entities;
@@ -80,7 +81,7 @@ public class PdfExportService : IPdfExportService
                     if (!string.IsNullOrWhiteSpace(offer.GeneralNotes))
                         NotesBlock(col, offer.GeneralNotes!);
                     PricingSummary(col, offer, includeLinePrices);
-                    if (includeLinePrices) PaymentPlanBlock(col, offer);
+                    PaymentPlanBlock(col, offer);   // müşteri PDF'inde de görünür
                     WorkProgramBlock(col, offer, includeLinePrices);
                     // Eksik ürünler yalnızca iç (fiyatlı) PDF'te; müşteri PDF'inde gösterilmez.
                     if (includeLinePrices && summary.InsufficientItems.Count > 0)
@@ -260,7 +261,7 @@ public class PdfExportService : IPdfExportService
                         c.Item().PaddingVertical(2).LineHorizontal(0.5f);
                         Line(c, "Ara Toplam", offer.SubTotal);
                         Line(c, $"İskonto (%{offer.DiscountRate})", offer.DiscountAmount);
-                        Line(c, $"KDV (%{offer.VatRate}){(offer.IsVatIncluded ? " - dahil" : "")}", offer.VatAmount);
+                        Line(c, $"Ek Oranlar (%{offer.VatRate}){(offer.IsVatIncluded ? " - dahil" : "")}", offer.VatAmount);
                         c.Item().PaddingVertical(2).LineHorizontal(0.5f);
                     }
                     c.Item().Row(rr =>
@@ -268,11 +269,9 @@ public class PdfExportService : IPdfExportService
                         rr.RelativeItem().Text("GENEL TOPLAM").Bold().FontColor(Navy);
                         rr.ConstantItem(90).AlignRight().Text(Money(offer.GrandTotal)).Bold().FontColor(Navy);
                     });
-                    if (prices)
-                    {
-                        Line(c, "Peşinat", offer.AdvancePayment);
-                        Line(c, "Kalan Ödeme", offer.RemainingPayment);
-                    }
+                    // Peşinat/Kalan müşteriye de gösterilir — ödeme planıyla birlikte anlam kazanır.
+                    Line(c, "Peşinat", offer.AdvancePayment);
+                    Line(c, "Kalan Ödeme", offer.RemainingPayment);
                 });
             });
         });
@@ -283,10 +282,28 @@ public class PdfExportService : IPdfExportService
         if (offer.PaymentPlans.Count == 0) return;
         Card(col, "Ödeme Planı", inner =>
         {
-            foreach (var p in offer.PaymentPlans)
-                inner.Item().Text($"{PaymentLabel(p.PaymentType)}: {Money(p.Amount)}" +
-                    (p.PaymentDate.HasValue ? $" - {p.PaymentDate:dd.MM.yyyy}" : "") +
-                    (string.IsNullOrWhiteSpace(p.Description) ? "" : $" ({p.Description})"));
+            inner.Item().Table(table =>
+            {
+                table.ColumnsDefinition(c =>
+                {
+                    c.ConstantColumn(30); c.RelativeColumn(2); c.ConstantColumn(75);
+                    c.ConstantColumn(70); c.RelativeColumn(3);
+                });
+                TableHeader(table, "#", "Ödeme Türü", "Tutar", "Vade", "Açıklama");
+                var i = 0;
+                foreach (var p in offer.PaymentPlans)
+                {
+                    var bg = i % 2 == 0 ? LightGray : "#ffffff";
+                    Cell(table, bg, "#000000", (++i).ToString());
+                    Cell(table, bg, "#000000", PaymentLabel(p.PaymentType));
+                    Cell(table, bg, "#000000", Money(p.Amount));
+                    Cell(table, bg, "#000000", p.PaymentDate.HasValue ? $"{p.PaymentDate:dd.MM.yyyy}" : "-");
+                    Cell(table, bg, "#000000", p.Description ?? "");
+                }
+            });
+            var planTotal = offer.PaymentPlans.Sum(p => p.Amount);
+            inner.Item().PaddingTop(3).AlignRight()
+                .Text($"Taksit toplamı: {Money(planTotal)}   •   Peşinat dahil: {Money(planTotal + offer.AdvancePayment)}").Italic();
         });
     }
 
@@ -430,12 +447,7 @@ public class PdfExportService : IPdfExportService
     private static string Money(decimal v) => v.ToString("#,##0.00") + " ₺";
     private static string Num(decimal v) => v % 1 == 0 ? v.ToString("0") : v.ToString("0.##");
 
-    private static string PaymentLabel(PaymentType t) => t switch
-    {
-        PaymentType.Cash => "Nakit",
-        PaymentType.CreditCard => "Kredi Kartı",
-        _ => "Diğer"
-    };
+    private static string PaymentLabel(PaymentType t) => PaymentTypeText.Label(t);
 
     // ==================== SERVİS FORMU PDF ====================
     public async Task<(string FileName, byte[] Content)> GenerateServicePdfAsync(int serviceId)

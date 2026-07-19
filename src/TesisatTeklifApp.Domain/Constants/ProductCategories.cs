@@ -80,8 +80,8 @@ public static class SectionCategories
         },
         [OfferSections.Material] = new[]
         {
-            ProductCategories.MalzemeEkipman, ProductCategories.RadyatorVanasi,
-            ProductCategories.TermostatikVana, ProductCategories.KombiDolabi,
+            // Vana kategorileri radyatör bölümüne ait olduğu için burada yer almaz.
+            ProductCategories.MalzemeEkipman, ProductCategories.KombiDolabi,
             ProductCategories.OdaTermostati, ProductCategories.BacaUzatmasi,
             ProductCategories.SelenoidVana, ProductCategories.GazAlarmCihazi,
             ProductCategories.CamMenfezi, ProductCategories.KombiElektrikIsi,

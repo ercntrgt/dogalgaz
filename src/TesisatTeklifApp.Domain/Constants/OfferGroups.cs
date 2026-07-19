@@ -35,9 +35,10 @@ public static class OfferGroups
         new() { Name = "KAROİFER TESİSATI GRUPLARI", Section = OfferSections.Installation, Icon = "bi-thermometer",
                 Categories = new[] { ProductCategories.KaloriferTesisati }, AllowFreeText = true },
 
+        // Vana kategorileri burada YOK: vanalar radyatör bölümündeki kendi alanından eklenir.
+        // (Aksi halde aynı vana hem buradan hem radyatörden eklenip iki kez sayılabiliyordu.)
         new() { Name = "MALZEME EKİPMAN", Section = OfferSections.Material, Icon = "bi-tools",
-                Categories = new[] { ProductCategories.MalzemeEkipman, ProductCategories.RadyatorVanasi,
-                    ProductCategories.TermostatikVana } },
+                Categories = new[] { ProductCategories.MalzemeEkipman } },
 
         new() { Name = "İŞÇİLİKLER-DOĞALGAZ", Section = OfferSections.Labor, Icon = "bi-hammer",
                 Categories = new[] { ProductCategories.Iscilik }, AllowFreeText = true },

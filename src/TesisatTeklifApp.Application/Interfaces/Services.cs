@@ -15,6 +15,9 @@ public interface IProductService
     Task SoftDeleteAsync(int id);
     Task AdjustStockAsync(int productId, decimal newQuantity, string? note);
 
+    /// <summary>Verilen sıraya göre ürünlerin SortOrder değerini yeniden numaralar (0,1,2...).</summary>
+    Task SaveOrderAsync(IList<int> orderedIds);
+
     /// <summary>Tüm ürünleri Excel şablonu olarak verir (düzenlenip geri yüklenir).</summary>
     Task<(string FileName, byte[] Content)> ExportProductsExcelAsync();
 

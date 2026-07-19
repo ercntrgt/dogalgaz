@@ -113,6 +113,19 @@ else
                     <button class="btn btn-primary" @onclick="CopyLink"><i class="bi bi-clipboard"></i> Kopyala</button>
                     <a class="btn btn-outline-secondary" href="@PublicLink" target="_blank">Aç</a>
                 </div>
+                <div class="mt-2">
+                    @if (HasPhone)
+                    {
+                        <a class="btn btn-sm btn-success" href="@WhatsAppLink" target="_blank">
+                            <i class="bi bi-whatsapp"></i> WhatsApp'tan Gönder
+                        </a>
+                        <span class="text-muted small ms-2">WhatsApp müşterinin numarasıyla açılır, mesaj hazır gelir — siz Gönder'e basarsınız.</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted small"><i class="bi bi-whatsapp"></i> WhatsApp ile göndermek için müşterinin telefon numarasını girin.</span>
+                    }
+                </div>
                 @if (!string.IsNullOrEmpty(linkMsg)) { <span class="text-success small">@linkMsg</span> }
             </div>
         </div>
@@ -321,7 +334,7 @@ else
                         <tbody>
                             <tr><td>Ara Toplam</td><td class="text-end">@Money(offer.SubTotal)</td></tr>
                             <tr><td>İskonto (%@offer.DiscountRate)</td><td class="text-end">@Money(offer.DiscountAmount)</td></tr>
-                            <tr><td>KDV (%@offer.VatRate)</td><td class="text-end">@Money(offer.VatAmount)</td></tr>
+                            <tr><td>Ek Oranlar (%@offer.VatRate)</td><td class="text-end">@Money(offer.VatAmount)</td></tr>
                             <tr class="border-top"><td class="fw-bold">Genel Toplam</td><td class="text-end fw-bold text-primary">@Money(offer.GrandTotal)</td></tr>
                             <tr><td>Peşinat</td><td class="text-end">@Money(offer.AdvancePayment)</td></tr>
                             <tr><td class="fw-semibold">Kalan Ödeme</td><td class="text-end fw-semibold">@Money(offer.RemainingPayment)</td></tr>
@@ -444,6 +457,33 @@ else
     private string? linkMsg;
 
     private string PublicLink => offer is null ? "" : $"{Nav.BaseUri}teklif/{offer.PublicToken}";
+
+    // --- WhatsApp ile imza linki gönderimi (ücretsiz wa.me deep-link; API/onay gerekmez) ---
+    private bool HasPhone => !string.IsNullOrEmpty(NormalizePhone(offer?.Customer?.Phone));
+
+    private string WhatsAppLink
+    {
+        get
+        {
+            var phone = NormalizePhone(offer?.Customer?.Phone);
+            if (string.IsNullOrEmpty(phone)) return "";
+            var ad = offer?.Customer?.FullName ?? "Müşterimiz";
+            var msg = $"Sayın {ad}, teklifiniz hazır. Onaylamak ve imzalamak için: {PublicLink}\n\nÖZDEMİR Mühendislik Mekanik Tesisat";
+            return $"https://wa.me/{phone}?text={Uri.EscapeDataString(msg)}";
+        }
+    }
+
+    /// <summary>Telefonu wa.me biçimine çevirir: rakam dışını at, baştaki 0'ı at, ülke kodu yoksa 90 ekle.</summary>
+    private static string? NormalizePhone(string? raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw)) return null;
+        var d = new string(raw.Where(char.IsDigit).ToArray());
+        if (d.StartsWith("00")) d = d[2..];
+        if (d.StartsWith("0")) d = d[1..];
+        if (!d.StartsWith("90")) d = "90" + d;
+        // 90 + 10 haneli TR numarası = 12 hane
+        return d.Length == 12 ? d : null;
+    }
 
     private async Task CopyLink()
     {

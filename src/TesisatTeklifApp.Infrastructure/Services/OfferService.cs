@@ -223,14 +223,15 @@ public class OfferService : IOfferService
             VatRate = source.VatRate,
             DiscountRate = source.DiscountRate,
             IsVatIncluded = source.IsVatIncluded,
+            PaymentMethod = source.PaymentMethod,
             GeneralNotes = source.GeneralNotes,
             ResponsiblePerson = source.ResponsiblePerson,
             EmployerName = source.EmployerName,
             Items = source.Items.Select(i => new OfferItem
             {
-                ProductId = i.ProductId, SectionName = i.SectionName, ItemName = i.ItemName,
-                IsSelected = i.IsSelected, Quantity = i.Quantity, Unit = i.Unit,
-                UnitPrice = i.UnitPrice, Description = i.Description
+                ProductId = i.ProductId, SectionName = i.SectionName, GroupName = i.GroupName,
+                ItemName = i.ItemName, IsSelected = i.IsSelected, Quantity = i.Quantity,
+                Unit = i.Unit, UnitPrice = i.UnitPrice, Description = i.Description
             }).ToList(),
             RadiatorItems = source.RadiatorItems.Select(r => new RadiatorItem
             {
@@ -341,6 +342,7 @@ public class OfferService : IOfferService
             .Include(o => o.Customer)
             .Include(o => o.Items)
             .Include(o => o.RadiatorItems)
+            .Include(o => o.PaymentPlans)
             .AsSplitQuery()
             .FirstOrDefaultAsync(o => o.PublicToken == token);
 

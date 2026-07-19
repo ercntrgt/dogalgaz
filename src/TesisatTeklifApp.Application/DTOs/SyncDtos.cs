@@ -9,7 +9,7 @@ public class OfferSyncDto
     public string? CreatedBy { get; set; }
     public string? CustomerSignature { get; set; }
     public decimal DiscountRate { get; set; }
-    public decimal VatRate { get; set; } = 20m;
+    public decimal VatRate { get; set; } = 30m;
     public bool IsVatIncluded { get; set; }
     public string? GeneralNotes { get; set; }
     public decimal AdvancePayment { get; set; }

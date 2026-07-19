@@ -27,6 +27,8 @@ public static class PaymentTypeText
     {
         PaymentType.Cash => "Nakit",
         PaymentType.CreditCard => "Kredi Kartı",
+        PaymentType.BankTransfer => "Havale / EFT",
+        PaymentType.Check => "Çek / Senet",
         _ => "Diğer"
     };
 }

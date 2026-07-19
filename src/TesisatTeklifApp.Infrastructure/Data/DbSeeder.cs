@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using TesisatTeklifApp.Domain.Common;
 using TesisatTeklifApp.Domain.Constants;
 using TesisatTeklifApp.Domain.Entities;
 using TesisatTeklifApp.Infrastructure.Identity;
@@ -78,6 +79,10 @@ public static class DbSeeder
         var settings = await db.StockSettings.FirstOrDefaultAsync();
         if (settings is not null && settings.CatalogVersion < CatalogVersion)
         {
+            // v3: "Radyatör" kategorisine sızmış tesisat/kolon kalemlerini düzelt.
+            // (Önce çalışır ki eksik-kalem eklemesi düzeltilmiş kategorileri görsün.)
+            await FixRadiatorCategoryAsync(db);
+
             var catalog = LoadCatalog(contentRootPath);
             if (catalog.Count == 0 && await db.Products.CountAsync() < 15)
                 catalog = SampleProducts();
@@ -93,10 +98,107 @@ public static class DbSeeder
             settings.CatalogVersion = CatalogVersion;
             await db.SaveChangesAsync();
         }
+
+        // --- Mevcut kayıtları büyük harfe çevir (tek seferlik) ---
+        if (settings is not null && settings.DataNormalizationVersion < DataNormalizationVersion)
+        {
+            await NormalizeExistingTextAsync(db);
+            settings.DataNormalizationVersion = DataNormalizationVersion;
+            await db.SaveChangesAsync();
+        }
+    }
+
+    /// <summary>Metin normalizasyon sürümü — büyük harf kuralı değişirse artır.</summary>
+    private const int DataNormalizationVersion = 1;
+
+    /// <summary>
+    /// Eski kayıtları da Türkçe büyük harfe çevirir. Entity'ler takip edilerek yüklenip
+    /// SaveChanges çağrıldığı için dönüşümü AppDbContext.NormalizeStrings yapar —
+    /// alan listesi tek yerde (TextCasing.UpperFields) kalır.
+    /// </summary>
+    private static async Task NormalizeExistingTextAsync(AppDbContext db)
+    {
+        await db.Customers.IgnoreQueryFilters().LoadAsync();
+        await db.Products.IgnoreQueryFilters().LoadAsync();
+        await db.Suppliers.IgnoreQueryFilters().LoadAsync();
+        await db.Ustalar.IgnoreQueryFilters().LoadAsync();
+        await db.ServiceRecords.IgnoreQueryFilters().LoadAsync();
+        await db.Offers.IgnoreQueryFilters().LoadAsync();
+        await db.OfferItems.IgnoreQueryFilters().LoadAsync();
+        await db.RadiatorItems.IgnoreQueryFilters().LoadAsync();
+        await db.PaymentPlans.IgnoreQueryFilters().LoadAsync();
+        await db.PurchaseOrders.IgnoreQueryFilters().LoadAsync();
+        await db.PurchaseOrderItems.IgnoreQueryFilters().LoadAsync();
+        await db.UstaPayments.IgnoreQueryFilters().LoadAsync();
+
+        // Takip edilen her varlığı "değişmiş" say ki NormalizeStrings hepsine uğrasın.
+        foreach (var e in db.ChangeTracker.Entries<BaseEntity>())
+            if (e.State == EntityState.Unchanged) e.State = EntityState.Modified;
     }
 
     /// <summary>Katalog sürümü — catalog.json değişince artır; seeder eksik kalemleri bir kez ekler.</summary>
-    private const int CatalogVersion = 2;
+    private const int CatalogVersion = 3;
+
+    /// <summary>
+    /// Excel içe aktarımında "Radyatör" kategorisine yanlışlıkla düşmüş tesisat/kolon kalemleri.
+    /// Ad → gerçek kategori. Radyatör seçim listesinde sadece radyatör kalsın diye düzeltilir.
+    /// </summary>
+    private static readonly Dictionary<string, string> RadiatorCategoryFixes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["DOĞALGAZ TESİSATI"] = ProductCategories.DogalgazTesisati,
+        ["OCAK VE KOMBİ TESİSATI"] = ProductCategories.DogalgazTesisati,
+        ["OCAK TESİSATI"] = ProductCategories.DogalgazTesisati,
+        ["SAYAÇ SONRASI KAYNAKLI TESİSATI"] = ProductCategories.DogalgazTesisati,
+        ["KOMBİ TESİSATI"] = ProductCategories.DogalgazTesisati,
+        ["UZUN TESİSAT +6 METRE"] = ProductCategories.DogalgazTesisati,
+        ["1''"] = ProductCategories.DogalgazTesisati,
+        ["3/4''"] = ProductCategories.DogalgazTesisati,
+        ["1/2''"] = ProductCategories.DogalgazTesisati,
+        ["21/2'' VANA GRUBU"] = ProductCategories.DogalgazTesisati,
+        ["G4 SAYAÇ GRUBU"] = ProductCategories.DogalgazTesisati,
+        ["300-21 mbar REGÜLATÖR GRUBU"] = ProductCategories.DogalgazTesisati,
+        ["KOLON TESİSATI"] = ProductCategories.KolonTesisati,
+        ["KOLON TESİSATI MÜHENDİSLİK HESABI-KONUT"] = ProductCategories.KolonTesisati,
+        ["KOLON TESİSATI MÜHENDİSLİK HESABI-ENDÜSTRİYEL"] = ProductCategories.KolonTesisati,
+        ["KISA KOLON"] = ProductCategories.KolonTesisati,
+        ["İLAVE YER HATTI"] = ProductCategories.KolonTesisati,
+        ["İLAVE KOLON TESİSATI"] = ProductCategories.KolonTesisati,
+        ["MÜŞAVİRLİK HİZMETİ"] = ProductCategories.Diger,
+    };
+
+    /// <summary>
+    /// Radyatör kategorisindeki yanlış kalemleri doğru kategoriye taşır; aynı ad doğru
+    /// kategoride zaten varsa (kopya) radyatördeki satırı siler. Idempotent.
+    /// </summary>
+    private static async Task FixRadiatorCategoryAsync(AppDbContext db)
+    {
+        var wrong = await db.Products.IgnoreQueryFilters()
+            .Where(p => p.Category == ProductCategories.Radyator).ToListAsync();
+        if (wrong.Count == 0) return;
+
+        var all = await db.Products.IgnoreQueryFilters()
+            .Select(p => new { p.Id, p.Name, p.Category }).ToListAsync();
+
+        foreach (var row in wrong)
+        {
+            var name = Squash(row.Name);
+            if (!RadiatorCategoryFixes.TryGetValue(name, out var target)) continue;
+
+            var duplicate = all.Any(a => a.Id != row.Id
+                && string.Equals(Squash(a.Name), name, StringComparison.OrdinalIgnoreCase)
+                && a.Category == target);
+
+            if (duplicate) row.IsDeleted = true;   // doğru kategoride zaten var
+            else row.Category = target;            // taşı
+        }
+
+        // Kaydetmek şart: aşağıdaki "eksik kalemleri ekle" adımı kategorileri DB'den okur.
+        // Kaydedilmezse taşınan kalem eksik sanılıp ikinci kez eklenir (kopya oluşur).
+        await db.SaveChangesAsync();
+    }
+
+    private static string Squash(string? s) =>
+        System.Text.RegularExpressions.Regex.Replace((s ?? "").Trim(), @"\s+", " ");
 
     private static string Key(string? name, string? category) =>
         System.Text.RegularExpressions.Regex.Replace((name ?? "").Trim(), @"\s+", " ").ToLowerInvariant()
@@ -113,6 +215,9 @@ public static class DbSeeder
             "ALTER TABLE \"RadiatorItems\" ADD COLUMN IF NOT EXISTS \"ItemName\" text;",
             "ALTER TABLE \"AspNetUsers\" ADD COLUMN IF NOT EXISTS \"SignatureStamp\" text;",
             "ALTER TABLE \"StockSettings\" ADD COLUMN IF NOT EXISTS \"CatalogVersion\" integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE \"StockSettings\" ADD COLUMN IF NOT EXISTS \"DataNormalizationVersion\" integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE \"Products\" ADD COLUMN IF NOT EXISTS \"SortOrder\" integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE \"Offers\" ADD COLUMN IF NOT EXISTS \"PaymentMethod\" integer NOT NULL DEFAULT 0;",
         });
         await db.Database.ExecuteSqlRawAsync(sql);
     }

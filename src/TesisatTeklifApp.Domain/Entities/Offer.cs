@@ -30,12 +30,16 @@ public class Offer : BaseEntity
     public decimal SubTotal { get; set; }
     public decimal DiscountRate { get; set; }
     public decimal DiscountAmount { get; set; }
-    public decimal VatRate { get; set; } = 20m;
+    /// <summary>Ek oranlar (%). Ekranda/PDF'te "Ek Oranlar" olarak geçer.</summary>
+    public decimal VatRate { get; set; } = 30m;
     public decimal VatAmount { get; set; }
     public decimal GrandTotal { get; set; }
 
     public decimal AdvancePayment { get; set; }
     public decimal RemainingPayment { get; set; }
+
+    /// <summary>Teklifin ödeme yöntemi. Taksitler bu yöntemle üretilir.</summary>
+    public PaymentType PaymentMethod { get; set; } = PaymentType.Cash;
     public bool IsVatIncluded { get; set; }
 
     public string? GeneralNotes { get; set; }

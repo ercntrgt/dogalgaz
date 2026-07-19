@@ -2,6 +2,7 @@ using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
 using TesisatTeklifApp.Application.DTOs;
 using TesisatTeklifApp.Application.Interfaces;
+using TesisatTeklifApp.Domain.Constants;
 using TesisatTeklifApp.Domain.Entities;
 using TesisatTeklifApp.Domain.Enums;
 using TesisatTeklifApp.Infrastructure.Data;
@@ -28,7 +29,8 @@ public class ProductService : IProductService
 
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
         {
-            var k = filter.Keyword.Trim();
+            // Ürün adları büyük harf saklanır — arama terimi de aynı dönüşümden geçer.
+            var k = TextCasing.TrUpper(filter.Keyword.Trim())!;
             q = q.Where(p => p.Name.Contains(k)
                 || (p.Brand != null && p.Brand.Contains(k))
                 || (p.Model != null && p.Model.Contains(k)));
@@ -40,7 +42,7 @@ public class ProductService : IProductService
         if (filter.OnlyCriticalStock)
             q = q.Where(p => p.IsStockTracked && p.StockQuantity <= p.CriticalStockQuantity);
 
-        return await q.AsNoTracking().OrderBy(p => p.Category).ThenBy(p => p.Name).ToListAsync();
+        return await q.AsNoTracking().OrderBy(p => p.Category).ThenBy(p => p.SortOrder).ThenBy(p => p.Name).ToListAsync();
     }
 
     public Task<Product?> GetByIdAsync(int id) =>
@@ -48,10 +50,10 @@ public class ProductService : IProductService
 
     public Task<List<Product>> GetByCategoryAsync(string category) =>
         _db.Products.AsNoTracking().Where(p => p.IsActive && p.Category == category)
-            .OrderBy(p => p.Name).ToListAsync();
+            .OrderBy(p => p.SortOrder).ThenBy(p => p.Name).ToListAsync();
 
     public Task<List<Product>> GetActiveAsync() =>
-        _db.Products.AsNoTracking().Where(p => p.IsActive).OrderBy(p => p.Category).ThenBy(p => p.Name).ToListAsync();
+        _db.Products.AsNoTracking().Where(p => p.IsActive).OrderBy(p => p.Category).ThenBy(p => p.SortOrder).ThenBy(p => p.Name).ToListAsync();
 
     public async Task AddAsync(Product product)
     {
@@ -87,6 +89,20 @@ public class ProductService : IProductService
             newQuantity - previous, note ?? "Manuel stok düzeltme");
     }
 
+    /// <summary>Verilen sıraya göre SortOrder'ı 0,1,2... olarak yeniden numaralar.</summary>
+    public async Task SaveOrderAsync(IList<int> orderedIds)
+    {
+        if (orderedIds is null || orderedIds.Count == 0) return;
+
+        var products = await _db.Products.Where(p => orderedIds.Contains(p.Id)).ToListAsync();
+        for (var i = 0; i < orderedIds.Count; i++)
+        {
+            var p = products.FirstOrDefault(x => x.Id == orderedIds[i]);
+            if (p is not null) p.SortOrder = i;
+        }
+        await _db.SaveChangesAsync();
+    }
+
     private static readonly string[] Headers =
     {
         "Id", "Ürün Adı", "Kategori", "Marka", "Model", "Birim",
@@ -97,7 +113,7 @@ public class ProductService : IProductService
     public async Task<(string FileName, byte[] Content)> ExportProductsExcelAsync()
     {
         var products = await _db.Products.AsNoTracking()
-            .OrderBy(p => p.Category).ThenBy(p => p.Name).ToListAsync();
+            .OrderBy(p => p.Category).ThenBy(p => p.SortOrder).ThenBy(p => p.Name).ToListAsync();
 
         using var wb = new XLWorkbook();
         var ws = wb.AddWorksheet("Urunler");

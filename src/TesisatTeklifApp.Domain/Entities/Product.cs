@@ -21,6 +21,9 @@ public class Product : BaseEntity
     public bool IsActive { get; set; } = true;
     public string? Description { get; set; }
 
+    /// <summary>Kategori içindeki gösterim sırası (Ürünler ekranından sürükle-bırak ile belirlenir). Küçük = üstte.</summary>
+    public int SortOrder { get; set; }
+
     // --- Stok alanları ---
     public bool IsStockTracked { get; set; } = true;
     public decimal StockQuantity { get; set; }

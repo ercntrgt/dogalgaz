@@ -23,7 +23,7 @@ public class ExcelExportService : IExcelExportService
             Durum = o.Status.ToString(),
             AraToplam = o.SubTotal,
             Iskonto = o.DiscountAmount,
-            KDV = o.VatAmount,
+            EkOranlar = o.VatAmount,
             GenelToplam = o.GrandTotal,
             Sorumlu = o.ResponsiblePerson ?? "-"
         });

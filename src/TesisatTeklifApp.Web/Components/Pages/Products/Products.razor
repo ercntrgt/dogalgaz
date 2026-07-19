@@ -44,11 +44,28 @@
     </div>
 </div>
 
+<div class="alert @(canReorder ? "alert-success" : "alert-secondary") py-2 small d-flex align-items-center">
+    <i class="bi bi-arrows-move me-2"></i>
+    @if (canReorder)
+    {
+        <span>Satırları <strong>sürükleyerek</strong> veya <strong>⤒</strong> ile sıralayabilirsiniz. Bu sıra teklif formundaki ürün listesine de yansır.</span>
+    }
+    else
+    {
+        <span>Sıralama yapmak için yukarıdan bir <strong>kategori seçip Filtrele</strong>'ye basın (sıra kategori içinde tutulur).</span>
+    }
+    @if (!string.IsNullOrEmpty(orderMsg))
+    {
+        <span class="ms-auto text-success fw-semibold">@orderMsg</span>
+    }
+</div>
+
 <div class="card summary-box">
     <div class="table-responsive">
         <table class="table table-hover mb-0 align-middle">
             <thead>
                 <tr>
+                    <AuthorizeView Roles="Admin" Context="d"><th style="width:34px"></th></AuthorizeView>
                     <th>Ad</th><th>Kategori</th><th>Marka/Model</th><th>Birim</th>
                     <th class="text-end">Satış ₺</th><th class="text-end">Stok</th><th>Durum</th>
                     <AuthorizeView Roles="Admin" Context="a"><th></th></AuthorizeView>
@@ -57,7 +74,18 @@
             <tbody>
                 @foreach (var p in items)
                 {
-                    <tr class="@RowClass(p)">
+                    <tr class="@RowClass(p) @(dragId == p.Id ? "row-dragging" : "")"
+                        draggable="@canReorder.ToString().ToLowerInvariant()"
+                        @ondragstart="() => DragStart(p)"
+                        @ondragover:preventDefault="true"
+                        @ondragover="() => DragOver(p)"
+                        @ondrop="DropRow"
+                        @key="p.Id">
+                        <AuthorizeView Roles="Admin" Context="d">
+                            <td class="drag-cell" title="Sürükleyip sırala">
+                                <i class="bi bi-grip-vertical text-muted"></i>
+                            </td>
+                        </AuthorizeView>
                         <td>@p.Name</td>
                         <td>@p.Category</td>
                         <td>@p.Brand @p.Model</td>
@@ -66,7 +94,9 @@
                         <td class="text-end">@(p.IsStockTracked ? FormatQty(p.StockQuantity) : "-")</td>
                         <td>@StockLabel(p)</td>
                         <AuthorizeView Roles="Admin" Context="a">
-                            <td class="text-end">
+                            <td class="text-end text-nowrap">
+                                <button class="btn btn-sm btn-outline-primary" title="En üste al"
+                                        @onclick="() => MoveToTop(p)">⤒</button>
                                 <a href="products/@p.Id" class="btn btn-sm btn-outline-secondary">Düzenle</a>
                             </td>
                         </AuthorizeView>
@@ -74,7 +104,7 @@
                 }
                 @if (items.Count == 0)
                 {
-                    <tr><td colspan="8" class="text-center text-muted py-4">Kayıt bulunamadı.</td></tr>
+                    <tr><td colspan="9" class="text-center text-muted py-4">Kayıt bulunamadı.</td></tr>
                 }
             </tbody>
         </table>
@@ -85,9 +115,60 @@
     private ProductSearchFilter filter = new();
     private List<Product> items = new();
 
+    // --- Sıralama (sürükle-bırak) ---
+    private int? dragId;
+    private string? orderMsg;
+
+    // Sıra kategori içinde tutulduğu için yalnızca tek kategori süzülüyken sürükleme anlamlı.
+    private bool canReorder => !string.IsNullOrWhiteSpace(filter.Category);
+
     protected override async Task OnInitializedAsync() => await Load();
 
-    private async Task Load() => items = await ProductService.SearchAsync(filter);
+    private async Task Load()
+    {
+        items = await ProductService.SearchAsync(filter);
+        dragId = null;
+    }
+
+    private void DragStart(Product p) { if (canReorder) dragId = p.Id; }
+
+    private void DragOver(Product target)
+    {
+        if (!canReorder || dragId is null || dragId == target.Id) return;
+        var from = items.FindIndex(x => x.Id == dragId);
+        var to = items.FindIndex(x => x.Id == target.Id);
+        if (from < 0 || to < 0) return;
+        var moved = items[from];
+        items.RemoveAt(from);
+        items.Insert(to, moved);
+    }
+
+    private async Task DropRow()
+    {
+        if (!canReorder || dragId is null) return;
+        dragId = null;
+        await PersistOrder();
+    }
+
+    private async Task MoveToTop(Product p)
+    {
+        if (!canReorder)
+        {
+            orderMsg = "Sıralamak için önce bir kategori seçin.";
+            return;
+        }
+        var i = items.FindIndex(x => x.Id == p.Id);
+        if (i <= 0) return;
+        items.RemoveAt(i);
+        items.Insert(0, p);
+        await PersistOrder();
+    }
+
+    private async Task PersistOrder()
+    {
+        await ProductService.SaveOrderAsync(items.Select(x => x.Id).ToList());
+        orderMsg = "Sıralama kaydedildi.";
+    }
 
     private string RowClass(Product p)
     {

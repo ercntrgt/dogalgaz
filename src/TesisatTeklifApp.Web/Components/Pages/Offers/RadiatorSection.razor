@@ -21,9 +21,48 @@
     @if (!collapsed)
     {
         <div class="card-body pt-2">
+            @* --- Radyatör seçimi: ara → tıkla → direkt eklenir (kombi grubu ile aynı desen) --- *@
+            <div class="pick-title">Radyatör</div>
+            <input class="form-control form-control-sm mb-2" placeholder="🔍 Radyatör ara (ör. 600)..."
+                   @bind="radSearch" @bind:event="oninput" />
+            <div class="group-picker mb-3">
+                @foreach (var p in FilteredRadiators.Take(200))
+                {
+                    <button type="button" class="group-pick" @onclick="() => AddPanel(p)">
+                        <i class="bi bi-plus-circle text-success me-1"></i>
+                        <span class="pick-name">@p.Name</span>
+                        <span class="pick-price price-cell ms-auto">@p.SalePrice.ToString("#,##0") ₺</span>
+                    </button>
+                }
+                @if (FilteredRadiators.Count == 0)
+                {
+                    <div class="text-muted small p-2">Eşleşen radyatör yok.</div>
+                }
+            </div>
+
+            @* --- Vana seçimi --- *@
+            <div class="pick-title">Vana</div>
+            <input class="form-control form-control-sm mb-2" placeholder="🔍 Vana ara..."
+                   @bind="valveSearch" @bind:event="oninput" />
+            <div class="group-picker mb-2">
+                @foreach (var p in FilteredValves.Take(200))
+                {
+                    <button type="button" class="group-pick" @onclick="() => AddValve(p)">
+                        <i class="bi bi-plus-circle text-success me-1"></i>
+                        <span class="pick-name">@p.Name</span>
+                        <span class="pick-price price-cell ms-auto">@p.SalePrice.ToString("#,##0") ₺</span>
+                    </button>
+                }
+                @if (FilteredValves.Count == 0)
+                {
+                    <div class="text-muted small p-2">Eşleşen vana yok. (Ürünler ekranından vana ekleyebilirsiniz.)</div>
+                }
+            </div>
+
             <div class="d-flex gap-2 mb-2 flex-wrap">
-                <button type="button" class="btn btn-sm btn-success" @onclick="AddPanel"><i class="bi bi-plus-circle"></i> Radyatör Ekle</button>
-                <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddValve"><i class="bi bi-plus-circle"></i> Vana Ekle</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="AddBlankPanel">
+                    <i class="bi bi-pencil-square"></i> Manuel radyatör satırı
+                </button>
             </div>
 
             @* --- Paneller --- *@
@@ -116,19 +155,48 @@
     [Parameter] public EventCallback OnChanged { get; set; }
 
     private bool collapsed = true;
+    private string? radSearch;
+    private string? valveSearch;
     private void Toggle() => collapsed = !collapsed;
 
     private List<RadiatorItem> Panels => Items.Where(i => !i.IsValve).ToList();
     private List<RadiatorItem> Valves => Items.Where(i => i.IsValve).ToList();
     private decimal TotalPanel => Panels.Sum(i => i.PanelLength * (i.Quantity > 0 ? i.Quantity : 1));
 
-    private void AddPanel() { Items.Add(new RadiatorItem { IsValve = false, Quantity = 1 }); Changed(); }
-    private void AddValve() { Items.Add(new RadiatorItem { IsValve = true, Quantity = 1 }); Changed(); }
+    private List<Product> FilteredRadiators => Filter(RadiatorProducts, radSearch);
+    private List<Product> FilteredValves => Filter(ValveProducts, valveSearch);
+
+    private static List<Product> Filter(List<Product> src, string? q) =>
+        string.IsNullOrWhiteSpace(q)
+            ? src
+            : src.Where(p => (p.Name ?? "").Contains(q.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
+
+    /// <summary>Listeden radyatör seçilince satır olarak eklenir (ölçü/fiyat üründen dolar).</summary>
+    private void AddPanel(Product p)
+    {
+        var r = new RadiatorItem { IsValve = false, Quantity = 1, ItemName = p.Name, RadiatorProductId = p.Id, UnitPrice = p.SalePrice };
+        var (brand, h, w) = ParseRadiatorName(p.Name, p.Brand);
+        if (!string.IsNullOrEmpty(brand)) r.RadiatorBrand = brand;
+        if (h.HasValue) r.RadiatorHeight = h;
+        if (w.HasValue) { r.RadiatorWidth = w; r.PanelLength = w.Value / 1000m; }
+        Items.Add(r);
+        Changed();
+    }
+
+    /// <summary>Listeden vana seçilince satır olarak eklenir (adet × birim fiyat).</summary>
+    private void AddValve(Product p)
+    {
+        Items.Add(new RadiatorItem { IsValve = true, Quantity = 1, ItemName = p.Name, ValveProductId = p.Id, UnitPrice = p.SalePrice });
+        Changed();
+    }
+
+    private void AddBlankPanel() { Items.Add(new RadiatorItem { IsValve = false, Quantity = 1 }); Changed(); }
     private void Remove(RadiatorItem r) { Items.Remove(r); Changed(); }
 
     private void OnRadiatorPicked(RadiatorItem r)
     {
-        var p = RadiatorProducts.FirstOrDefault(x => x.Name == (r.ItemName ?? "").Trim());
+        var p = RadiatorProducts.FirstOrDefault(x =>
+            string.Equals(x.Name, (r.ItemName ?? "").Trim(), StringComparison.OrdinalIgnoreCase));
         if (p is not null)
         {
             r.RadiatorProductId = p.Id;
@@ -151,7 +219,8 @@
 
     private void OnValvePicked(RadiatorItem r)
     {
-        var p = ValveProducts.FirstOrDefault(x => x.Name == (r.ItemName ?? "").Trim());
+        var p = ValveProducts.FirstOrDefault(x =>
+            string.Equals(x.Name, (r.ItemName ?? "").Trim(), StringComparison.OrdinalIgnoreCase));
         if (p is not null)
         {
             r.ValveProductId = p.Id;
@@ -165,15 +234,21 @@
 
     private static string FormatQty(decimal v) => v % 1 == 0 ? v.ToString("0") : v.ToString("0.##");
 
+    // Panel radyatör adları "600*1400" gibi mm ölçüsü taşır. HAVLUPAN'da ise "6*60" dilim×genişlik
+    // demektir; mm sanılırsa 0,06 m gibi saçma panel uzunluğu çıkar. Bu yüzden yalnızca
+    // gerçekçi mm değerleri (>= 200) ölçü olarak kabul edilir, diğerlerinde alan boş bırakılır.
+    private const int MinPlausibleMm = 200;
+
     private static (string? brand, int? height, int? width) ParseRadiatorName(string name, string? fallbackBrand)
     {
         var brand = fallbackBrand;
         var m = System.Text.RegularExpressions.Regex.Match(name ?? "", @"(\d{2,4})\s*[\*xX]\s*(\d{2,5})");
         int? h = null, w = null;
-        if (m.Success)
+        if (m.Success
+            && int.TryParse(m.Groups[1].Value, out var hh) && int.TryParse(m.Groups[2].Value, out var ww)
+            && hh >= MinPlausibleMm && ww >= MinPlausibleMm)
         {
-            if (int.TryParse(m.Groups[1].Value, out var hh)) h = hh;
-            if (int.TryParse(m.Groups[2].Value, out var ww)) w = ww;
+            h = hh; w = ww;
         }
         if (string.IsNullOrEmpty(brand) && !string.IsNullOrWhiteSpace(name))
             brand = name.Trim().Split(' ')[0];

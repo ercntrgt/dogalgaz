@@ -122,7 +122,7 @@
                     p => new[] { p.Name, p.Category, Q(p.StockQuantity), Q(p.CriticalStockQuantity), p.Unit });
                 break;
             case "revenue":
-                await Tabulate(await ReportService.GetRevenueReportAsync(filter), new[] { "Dönem", "Sipariş Adedi", "Ciro", "KDV", "İskonto" },
+                await Tabulate(await ReportService.GetRevenueReportAsync(filter), new[] { "Dönem", "Sipariş Adedi", "Ciro", "Ek Oranlar", "İskonto" },
                     r => new[] { r.Period, r.OrderCount.ToString(), Money(r.TotalRevenue), Money(r.TotalVat), Money(r.TotalDiscount) });
                 break;
             case "productsales":

@@ -80,6 +80,31 @@
                 <span>@offer.GrandTotal.ToString("#,##0.00") ₺</span>
             </div>
 
+            @if (offer.AdvancePayment > 0 || Installments.Any())
+            {
+                <h6 class="pub-sec mt-4">Ödeme Planı</h6>
+                @if (offer.AdvancePayment > 0)
+                {
+                    <div class="pub-line">
+                        <span><strong>Peşinat</strong></span>
+                        <span>@offer.AdvancePayment.ToString("#,##0.00") ₺</span>
+                    </div>
+                }
+                @foreach (var (p, i) in Installments.Select((p, i) => (p, i + 1)))
+                {
+                    <div class="pub-line">
+                        <span>
+                            @i. Taksit — @PaymentTypeText.Label(p.PaymentType)
+                            @if (p.PaymentDate.HasValue)
+                            {
+                                <span class="text-muted small">(@p.PaymentDate!.Value.ToString("dd.MM.yyyy"))</span>
+                            }
+                        </span>
+                        <span>@p.Amount.ToString("#,##0.00") ₺</span>
+                    </div>
+                }
+            }
+
             @if (offer.CustomerApprovedDate is not null || approved)
             {
                 <div class="pub-approved">
@@ -139,6 +164,7 @@
     private bool loading = true;
     private bool saving;
     private bool approved;
+    private bool padInit;
     private string? msg;
 
     private IEnumerable<KeyValuePair<string, List<OfferItem>>> ItemsByGroup =>
@@ -146,6 +172,9 @@
             .Where(i => i.IsSelected && i.Quantity > 0)
             .GroupBy(i => string.IsNullOrEmpty(i.GroupName) ? "DİĞER" : i.GroupName!)
             .Select(g => new KeyValuePair<string, List<OfferItem>>(g.Key, g.ToList()));
+
+    private IEnumerable<PaymentPlan> Installments =>
+        (offer?.PaymentPlans ?? new List<PaymentPlan>()).Where(p => p.Amount > 0);
 
     private IEnumerable<RadiatorItem> Radiators =>
         (offer?.RadiatorItems ?? new List<RadiatorItem>()).Where(r => r.Quantity > 0);
@@ -157,10 +186,15 @@
         loading = false;
     }
 
+    // Tuval yalnızca veri yüklendikten sonra oluştuğu için firstRender tek başına yetmez;
+    // bayrakla tek sefer kurulur. Aksi halde her render pad'i sıfırlayıp çizimi siliyordu.
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (offer is not null && offer.CustomerApprovedDate is null && !approved)
+        if (!padInit && offer is not null && offer.CustomerApprovedDate is null && !approved)
+        {
             await JS.InvokeVoidAsync("signaturePad.init", "sigCanvas");
+            padInit = true;
+        }
     }
 
     private async Task ClearSig() => await JS.InvokeVoidAsync("signaturePad.clear", "sigCanvas");

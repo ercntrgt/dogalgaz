@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TesisatTeklifApp.Application.DTOs;
 using TesisatTeklifApp.Application.Interfaces;
+using TesisatTeklifApp.Domain.Constants;
 using TesisatTeklifApp.Domain.Entities;
 using TesisatTeklifApp.Infrastructure.Data;
 
@@ -16,25 +17,39 @@ public class CustomerService : ICustomerService
     {
         var q = _db.Customers.AsQueryable();
 
+        // Veriler büyük harf saklandığı için arama terimleri de aynı dönüşümden geçer
+        // (Postgres'te Contains harf duyarlıdır — küçük harfle arayan kullanıcı bulamazdı).
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
         {
-            var k = filter.Keyword.Trim();
+            var k = TextCasing.TrUpper(filter.Keyword.Trim())!;
             q = q.Where(c => c.FirstName.Contains(k) || c.LastName.Contains(k)
                 || (c.Phone != null && c.Phone.Contains(k))
                 || (c.NationalId != null && c.NationalId.Contains(k)));
         }
         if (!string.IsNullOrWhiteSpace(filter.FirstName))
-            q = q.Where(c => c.FirstName.Contains(filter.FirstName));
+        {
+            var v = TextCasing.TrUpper(filter.FirstName.Trim())!;
+            q = q.Where(c => c.FirstName.Contains(v));
+        }
         if (!string.IsNullOrWhiteSpace(filter.LastName))
-            q = q.Where(c => c.LastName.Contains(filter.LastName));
+        {
+            var v = TextCasing.TrUpper(filter.LastName.Trim())!;
+            q = q.Where(c => c.LastName.Contains(v));
+        }
         if (!string.IsNullOrWhiteSpace(filter.Phone))
             q = q.Where(c => c.Phone != null && c.Phone.Contains(filter.Phone));
         if (!string.IsNullOrWhiteSpace(filter.NationalId))
             q = q.Where(c => c.NationalId != null && c.NationalId.Contains(filter.NationalId));
         if (!string.IsNullOrWhiteSpace(filter.City))
-            q = q.Where(c => c.City != null && c.City.Contains(filter.City));
+        {
+            var v = TextCasing.TrUpper(filter.City.Trim())!;
+            q = q.Where(c => c.City != null && c.City.Contains(v));
+        }
         if (!string.IsNullOrWhiteSpace(filter.District))
-            q = q.Where(c => c.District != null && c.District.Contains(filter.District));
+        {
+            var v = TextCasing.TrUpper(filter.District.Trim())!;
+            q = q.Where(c => c.District != null && c.District.Contains(v));
+        }
 
         return await q.AsNoTracking().OrderByDescending(c => c.CreatedDate).ToListAsync();
     }

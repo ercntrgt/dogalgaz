@@ -9,6 +9,7 @@
 @inject IOfferCalculationService Calc
 @inject IAuditService Audit
 @inject NavigationManager Nav
+@inject IJSRuntime JS
 
 <PageTitle>@(IsNew ? "Yeni Teklif" : offer.OfferNumber)</PageTitle>
 
@@ -165,17 +166,17 @@ else
                             </div>
                             <div class="col-7 text-muted">İskonto Tutarı</div>
                             <div class="col-5 text-end">@Money(offer.DiscountAmount)</div>
-                            <div class="col-7">KDV Oranı (%)</div>
+                            <div class="col-7">Ek Oranlar (%)</div>
                             <div class="col-5">
                                 <input type="number" step="any" class="form-control form-control-sm" @bind="offer.VatRate" @bind:after="Recalc" />
                             </div>
                             <div class="col-7">
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="vatinc" @bind="offer.IsVatIncluded" @bind:after="Recalc" />
-                                    <label class="form-check-label" for="vatinc">Fiyatlara KDV dahil</label>
+                                    <label class="form-check-label" for="vatinc">Fiyatlara dahil</label>
                                 </div>
                             </div>
-                            <div class="col-5 text-end text-muted">KDV: @Money(offer.VatAmount)</div>
+                            <div class="col-5 text-end text-muted">Ek Oranlar: @Money(offer.VatAmount)</div>
                         </div>
                         <div class="d-flex justify-content-between border-top pt-2">
                             <span class="fw-bold fs-5">Genel Toplam</span>
@@ -199,6 +200,17 @@ else
             <div class="card summary-box mb-3 price-cell">
                 <div class="card-header bg-white fw-semibold">I) Ödeme Planı (Taksitler / Vadeler)</div>
                 <div class="card-body">
+                    @* Ödeme yöntemi en üstte — taksitler bu yönteme göre üretilir *@
+                    <div class="mb-3">
+                        <label class="form-label small mb-1 fw-semibold">Ödeme Yöntemi</label>
+                        <select class="form-select form-select-sm" @bind="offer.PaymentMethod" @bind:after="OnPaymentMethodChanged">
+                            @foreach (var t in PaymentTypes.Selectable)
+                            {
+                                <option value="@t">@PaymentTypeText.Label(t)</option>
+                            }
+                        </select>
+                    </div>
+
                     @* Otomatik eşit taksit bölme *@
                     <div class="row g-2 align-items-end mb-3 p-2 rounded" style="background:#f4f6f9;">
                         <div class="col-auto">
@@ -236,9 +248,10 @@ else
                         <div class="row g-2 mb-2 align-items-center">
                             <div class="col-md-3">
                                 <select class="form-select form-select-sm" @bind="pp.PaymentType">
-                                    <option value="@PaymentType.Cash">Nakit</option>
-                                    <option value="@PaymentType.CreditCard">Kredi Kartı</option>
-                                    <option value="@PaymentType.Other">Diğer</option>
+                                    @foreach (var t in PaymentTypes.Selectable)
+                                    {
+                                        <option value="@t">@PaymentTypeText.Label(t)</option>
+                                    }
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -396,7 +409,7 @@ else
 
     private Offer NewDraft()
         // Boş taslak; kalemler grup akordeonundan ("Grubu Ekle" / tek tek) eklenir.
-        => new() { OfferDate = DateTime.Today, Status = OfferStatus.Draft, VatRate = 20m };
+        => new() { OfferDate = DateTime.Today, Status = OfferStatus.Draft, VatRate = 30m };
 
     private void Recalc()
     {
@@ -404,7 +417,7 @@ else
         StateHasChanged();
     }
 
-    private void AddPayment() => offer.PaymentPlans.Add(new PaymentPlan { PaymentType = PaymentType.Cash });
+    private void AddPayment() => offer.PaymentPlans.Add(new PaymentPlan { PaymentType = offer.PaymentMethod });
 
     private int installmentCount = 3;
     private string installmentPeriod = "Ay";
@@ -412,10 +425,31 @@ else
     private decimal InstallmentBase =>
         (offer.GrandTotal - offer.AdvancePayment) > 0 ? offer.GrandTotal - offer.AdvancePayment : offer.GrandTotal;
 
-    private void GenerateInstallments()
+    /// <summary>Yöntem değişince mevcut taksitlerin türünü de günceller; taksit sayısını yönteme göre önerir.</summary>
+    private void OnPaymentMethodChanged()
+    {
+        foreach (var p in offer.PaymentPlans) p.PaymentType = offer.PaymentMethod;
+
+        // Peşin yöntemlerde tek ödeme, vadeli yöntemlerde 3 taksit mantıklı bir başlangıç.
+        installmentCount = offer.PaymentMethod switch
+        {
+            PaymentType.Cash or PaymentType.BankTransfer => 1,
+            _ => 3
+        };
+        StateHasChanged();
+    }
+
+    private async Task GenerateInstallments()
     {
         var n = installmentCount;
         if (n < 1) return;
+
+        // Elle girilmiş satırlar varsa üzerine yazmadan önce onay al.
+        var manual = offer.PaymentPlans.Any(p => string.IsNullOrEmpty(p.Description) || !p.Description!.EndsWith(". taksit"));
+        if (manual && !await JS.InvokeAsync<bool>("confirm",
+                "Ödeme planındaki mevcut satırlar silinip yeniden oluşturulacak. Devam edilsin mi?"))
+            return;
+
         var total = InstallmentBase;
         var per = Math.Round(total / n, 2, MidpointRounding.AwayFromZero);
         var today = DateTime.Today;
@@ -432,7 +466,7 @@ else
             var amount = i == n - 1 ? Math.Round(total - per * (n - 1), 2) : per;
             offer.PaymentPlans.Add(new PaymentPlan
             {
-                PaymentType = PaymentType.Cash, Amount = amount, PaymentDate = date, Description = $"{i + 1}. taksit"
+                PaymentType = offer.PaymentMethod, Amount = amount, PaymentDate = date, Description = $"{i + 1}. taksit"
             });
         }
         StateHasChanged();

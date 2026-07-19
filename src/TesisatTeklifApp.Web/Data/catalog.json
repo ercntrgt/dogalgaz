@@ -1,3082 +1,2992 @@
 [
- {
-  "Name": "BOSCH CONDENSE 1200 20 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 30000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BOSCH CONDENSE 1200 24 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 35000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS GB022İ 20/24 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS GB062 20/24 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 43376.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS GB062 24/30 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 52331.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS GB072 24/30 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS GB072 YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS GB122İ 24/30 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 56553.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS GB172İ 30 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 78569.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS GB172İ 35 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 82808.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS GB182İ 35 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 148685.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAİKİN CSU 24 KW TR",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAİKİN İCON 20/24 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAİKİN NDJ PREMİX 24 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 55000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAİKİN NDJ PREMİX 35 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 62000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAİKİN NDJ SMART 24 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 61000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAİKİN NDJ SMART 28 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 67000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAİKİN NDJ SMART 35 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 69000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAİKİN VZ PREMİX 23 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4500.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAİKİN VZ PREMİX 42 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 62000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM 11 LT ŞOFBEN",
-  "Category": "Diğer",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM ADEMİX 18 KW  YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM ADEMİX 18/24 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM ADEMİX 24/28 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM ATRN CONDENSE 20 KW  YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM ATROMİX 20 KW  YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM ATROMİX 20/24 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM ATROMİX 24/28 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM L 350 F 14 LT HERMETİK ŞOFBEN",
-  "Category": "Diğer",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM NİTROMİX 24 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM NİTROMİX 35 KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DEMİRDÖKÜM VİNTOMİX 18/24 KW  YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ECA CİTİUS PREMİX 24 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 38432.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ECA CİTİUS PREMİX 28 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 41720.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ECA HERMATİK ŞOFBEN",
-  "Category": "Diğer",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ECA PHONEİX 11 LT. ŞOFBEN",
-  "Category": "Diğer",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ECA PROTEUS PREMİX 24 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 46949.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ECA PROTEUS PREMİX 28 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 50300.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ECA PROTEUS PREMİX 30 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 51955.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ECA PROTEUS PREMİX 35 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 53960.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ECA PROTEUS PREMİX 42 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 56167.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HEXEL LİNA YOĞUŞMALI 25 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 33512.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HEXEL MİNA YOĞUŞMALI 25 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 30630.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HEXEL MİNA YOĞUŞMALI 42 KW",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 42233.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "VAILLANT VED PRO 18/8",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "VAİLLANT 236 5-3 PRO YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "VAİLLANT 36 CS",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "VAİLLANT CLİMAVAIR PURE 12K INVERTER SPLİT KLİMA",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "VAİLLANT ECO TEC İNTRO 24 KW KW YOĞUŞMALI KOMBİ",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 54768.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAYLUX 12 KW ISI POMPASI",
-  "Category": "Isı Pompası",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 125000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAYLUX 16 KW ISI POMPASI",
-  "Category": "Isı Pompası",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 140000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SİESTA 9 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SİESTA 12 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SİESTA 14 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SİESTA 18 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SİESTA 24 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SENSİRA 7 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SENSİRA 9 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SENSİRA 12 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SENSİRA 14 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SENSİRA 18 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SENSİRA 21 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SENSİRA 24 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ SHIRA ECO 7 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ SHIRA ECO 9 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ SHIRA ECO 12 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ SHIRA ECO 18 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ SHIRA ECO 21 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ SHIRA ECO 24 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN PERFERA 9 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN PERFERA 12 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN PERFERA 18 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ ZETA SHIRA PLUS 7 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ ZETA SHIRA PLUS 9 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ ZETA SHIRA PLUS 12 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ ZETA SHIRA PLUS 14 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ ZETA SHIRA PLUS 18 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ ZETA SHIRA PLUS 21 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN YENİ ZETA SHIRA PLUS 24 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 7 BTU - BEYAZ",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 9 BTU - BEYAZ",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 12 BTU - BEYAZ",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 14 BTU - BEYAZ",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 18 BTU - BEYAZ",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 7 BTU - GRİ",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 9 BTU - GRİ",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 12 BTU - GRİ",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 14 BTU - GRİ",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 18 BTU - GRİ",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 7 BTU - SİYAH",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 9 BTU - SİYAH",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 12 BTU - SİYAH",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 14 BTU - SİYAH",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN EMURA III 18 BTU - SİYAH",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN URURU SARARA 9 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN URURU SARARA 12 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN URURU SARARA 18 BTU",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN MULTİ DIŞ ÜNİTE (.....)",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN MULTİ DIŞ İÇ ÜNİTE (.....)",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN SALON TİPİ (...)",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DAIKIN KASET TİPİ (...)",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BOSCH 9 BTU KLİMA",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BOSCH 12 BTU KLİMA",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BOSCH 18 BTU KLİMA",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BOSCH 24 BTU KLİMA",
-  "Category": "Klima",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BOSCH SALON TİPİ (...)",
-  "Category": "Kombi",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  400*1000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2700.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  400*1200 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3240.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  400*1400 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3780.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  400*1600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4320.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  400*1800 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4860.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  400*2000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 5400.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  400*600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1620.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  400*800 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2160.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  500*1000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  500*1200 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  500*1400 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4200.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  500*1600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  500*1800 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 5400.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  500*2000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 6000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  500*600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  500*800 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2400.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*1000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*1100 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3300.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*1200 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*1300 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3900.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*1400 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4200.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*1500 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4500.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*1600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*1700 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 5100.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*1800 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 5400.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*1900 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 5700.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*2000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 6000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*2100 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 6300.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*2200 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 6600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*2300 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 6900.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*2400 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 7200.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*2500 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 7500.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*2600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 7800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*2700 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 8100.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*2800 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 8400.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*2900 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 8700.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*3000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 9000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*400 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1200.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*500 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1500.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*700 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2100.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  600*900 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2700.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*1000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 5100.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*1100 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 5650.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*1200 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 6240.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*1300 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 6630.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*1400 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 7140.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*1500 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 7650.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*1600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 8160.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*1700 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 8670.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*400 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2040.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*500 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2550.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3060.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*700 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3570.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*800 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4080.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BUDERUS  900*900 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4590.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*1000 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*1100 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3300.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*1200 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*1300 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3900.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*1400 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4200.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*1500 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4500.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*1600 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*1800 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 5400.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*2000 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*2200 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 6600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*2400 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 7200.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*2600 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 7800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*2800 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 8400.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*3000 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 9000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*400 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1200.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*500 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1500.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*600 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*700 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2100.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*800 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2400.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  600*900 STANDART PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2700.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*1000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4500.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*1100 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4950.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*1200 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 5400.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*1300 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 5850.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*1400 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 6300.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*1500 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 6750.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*1600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 7200.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*1800 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 8100.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*2000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 9000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*2200 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 9900.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*2400 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 10800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*2600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 11700.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*2800 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 12600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*3000 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 13500.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*400 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*500 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2250.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*600 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2700.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*700 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3150.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*800 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 3600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "E.C.A  900*900 PANEL RADYATÖR",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 4050.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 4*120 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 5*100 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1049.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 5*110 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1200.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 5*120 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1350.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 5*140 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1700.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 5*160 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 5*70 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 825.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 50*100 DÜZ KROM",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2050.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 50*110 DÜZ KROM",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2360.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 50*120 DÜZ KROM",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 50*70 DÜZ KROM",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1600.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 50*80 DÜZKROM",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1900.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 6*10 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1150.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 6*12 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1450.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 6*14 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1900.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 6*60   BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1700.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 6*70 BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 1800.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "HAVLUPAN 6*80   BEYAZ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 2000.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "DOĞALGAZ TESİSATI",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "OCAK VE KOMBİ TESİSATI",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "OCAK TESİSATI",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "SAYAÇ SONRASI KAYNAKLI TESİSATI",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ TESİSATI",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "UZUN TESİSAT +6 METRE",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "1''",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "3/4''",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "1/2''",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOLON TESİSATI",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOLON TESİSATI MÜHENDİSLİK HESABI-KONUT",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOLON TESİSATI MÜHENDİSLİK HESABI-ENDÜSTRİYEL",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KISA KOLON",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "İLAVE YER HATTI",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "İLAVE KOLON TESİSATI",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "21/2'' VANA GRUBU",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "G4 SAYAÇ GRUBU",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "300-21 mbar REGÜLATÖR GRUBU",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "MÜŞAVİRLİK HİZMETİ",
-  "Category": "Radyatör",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ MONTAJ",
-  "Category": "Kalorifer Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "MONTAJ",
-  "Category": "Kalorifer Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "FULL İLAVE LİSTESİ-25 lik",
-  "Category": "Kalorifer Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "FULL İLAVE LİSTESİ-32 lik",
-  "Category": "Kalorifer Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "EK HAT ALMA-20 LİK",
-  "Category": "Kalorifer Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "EK HAT ALMA-25 LİK",
-  "Category": "Kalorifer Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "EK HAT ALMA-32 LİK",
-  "Category": "Kalorifer Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KIRIM FARKI",
-  "Category": "Kalorifer Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "RADYATÖR VANASI (........ MARKA)",
-  "Category": "Radyatör vanası",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "TERMOSTATİK VANA (...... MARKA)",
-  "Category": "Termostatik vana",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ DOLABI",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ODA TERMOSTATI  (....... MARKA)",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BACA UZATMASI (........ CİNS)",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ ELEKTRİK İŞİ (......)",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "SELENOİD VANA",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "GAZ ALARM CİHAZI",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "CAM MENFEZ",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "MONTAJ",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ GAZ",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ GAZ HAT ALMALI",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "OCAK GAZI HATTI",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ OCAK GAZ HATTI",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "FULL",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "FULL KIRIMLI",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KIRIMLI ALT YAPI",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ PETEK MONTAJI",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ MONTAJ",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "PETEK GRUP MONTAJI",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "PETEK HAT ALMA",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ HAT ALMA",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "SICAK SOĞUK ALMA",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ESNEK TESİSAT FARKI",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "Petek Grup Farkı Adet",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "YERDEN ISITMA m*2 fiyatı",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOLON-VANA BAŞI (7 vanaya kadar)",
-  "Category": "Kolon Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOLON METRAJ",
-  "Category": "Kolon Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KISA KOLON",
-  "Category": "Kolon Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BASTON",
-  "Category": "Kolon Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "SAYAÇ SONRASI",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "YARIM GAZ",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "Korkuteli YOL",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "Gölhisar YOL",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "Elmalı YOL",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "YEMEK",
-  "Category": "İşçilik",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "MONTAJI İŞÇİLİK BEDELİ  7-9-12-14 BTU",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "MONTAJI İŞÇİLİK BEDELİ 18-24 BTU",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "MONTAJI İŞÇİLİK BEDELİ MULTİ İÇ ÜNİTE",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "MONTAJI İŞÇİLİK BEDELİ MULTİDIŞ ÜNİTE",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BAKIR BORU 1/4 - 3/8 MALZEME",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BAKIR BORU 1/4 - 1/2 MALZEME",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BAKIR BORU 1/4 - 3/8 İŞÇİLİK",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BAKIR BORU 1/4 - 1/2 İŞÇİLİK",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KABLO KANALI  1/4 - 3/8",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KABLO KANALI  1/4 - 1/2",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KLİMA AYAĞI",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "4*1,5 ANTIGRON KABLO",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "BANT",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "TEK TARAFLI TAKOZ",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ÇİFT TARAFLI TAKOZ",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "TEK TARAFLI BÜYÜK TAKOZ",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "ÇİGT TARAFLI BÜYÜK TAKOZ",
-  "Category": "Malzeme/Ekipman",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "OCAK VE KOMBİ TESİSATI",
-  "Category": "Doğalgaz Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "OCAK TESİSATI",
-  "Category": "Doğalgaz Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "SAYAÇ SONRASI KAYNAKLI TESİSATI",
-  "Category": "Doğalgaz Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "KOMBİ TESİSATI",
-  "Category": "Doğalgaz Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Adet",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "UZUN TESİSAT +6 METRE",
-  "Category": "Doğalgaz Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "1''",
-  "Category": "Doğalgaz Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "3/4''",
-  "Category": "Doğalgaz Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- },
- {
-  "Name": "1/2''",
-  "Category": "Doğalgaz Tesisatı",
-  "Brand": null,
-  "Model": null,
-  "Unit": "Metre",
-  "PurchasePrice": 0.0,
-  "SalePrice": 0.0,
-  "VatRate": 20.0
- }
+  {
+    "Name": "BOSCH CONDENSE 1200 20 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 30000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BOSCH CONDENSE 1200 24 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 35000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS GB022İ 20/24 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS GB062 20/24 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 43376.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS GB062 24/30 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 52331.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS GB072 24/30 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS GB072 YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS GB122İ 24/30 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 56553.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS GB172İ 30 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 78569.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS GB172İ 35 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 82808.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS GB182İ 35 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 148685.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAİKİN CSU 24 KW TR",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAİKİN İCON 20/24 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAİKİN NDJ PREMİX 24 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 55000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAİKİN NDJ PREMİX 35 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 62000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAİKİN NDJ SMART 24 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 61000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAİKİN NDJ SMART 28 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 67000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAİKİN NDJ SMART 35 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 69000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAİKİN VZ PREMİX 23 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4500.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAİKİN VZ PREMİX 42 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 62000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM 11 LT ŞOFBEN",
+    "Category": "Diğer",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM ADEMİX 18 KW  YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM ADEMİX 18/24 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM ADEMİX 24/28 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM ATRN CONDENSE 20 KW  YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM ATROMİX 20 KW  YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM ATROMİX 20/24 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM ATROMİX 24/28 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM L 350 F 14 LT HERMETİK ŞOFBEN",
+    "Category": "Diğer",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM NİTROMİX 24 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM NİTROMİX 35 KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DEMİRDÖKÜM VİNTOMİX 18/24 KW  YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ECA CİTİUS PREMİX 24 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 38432.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ECA CİTİUS PREMİX 28 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 41720.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ECA HERMATİK ŞOFBEN",
+    "Category": "Diğer",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ECA PHONEİX 11 LT. ŞOFBEN",
+    "Category": "Diğer",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ECA PROTEUS PREMİX 24 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 46949.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ECA PROTEUS PREMİX 28 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 50300.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ECA PROTEUS PREMİX 30 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 51955.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ECA PROTEUS PREMİX 35 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 53960.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ECA PROTEUS PREMİX 42 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 56167.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HEXEL LİNA YOĞUŞMALI 25 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 33512.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HEXEL MİNA YOĞUŞMALI 25 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 30630.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HEXEL MİNA YOĞUŞMALI 42 KW",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 42233.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "VAILLANT VED PRO 18/8",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "VAİLLANT 236 5-3 PRO YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "VAİLLANT 36 CS",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "VAİLLANT CLİMAVAIR PURE 12K INVERTER SPLİT KLİMA",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "VAİLLANT ECO TEC İNTRO 24 KW KW YOĞUŞMALI KOMBİ",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 54768.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAYLUX 12 KW ISI POMPASI",
+    "Category": "Isı Pompası",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 125000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAYLUX 16 KW ISI POMPASI",
+    "Category": "Isı Pompası",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 140000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SİESTA 9 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SİESTA 12 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SİESTA 14 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SİESTA 18 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SİESTA 24 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SENSİRA 7 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SENSİRA 9 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SENSİRA 12 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SENSİRA 14 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SENSİRA 18 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SENSİRA 21 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SENSİRA 24 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ SHIRA ECO 7 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ SHIRA ECO 9 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ SHIRA ECO 12 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ SHIRA ECO 18 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ SHIRA ECO 21 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ SHIRA ECO 24 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN PERFERA 9 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN PERFERA 12 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN PERFERA 18 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ ZETA SHIRA PLUS 7 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ ZETA SHIRA PLUS 9 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ ZETA SHIRA PLUS 12 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ ZETA SHIRA PLUS 14 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ ZETA SHIRA PLUS 18 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ ZETA SHIRA PLUS 21 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN YENİ ZETA SHIRA PLUS 24 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 7 BTU - BEYAZ",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 9 BTU - BEYAZ",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 12 BTU - BEYAZ",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 14 BTU - BEYAZ",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 18 BTU - BEYAZ",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 7 BTU - GRİ",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 9 BTU - GRİ",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 12 BTU - GRİ",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 14 BTU - GRİ",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 18 BTU - GRİ",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 7 BTU - SİYAH",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 9 BTU - SİYAH",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 12 BTU - SİYAH",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 14 BTU - SİYAH",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN EMURA III 18 BTU - SİYAH",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN URURU SARARA 9 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN URURU SARARA 12 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN URURU SARARA 18 BTU",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN MULTİ DIŞ ÜNİTE (.....)",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN MULTİ DIŞ İÇ ÜNİTE (.....)",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN SALON TİPİ (...)",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DAIKIN KASET TİPİ (...)",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BOSCH 9 BTU KLİMA",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BOSCH 12 BTU KLİMA",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BOSCH 18 BTU KLİMA",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BOSCH 24 BTU KLİMA",
+    "Category": "Klima",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BOSCH SALON TİPİ (...)",
+    "Category": "Kombi",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  400*1000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2700.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  400*1200 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3240.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  400*1400 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3780.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  400*1600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4320.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  400*1800 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4860.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  400*2000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 5400.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  400*600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1620.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  400*800 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2160.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  500*1000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  500*1200 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  500*1400 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4200.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  500*1600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  500*1800 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 5400.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  500*2000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 6000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  500*600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  500*800 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2400.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*1000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*1100 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3300.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*1200 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*1300 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3900.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*1400 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4200.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*1500 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4500.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*1600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*1700 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 5100.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*1800 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 5400.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*1900 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 5700.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*2000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 6000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*2100 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 6300.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*2200 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 6600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*2300 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 6900.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*2400 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 7200.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*2500 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 7500.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*2600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 7800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*2700 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 8100.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*2800 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 8400.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*2900 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 8700.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*3000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 9000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*400 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1200.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*500 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1500.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*700 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2100.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  600*900 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2700.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*1000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 5100.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*1100 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 5650.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*1200 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 6240.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*1300 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 6630.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*1400 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 7140.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*1500 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 7650.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*1600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 8160.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*1700 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 8670.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*400 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2040.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*500 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2550.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3060.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*700 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3570.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*800 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4080.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BUDERUS  900*900 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4590.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*1000 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*1100 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3300.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*1200 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*1300 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3900.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*1400 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4200.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*1500 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4500.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*1600 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*1800 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 5400.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*2000 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*2200 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 6600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*2400 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 7200.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*2600 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 7800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*2800 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 8400.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*3000 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 9000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*400 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1200.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*500 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1500.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*600 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*700 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2100.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*800 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2400.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  600*900 STANDART PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2700.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*1000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4500.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*1100 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4950.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*1200 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 5400.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*1300 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 5850.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*1400 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 6300.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*1500 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 6750.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*1600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 7200.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*1800 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 8100.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*2000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 9000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*2200 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 9900.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*2400 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 10800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*2600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 11700.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*2800 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 12600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*3000 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 13500.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*400 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*500 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2250.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*600 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2700.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*700 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3150.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*800 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 3600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "E.C.A  900*900 PANEL RADYATÖR",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 4050.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 4*120 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 5*100 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1049.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 5*110 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1200.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 5*120 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1350.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 5*140 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1700.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 5*160 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 5*70 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 825.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 50*100 DÜZ KROM",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2050.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 50*110 DÜZ KROM",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2360.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 50*120 DÜZ KROM",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 50*70 DÜZ KROM",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1600.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 50*80 DÜZKROM",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1900.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 6*10 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1150.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 6*12 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1450.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 6*14 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1900.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 6*60   BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1700.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 6*70 BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 1800.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "HAVLUPAN 6*80   BEYAZ",
+    "Category": "Radyatör",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 2000.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "DOĞALGAZ TESİSATI",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOLON TESİSATI",
+    "Category": "Kolon Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOLON TESİSATI MÜHENDİSLİK HESABI-KONUT",
+    "Category": "Kolon Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOLON TESİSATI MÜHENDİSLİK HESABI-ENDÜSTRİYEL",
+    "Category": "Kolon Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "İLAVE YER HATTI",
+    "Category": "Kolon Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "İLAVE KOLON TESİSATI",
+    "Category": "Kolon Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "21/2'' VANA GRUBU",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "G4 SAYAÇ GRUBU",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "300-21 mbar REGÜLATÖR GRUBU",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "MÜŞAVİRLİK HİZMETİ",
+    "Category": "Diğer",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOMBİ MONTAJ",
+    "Category": "Kalorifer Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "MONTAJ",
+    "Category": "Kalorifer Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "FULL İLAVE LİSTESİ-25 lik",
+    "Category": "Kalorifer Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "FULL İLAVE LİSTESİ-32 lik",
+    "Category": "Kalorifer Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "EK HAT ALMA-20 LİK",
+    "Category": "Kalorifer Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "EK HAT ALMA-25 LİK",
+    "Category": "Kalorifer Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "EK HAT ALMA-32 LİK",
+    "Category": "Kalorifer Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KIRIM FARKI",
+    "Category": "Kalorifer Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "RADYATÖR VANASI (........ MARKA)",
+    "Category": "Radyatör vanası",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "TERMOSTATİK VANA (...... MARKA)",
+    "Category": "Termostatik vana",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOMBİ DOLABI",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ODA TERMOSTATI  (....... MARKA)",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BACA UZATMASI (........ CİNS)",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOMBİ ELEKTRİK İŞİ (......)",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "SELENOİD VANA",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "GAZ ALARM CİHAZI",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "CAM MENFEZ",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "MONTAJ",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOMBİ GAZ",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOMBİ GAZ HAT ALMALI",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "OCAK GAZI HATTI",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOMBİ OCAK GAZ HATTI",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "FULL",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "FULL KIRIMLI",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KIRIMLI ALT YAPI",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOMBİ PETEK MONTAJI",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOMBİ MONTAJ",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "PETEK GRUP MONTAJI",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "PETEK HAT ALMA",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOMBİ HAT ALMA",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "SICAK SOĞUK ALMA",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ESNEK TESİSAT FARKI",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "Petek Grup Farkı Adet",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "YERDEN ISITMA m*2 fiyatı",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOLON-VANA BAŞI (7 vanaya kadar)",
+    "Category": "Kolon Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOLON METRAJ",
+    "Category": "Kolon Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KISA KOLON",
+    "Category": "Kolon Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BASTON",
+    "Category": "Kolon Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "SAYAÇ SONRASI",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "YARIM GAZ",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "Korkuteli YOL",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "Gölhisar YOL",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "Elmalı YOL",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "YEMEK",
+    "Category": "İşçilik",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "MONTAJI İŞÇİLİK BEDELİ  7-9-12-14 BTU",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "MONTAJI İŞÇİLİK BEDELİ 18-24 BTU",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "MONTAJI İŞÇİLİK BEDELİ MULTİ İÇ ÜNİTE",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "MONTAJI İŞÇİLİK BEDELİ MULTİDIŞ ÜNİTE",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BAKIR BORU 1/4 - 3/8 MALZEME",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BAKIR BORU 1/4 - 1/2 MALZEME",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BAKIR BORU 1/4 - 3/8 İŞÇİLİK",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BAKIR BORU 1/4 - 1/2 İŞÇİLİK",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KABLO KANALI  1/4 - 3/8",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KABLO KANALI  1/4 - 1/2",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KLİMA AYAĞI",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "4*1,5 ANTIGRON KABLO",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "BANT",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "TEK TARAFLI TAKOZ",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ÇİFT TARAFLI TAKOZ",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "TEK TARAFLI BÜYÜK TAKOZ",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ÇİGT TARAFLI BÜYÜK TAKOZ",
+    "Category": "Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "OCAK VE KOMBİ TESİSATI",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "OCAK TESİSATI",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "SAYAÇ SONRASI KAYNAKLI TESİSATI",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "KOMBİ TESİSATI",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "UZUN TESİSAT +6 METRE",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "1''",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "3/4''",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "1/2''",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Metre",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  }
 ]

@@ -18,4 +18,7 @@ public class StockSettings : BaseEntity
 
     /// <summary>Uygulanmış katalog sürümü. catalog.json güncellenince artırılır; seeder yeni kalemleri bir kez ekler.</summary>
     public int CatalogVersion { get; set; }
+
+    /// <summary>Uygulanmış metin normalizasyon sürümü (mevcut kayıtları büyük harfe çeviren tek seferlik geçiş).</summary>
+    public int DataNormalizationVersion { get; set; }
 }

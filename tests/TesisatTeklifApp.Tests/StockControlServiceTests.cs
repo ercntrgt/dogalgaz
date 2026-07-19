@@ -81,7 +81,7 @@ public class StockDeductionIntegrationTests : IDisposable
     [Fact]
     public async Task Deduct_Reduces_Stock_For_Sufficient_And_Skips_Insufficient()
     {
-        int offerId;
+        int offerId, p1Id, p2Id;
         using (var ctx = NewCtx())
         {
             var p1 = new Product { Name = "Yeterli", IsStockTracked = true, StockQuantity = 50, SalePrice = 10 };
@@ -94,7 +94,7 @@ public class StockDeductionIntegrationTests : IDisposable
             offer.Items.Add(new OfferItem { ProductId = p2.Id, Quantity = 10, RequestedQuantity = 10, IsSelected = true });
             ctx.Offers.Add(offer);
             await ctx.SaveChangesAsync();
-            offerId = offer.Id;
+            offerId = offer.Id; p1Id = p1.Id; p2Id = p2.Id;
         }
 
         using (var ctx = NewCtx())
@@ -108,8 +108,8 @@ public class StockDeductionIntegrationTests : IDisposable
 
         using (var ctx = NewCtx())
         {
-            var sufficient = await ctx.Products.FirstAsync(p => p.Name == "Yeterli");
-            var insufficient = await ctx.Products.FirstAsync(p => p.Name == "Yetersiz");
+            var sufficient = await ctx.Products.FirstAsync(p => p.Id == p1Id);
+            var insufficient = await ctx.Products.FirstAsync(p => p.Id == p2Id);
             Assert.Equal(45m, sufficient.StockQuantity);   // 50 - 5
             Assert.Equal(3m, insufficient.StockQuantity);  // değişmedi (eksiye düşmez)
 
@@ -121,7 +121,7 @@ public class StockDeductionIntegrationTests : IDisposable
     [Fact]
     public async Task Deduct_Is_Idempotent_No_Double_Deduction()
     {
-        int offerId;
+        int offerId, prodId;
         using (var ctx = NewCtx())
         {
             var p = new Product { Name = "Tekil", IsStockTracked = true, StockQuantity = 20, SalePrice = 10 };
@@ -131,7 +131,7 @@ public class StockDeductionIntegrationTests : IDisposable
             offer.Items.Add(new OfferItem { ProductId = p.Id, Quantity = 5, RequestedQuantity = 5, IsSelected = true });
             ctx.Offers.Add(offer);
             await ctx.SaveChangesAsync();
-            offerId = offer.Id;
+            offerId = offer.Id; prodId = p.Id;
         }
 
         using (var ctx = NewCtx()) await new StockControlService(ctx).DeductStockForOfferAsync(offerId);
@@ -139,7 +139,7 @@ public class StockDeductionIntegrationTests : IDisposable
 
         using (var ctx = NewCtx())
         {
-            var p = await ctx.Products.FirstAsync(x => x.Name == "Tekil");
+            var p = await ctx.Products.FirstAsync(x => x.Id == prodId);
             Assert.Equal(15m, p.StockQuantity);  // sadece bir kez düşülmüş (20 - 5)
         }
     }
@@ -147,7 +147,7 @@ public class StockDeductionIntegrationTests : IDisposable
     [Fact]
     public async Task Restore_Adds_Back_Deducted_Stock_On_Cancel()
     {
-        int offerId;
+        int offerId, prodId;
         using (var ctx = NewCtx())
         {
             var p = new Product { Name = "İade", IsStockTracked = true, StockQuantity = 30, SalePrice = 10 };
@@ -157,20 +157,20 @@ public class StockDeductionIntegrationTests : IDisposable
             offer.Items.Add(new OfferItem { ProductId = p.Id, Quantity = 8, RequestedQuantity = 8, IsSelected = true });
             ctx.Offers.Add(offer);
             await ctx.SaveChangesAsync();
-            offerId = offer.Id;
+            offerId = offer.Id; prodId = p.Id;
         }
 
         using (var ctx = NewCtx()) await new StockControlService(ctx).DeductStockForOfferAsync(offerId);
         using (var ctx = NewCtx())
         {
-            var p = await ctx.Products.FirstAsync(x => x.Name == "İade");
+            var p = await ctx.Products.FirstAsync(x => x.Id == prodId);
             Assert.Equal(22m, p.StockQuantity); // 30 - 8
         }
 
         using (var ctx = NewCtx()) await new StockControlService(ctx).RestoreStockForCancelledOrderAsync(offerId);
         using (var ctx = NewCtx())
         {
-            var p = await ctx.Products.FirstAsync(x => x.Name == "İade");
+            var p = await ctx.Products.FirstAsync(x => x.Id == prodId);
             Assert.Equal(30m, p.StockQuantity); // geri eklendi
         }
     }

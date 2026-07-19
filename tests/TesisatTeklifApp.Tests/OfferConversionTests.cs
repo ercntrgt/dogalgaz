@@ -94,7 +94,8 @@ public class OfferConversionTests : IDisposable
             var all = await ctx.Offers.ToListAsync();
             Assert.Single(all);
             Assert.Equal(OfferStatus.ConvertedToOrder, all[0].Status);  // durum korunmalı
-            Assert.Equal("Düzenlendi", all[0].GeneralNotes);
+            // Serbest metinler DB'ye Türkçe büyük harfle yazılır (AppDbContext.NormalizeStrings).
+            Assert.Equal("DÜZENLENDİ", all[0].GeneralNotes);
         }
     }
 

@@ -80,8 +80,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddResponseCompression(o => o.EnableForHttps = true);
 
 // --- Blazor ---
+// MaximumReceiveMessageSize varsayılanı 32 KB. İmza (canvas → base64 PNG) tek parça
+// string olarak geldiği için büyük imzalarda bu sınır aşılıp circuit kopuyordu
+// (kullanıcıya "imza alınamadı" deyip küçük imza atmaya zorluyordu). 1 MB'a çıkarıldı.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddHubOptions(o => o.MaximumReceiveMessageSize = 1024 * 1024);
 
 var app = builder.Build();
 
