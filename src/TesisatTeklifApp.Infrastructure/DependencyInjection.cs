@@ -52,7 +52,6 @@ public static class DependencyInjection
         services.AddScoped<ISupplierService, SupplierService>();
         services.AddScoped<IPurchaseService, PurchaseService>();
         services.AddScoped<IAuditService, AuditService>();
-        services.AddScoped<IDataResetService, DataResetService>();
         services.AddScoped<IPhotoService, PhotoService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IExcelExportService, ExcelExportService>();
