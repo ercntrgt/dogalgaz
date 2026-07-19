@@ -94,6 +94,15 @@ public interface IPhotoService
     Task DeleteAsync(int id);
 }
 
+/// <summary>Teslim öncesi hareket verilerini temizler. Ürün/kullanıcı/ayar korunur.</summary>
+public interface IDataResetService
+{
+    Task<DataResetCounts> GetCountsAsync();
+
+    /// <summary>Hareket verilerini kalıcı siler. Geri alınamaz.</summary>
+    Task<DataResetCounts> PurgeAsync(bool zeroStock);
+}
+
 public interface IAuditService
 {
     Task LogAsync(string entityType, int entityId, string action, string? userName, string? description = null);

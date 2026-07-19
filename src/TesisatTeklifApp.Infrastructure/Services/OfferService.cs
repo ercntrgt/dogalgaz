@@ -68,6 +68,7 @@ public class OfferService : IOfferService
         var candidates = await _db.Offers
             .AsNoTracking()
             .Include(o => o.Customer)
+            .Include(o => o.Usta)          // takvimde işe gidecek usta gösterilir
             .Where(o => o.Status == OfferStatus.Approved
                 || o.Status == OfferStatus.ConvertedToOrder
                 || o.Status == OfferStatus.WaitingSupply

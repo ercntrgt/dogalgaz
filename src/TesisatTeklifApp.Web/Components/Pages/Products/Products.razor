@@ -74,12 +74,17 @@
             <tbody>
                 @foreach (var p in items)
                 {
-                    <tr class="@RowClass(p) @(dragId == p.Id ? "row-dragging" : "")"
+                    @* Sıralama yalnızca BIRAKINCA yapılır; sürükleme sırasında sadece hedef
+                       satır vurgulanır. (Sürüklerken yeniden sıralamak, ondragover saniyede
+                       onlarca kez tetiklendiği için satırların sekmesine yol açıyordu.) *@
+                    <tr class="@RowClass(p) @(dragId == p.Id ? "row-dragging" : "") @(overId == p.Id && dragId != p.Id ? "row-drop-target" : "")"
                         draggable="@canReorder.ToString().ToLowerInvariant()"
                         @ondragstart="() => DragStart(p)"
+                        @ondragenter="() => overId = p.Id"
                         @ondragover:preventDefault="true"
-                        @ondragover="() => DragOver(p)"
-                        @ondrop="DropRow"
+                        @ondragend="DragEnd"
+                        @ondrop:preventDefault="true"
+                        @ondrop="() => DropOn(p)"
                         @key="p.Id">
                         <AuthorizeView Roles="Admin" Context="d">
                             <td class="drag-cell" title="Sürükleyip sırala">
@@ -116,7 +121,8 @@
     private List<Product> items = new();
 
     // --- Sıralama (sürükle-bırak) ---
-    private int? dragId;
+    private int? dragId;    // sürüklenen satır
+    private int? overId;    // üzerinde durulan satır (sadece vurgu)
     private string? orderMsg;
 
     // Sıra kategori içinde tutulduğu için yalnızca tek kategori süzülüyken sürükleme anlamlı.
@@ -132,21 +138,22 @@
 
     private void DragStart(Product p) { if (canReorder) dragId = p.Id; }
 
-    private void DragOver(Product target)
-    {
-        if (!canReorder || dragId is null || dragId == target.Id) return;
-        var from = items.FindIndex(x => x.Id == dragId);
-        var to = items.FindIndex(x => x.Id == target.Id);
-        if (from < 0 || to < 0) return;
-        var moved = items[from];
-        items.RemoveAt(from);
-        items.Insert(to, moved);
-    }
+    private void DragEnd() { dragId = null; overId = null; }
 
-    private async Task DropRow()
+    /// <summary>Sürüklenen satırı, bırakılan satırın konumuna taşır ve kaydeder.</summary>
+    private async Task DropOn(Product target)
     {
-        if (!canReorder || dragId is null) return;
-        dragId = null;
+        var moving = dragId;
+        DragEnd();
+        if (!canReorder || moving is null || moving == target.Id) return;
+
+        var from = items.FindIndex(x => x.Id == moving);
+        var to = items.FindIndex(x => x.Id == target.Id);
+        if (from < 0 || to < 0 || from == to) return;
+
+        var row = items[from];
+        items.RemoveAt(from);
+        items.Insert(to, row);
         await PersistOrder();
     }
 
