@@ -4,8 +4,9 @@ services:
   - type: web
     name: ozdemir-tesisat
     runtime: docker
-    plan: free
-    region: frankfurt          # Türkiye'ye en yakın bölge (hız için kritik)
+    plan: starter              # Ücretli: uyumaz (free planda 15 dk sonra uykuya geçip 30-60 sn açılıyordu)
+    region: frankfurt          # Türkiye'ye en yakın bölge (hız için kritik). DİKKAT: mevcut
+                               # servisin bölgesi DEĞİŞTİRİLEMEZ; Frankfurt için servis yeniden kurulur.
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
