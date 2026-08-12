@@ -178,10 +178,20 @@ else
                             </div>
                             <div class="col-5 text-end text-muted">Ek Oranlar: @Money(offer.VatAmount)</div>
                         </div>
-                        <div class="d-flex justify-content-between border-top pt-2">
+                        @* Genel toplam doğrudan üzerine yazılarak düzeltilebilir (yuvarlama / pazarlık). *@
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2">
                             <span class="fw-bold fs-5">Genel Toplam</span>
-                            <span class="fw-bold fs-5 text-primary">@Money(offer.GrandTotal)</span>
+                            <input type="number" step="any" title="Tutarı elle düzeltmek için üzerine yazın"
+                                   class="form-control fw-bold fs-5 text-end text-primary @(ManualGrandTotal ? "border-warning bg-warning-subtle" : "")"
+                                   style="width:170px" @bind="GrandTotalInput" @bind:after="Recalc" />
                         </div>
+                        @if (ManualGrandTotal)
+                        {
+                            <div class="small text-muted text-end mt-1">
+                                Elle düzeltildi — hesaplanan: @Money(AutoGrandTotal), fark: @Money(offer.GrandTotal - AutoGrandTotal)
+                                <button type="button" class="btn btn-link btn-sm p-0 ms-1 align-baseline" @onclick="ResetGrandTotal">Geri al</button>
+                            </div>
+                        }
                         <div class="row g-2 align-items-center mt-1">
                             <div class="col-7">Peşinat</div>
                             <div class="col-5">
@@ -415,6 +425,28 @@ else
     {
         Calc.RecalculateOfferTotals(offer);
         StateHasChanged();
+    }
+
+    // --- Genel toplamı elle düzeltme (yuvarlama / pazarlık) ---
+    private bool ManualGrandTotal => offer.GrandTotalOverride is not null;
+
+    /// <summary>Kalemlerden hesaplanan tutar — elle girilen değerle karşılaştırmak için gösterilir.</summary>
+    private decimal AutoGrandTotal => Calc.CalculateAutoGrandTotal(offer);
+
+    /// <summary>
+    /// Genel toplam kutusu: okurken güncel toplamı gösterir, yazınca elle düzeltmeye geçer.
+    /// Hesaplanan tutar yazılırsa elle düzeltme kalkar (otomatiğe döner).
+    /// </summary>
+    private decimal GrandTotalInput
+    {
+        get => offer.GrandTotal;
+        set => offer.GrandTotalOverride = value == AutoGrandTotal ? null : value;
+    }
+
+    private void ResetGrandTotal()
+    {
+        offer.GrandTotalOverride = null;
+        Recalc();
     }
 
     private void AddPayment() => offer.PaymentPlans.Add(new PaymentPlan { PaymentType = offer.PaymentMethod });

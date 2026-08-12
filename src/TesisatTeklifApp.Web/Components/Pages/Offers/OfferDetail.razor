@@ -336,6 +336,10 @@ else
                             <tr><td>İskonto (%@offer.DiscountRate)</td><td class="text-end">@Money(offer.DiscountAmount)</td></tr>
                             <tr><td>Ek Oranlar (%@offer.VatRate)</td><td class="text-end">@Money(offer.VatAmount)</td></tr>
                             <tr class="border-top"><td class="fw-bold">Genel Toplam</td><td class="text-end fw-bold text-primary">@Money(offer.GrandTotal)</td></tr>
+                            @if (offer.GrandTotalOverride is not null)
+                            {
+                                <tr><td colspan="2" class="small text-muted pt-0 border-0">Genel toplam elle düzeltildi.</td></tr>
+                            }
                             <tr><td>Peşinat</td><td class="text-end">@Money(offer.AdvancePayment)</td></tr>
                             <tr><td class="fw-semibold">Kalan Ödeme</td><td class="text-end fw-semibold">@Money(offer.RemainingPayment)</td></tr>
                         </tbody>

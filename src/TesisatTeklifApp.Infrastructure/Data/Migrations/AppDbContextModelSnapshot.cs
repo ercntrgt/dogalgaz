@@ -287,6 +287,10 @@ namespace TesisatTeklifApp.Infrastructure.Data.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("TEXT");
 
+                    b.Property<decimal?>("GrandTotalOverride")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
                     b.Property<decimal>("InstallationTotal")
                         .HasPrecision(18, 2)
                         .HasColumnType("TEXT");

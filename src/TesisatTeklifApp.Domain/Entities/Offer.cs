@@ -34,6 +34,8 @@ public class Offer : BaseEntity
     public decimal VatRate { get; set; } = 30m;
     public decimal VatAmount { get; set; }
     public decimal GrandTotal { get; set; }
+    /// <summary>Elle girilen genel toplam (yuvarlama/pazarlık). Doluysa hesaplanan tutarın yerine geçer; boşsa otomatik hesaplanır.</summary>
+    public decimal? GrandTotalOverride { get; set; }
 
     public decimal AdvancePayment { get; set; }
     public decimal RemainingPayment { get; set; }

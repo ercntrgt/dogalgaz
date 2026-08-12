@@ -75,6 +75,36 @@ public class OfferCalculationServiceTests
     }
 
     [Fact]
+    public void Manual_GrandTotal_Overrides_Calculated_Total()
+    {
+        var offer = new Offer { VatRate = 20m, IsVatIncluded = false, AdvancePayment = 200m };
+        offer.Items.Add(Item(OfferSections.KombiKazan, 1, 1000m));   // hesaplanan: 1200
+        offer.GrandTotalOverride = 1150m;                            // elle yuvarlandı
+        _calc.RecalculateOfferTotals(offer);
+
+        Assert.Equal(1000m, offer.SubTotal);        // kalem toplamları değişmez
+        Assert.Equal(1200m, _calc.CalculateAutoGrandTotal(offer));
+        Assert.Equal(1150m, offer.GrandTotal);
+        Assert.Equal(191.67m, offer.VatAmount);     // 1150 - (1150/1.2)=958.33 -> 191.67
+        Assert.Equal(950m, offer.RemainingPayment); // 1150 - 200
+    }
+
+    [Fact]
+    public void Clearing_Manual_GrandTotal_Returns_To_Calculated_Total()
+    {
+        var offer = new Offer { VatRate = 20m, IsVatIncluded = false, GrandTotalOverride = 1150m };
+        offer.Items.Add(Item(OfferSections.KombiKazan, 1, 1000m));
+        _calc.RecalculateOfferTotals(offer);
+        Assert.Equal(1150m, offer.GrandTotal);
+
+        offer.GrandTotalOverride = null;
+        _calc.RecalculateOfferTotals(offer);
+
+        Assert.Equal(1200m, offer.GrandTotal);
+        Assert.Equal(200m, offer.VatAmount);
+    }
+
+    [Fact]
     public void RemainingPayment_Is_GrandTotal_Minus_Advance()
     {
         var offer = new Offer { VatRate = 0m, IsVatIncluded = false, AdvancePayment = 300m };

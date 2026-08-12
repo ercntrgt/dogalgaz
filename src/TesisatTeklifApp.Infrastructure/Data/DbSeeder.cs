@@ -228,6 +228,7 @@ public static class DbSeeder
             "ALTER TABLE \"StockSettings\" ADD COLUMN IF NOT EXISTS \"DataNormalizationVersion\" integer NOT NULL DEFAULT 0;",
             "ALTER TABLE \"Products\" ADD COLUMN IF NOT EXISTS \"SortOrder\" integer NOT NULL DEFAULT 0;",
             "ALTER TABLE \"Offers\" ADD COLUMN IF NOT EXISTS \"PaymentMethod\" integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE \"Offers\" ADD COLUMN IF NOT EXISTS \"GrandTotalOverride\" numeric(18,2);",
         });
         await db.Database.ExecuteSqlRawAsync(sql);
     }

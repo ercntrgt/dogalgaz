@@ -45,6 +45,23 @@ public class OfferCalculationService : IOfferCalculationService
     public decimal CalculateVat(decimal baseAmount, decimal vatRate)
         => Round(baseAmount * vatRate / 100m);
 
+    /// <summary>KDV dahil bir tutarın içindeki KDV'yi ayrıştırır (matrah = tutar / (1 + oran/100)).</summary>
+    private static decimal ExtractVat(decimal grossAmount, decimal vatRate)
+    {
+        var divisor = 1 + vatRate / 100m;
+        if (divisor <= 0) return 0m;
+        return Round(grossAmount - Round(grossAmount / divisor));
+    }
+
+    /// <summary>Elle düzeltme uygulanmadan önceki, kalemlerden hesaplanan genel toplam.</summary>
+    public decimal CalculateAutoGrandTotal(Offer offer)
+    {
+        var afterDiscount = Round(offer.SubTotal - offer.DiscountAmount);
+        return offer.IsVatIncluded
+            ? afterDiscount                                                  // fiyatlar KDV dahil girilmiş
+            : Round(afterDiscount + CalculateVat(afterDiscount, offer.VatRate));
+    }
+
     public decimal CalculateGrandTotal(Offer offer) => offer.GrandTotal;
 
     public decimal CalculateRemainingPayment(decimal grandTotal, decimal advancePayment)
@@ -76,18 +93,17 @@ public class OfferCalculationService : IOfferCalculationService
         var afterDiscount = Round(offer.SubTotal - offer.DiscountAmount);
 
         // 4) KDV ve genel toplam
-        if (offer.IsVatIncluded)
+        offer.VatAmount = offer.IsVatIncluded
+            ? ExtractVat(afterDiscount, offer.VatRate)                 // fiyatlar KDV dahil → içinden ayrıştır
+            : CalculateVat(afterDiscount, offer.VatRate);              // fiyatlar KDV hariç → üstüne ekle
+        offer.GrandTotal = CalculateAutoGrandTotal(offer);
+
+        // 4b) Genel toplam elle girildiyse (yuvarlama/pazarlık) hesaplanan tutarın yerine geçer.
+        // Ek oran tutarı da girilen toplamın içinden ayrıştırılır ki özet kendi içinde tutarlı kalsın.
+        if (offer.GrandTotalOverride is decimal manual)
         {
-            // Fiyatlar KDV dahil girilmiş → KDV toplam içinden ayrıştırılır.
-            var net = Round(afterDiscount / (1 + offer.VatRate / 100m));
-            offer.VatAmount = Round(afterDiscount - net);
-            offer.GrandTotal = afterDiscount;
-        }
-        else
-        {
-            // Fiyatlar KDV hariç → KDV eklenir.
-            offer.VatAmount = CalculateVat(afterDiscount, offer.VatRate);
-            offer.GrandTotal = Round(afterDiscount + offer.VatAmount);
+            offer.GrandTotal = Round(manual);
+            offer.VatAmount = ExtractVat(offer.GrandTotal, offer.VatRate);
         }
 
         // 5) Kalan ödeme

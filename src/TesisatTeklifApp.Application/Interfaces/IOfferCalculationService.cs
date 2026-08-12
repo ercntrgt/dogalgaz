@@ -21,6 +21,8 @@ public interface IOfferCalculationService
     decimal CalculateSubTotal(Offer offer);
     decimal CalculateDiscount(decimal subTotal, decimal discountRate);
     decimal CalculateVat(decimal baseAmount, decimal vatRate);
+    /// <summary>Elle düzeltme uygulanmadan önceki, kalemlerden hesaplanan genel toplam.</summary>
+    decimal CalculateAutoGrandTotal(Offer offer);
     decimal CalculateGrandTotal(Offer offer);
     decimal CalculateRemainingPayment(decimal grandTotal, decimal advancePayment);
 

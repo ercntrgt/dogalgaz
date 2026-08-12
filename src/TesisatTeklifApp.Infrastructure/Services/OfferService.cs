@@ -223,6 +223,7 @@ public class OfferService : IOfferService
             CreatedBy = createdBy ?? source.CreatedBy,
             VatRate = source.VatRate,
             DiscountRate = source.DiscountRate,
+            GrandTotalOverride = source.GrandTotalOverride,
             IsVatIncluded = source.IsVatIncluded,
             PaymentMethod = source.PaymentMethod,
             GeneralNotes = source.GeneralNotes,
