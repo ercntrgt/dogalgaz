@@ -48,4 +48,27 @@ public class RadiatorItem : BaseEntity
     public StockStatus StockStatus { get; set; } = StockStatus.NotTracked;
     public bool IsStockInsufficient { get; set; }
     public bool IsStockDeducted { get; set; }
+
+    /// <summary>
+    /// PDF / teklif ekranlarında gösterilen kalem adı. Panel radyatörde ölçü (Yükseklik*En) yazılır;
+    /// ölçü yoksa (ör. HAVLUPAN 5*100 — ad mm ölçüsü taşımaz) ürün adı kullanılır, aksi halde
+    /// müşteri belgesinde yalnızca "HAVLUPAN *" kalırdı.
+    /// </summary>
+    public string GetDisplayName()
+    {
+        if (IsValve) return string.IsNullOrWhiteSpace(ItemName) ? "Vana" : ItemName.Trim();
+
+        string? body;
+        if (RadiatorHeight.HasValue && RadiatorWidth.HasValue)
+            body = $"{RadiatorBrand} {RadiatorHeight}*{RadiatorWidth}";
+        else if (!string.IsNullOrWhiteSpace(ItemName))
+            body = ItemName;
+        else if (!string.IsNullOrWhiteSpace(RadiatorSize))
+            body = $"{RadiatorBrand} {RadiatorSize}";
+        else
+            body = RadiatorBrand;
+
+        var text = string.Join(" ", $"{RoomName} {body}".Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        return text.Length == 0 ? "Radyatör" : text;
+    }
 }

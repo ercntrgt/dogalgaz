@@ -28,6 +28,8 @@ public interface IProductService
 public interface ICustomerService
 {
     Task<List<Customer>> SearchAsync(CustomerSearchFilter filter);
+    /// <summary>Müşteri Id → en son teklifinin durumu (teklifi olmayanlar sözlükte yer almaz).</summary>
+    Task<Dictionary<int, OfferStatus>> GetLatestOfferStatusesAsync(IEnumerable<int> customerIds);
     Task<Customer?> GetByIdAsync(int id);
     Task AddAsync(Customer customer);
     Task UpdateAsync(Customer customer);

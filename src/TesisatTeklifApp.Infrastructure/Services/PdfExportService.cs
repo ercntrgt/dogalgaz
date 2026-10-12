@@ -76,6 +76,7 @@ public class PdfExportService : IPdfExportService
                     SectionTable(col, "Doğalgaz Tesisatı", offer, OfferSections.GasInstallation, includeLinePrices);
                     SectionTable(col, "Malzeme / Ekipman", offer, OfferSections.Material, includeLinePrices);
                     RadiatorTable(col, offer, includeLinePrices);
+                    ValveTable(col, offer, includeLinePrices);
                     SectionTable(col, "Tesisat Hizmetleri", offer, OfferSections.Installation, includeLinePrices);
                     SectionTable(col, "İşçilik", offer, OfferSections.Labor, includeLinePrices);
                     if (!string.IsNullOrWhiteSpace(offer.GeneralNotes))
@@ -199,9 +200,9 @@ public class PdfExportService : IPdfExportService
 
     private void RadiatorTable(ColumnDescriptor col, Offer offer, bool prices)
     {
-        var radItems = offer.RadiatorItems.Where(r => r.Quantity > 0 || r.TotalPrice > 0).ToList();
+        var radItems = offer.RadiatorItems.Where(r => !r.IsValve && (r.Quantity > 0 || r.TotalPrice > 0)).ToList();
         if (radItems.Count == 0) return;
-        Card(col, "Radyatör & Vana", inner =>
+        Card(col, "Radyatör", inner =>
         {
             inner.Item().Table(table =>
             {
@@ -223,11 +224,8 @@ public class PdfExportService : IPdfExportService
                 foreach (var r in radItems)
                 {
                     var bg = i++ % 2 == 0 ? LightGray : "#ffffff";
-                    var kalem = r.IsValve
-                        ? (r.ItemName ?? "Vana")
-                        : $"{r.RoomName} {r.RadiatorBrand} {r.RadiatorHeight}*{r.RadiatorWidth}".Trim();
-                    Cell(table, bg, "#000000", kalem);
-                    Cell(table, bg, "#000000", r.IsValve ? "-" : Num(r.PanelLength));
+                    Cell(table, bg, "#000000", r.GetDisplayName());
+                    Cell(table, bg, "#000000", r.PanelLength == 0 ? "-" : Num(r.PanelLength));
                     Cell(table, bg, "#000000", Num(r.Quantity));
                     if (prices)
                     {
@@ -236,8 +234,46 @@ public class PdfExportService : IPdfExportService
                     }
                 }
             });
-            var totalPanel = radItems.Where(r => !r.IsValve).Sum(r => r.PanelLength * (r.Quantity > 0 ? r.Quantity : 1));
+            var totalPanel = radItems.Sum(r => r.PanelLength * (r.Quantity > 0 ? r.Quantity : 1));
             inner.Item().PaddingTop(3).AlignRight().Text($"Toplam panel uzunluğu: {Num(totalPanel)} m").Italic();
+        });
+    }
+
+    /// <summary>Vana grubu — radyatörden ayrı tablo (kalemler RadiatorItems'ta IsValve=true).</summary>
+    private void ValveTable(ColumnDescriptor col, Offer offer, bool prices)
+    {
+        var valves = offer.RadiatorItems.Where(r => r.IsValve && (r.Quantity > 0 || r.TotalPrice > 0)).ToList();
+        if (valves.Count == 0) return;
+        Card(col, "Vana Grubu", inner =>
+        {
+            inner.Item().Table(table =>
+            {
+                if (prices)
+                {
+                    table.ColumnsDefinition(c =>
+                    {
+                        c.RelativeColumn(4); c.ConstantColumn(45); c.ConstantColumn(65); c.ConstantColumn(70);
+                    });
+                    TableHeader(table, "Kalem", "Adet", "B.Fiyat", "Toplam");
+                }
+                else
+                {
+                    table.ColumnsDefinition(c => { c.RelativeColumn(4); c.ConstantColumn(45); });
+                    TableHeader(table, "Kalem", "Adet");
+                }
+                var i = 0;
+                foreach (var r in valves)
+                {
+                    var bg = i++ % 2 == 0 ? LightGray : "#ffffff";
+                    Cell(table, bg, "#000000", r.GetDisplayName());
+                    Cell(table, bg, "#000000", Num(r.Quantity));
+                    if (prices)
+                    {
+                        Cell(table, bg, "#000000", Money(r.UnitPrice));
+                        Cell(table, bg, "#000000", Money(r.TotalPrice));
+                    }
+                }
+            });
         });
     }
 
@@ -255,7 +291,8 @@ public class PdfExportService : IPdfExportService
                         Line(c, "Kombi / Kazan", offer.KombiKazanTotal);
                         Line(c, "Doğalgaz Tesisatı", offer.GasInstallationTotal);
                         Line(c, "Malzeme / Ekipman", offer.MaterialTotal);
-                        Line(c, "Radyatör", offer.RadiatorTotal);
+                        Line(c, "Radyatör", offer.GetPanelRadiatorTotal());
+                        Line(c, "Vana Grubu", offer.GetValveTotal());
                         Line(c, "Tesisat Hizmetleri", offer.InstallationTotal);
                         Line(c, "İşçilik", offer.LaborTotal);
                         c.Item().PaddingVertical(2).LineHorizontal(0.5f);

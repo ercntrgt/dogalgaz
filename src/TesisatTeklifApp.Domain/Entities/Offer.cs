@@ -23,6 +23,8 @@ public class Offer : BaseEntity
     public decimal KombiKazanTotal { get; set; }
     public decimal GasInstallationTotal { get; set; }
     public decimal MaterialTotal { get; set; }
+    /// <summary>Radyatör + vana toplamı (vanalar RadiatorItems'ta IsValve=true). Özette
+    /// <see cref="GetPanelRadiatorTotal"/> / <see cref="GetValveTotal"/> ile ayrı gösterilir.</summary>
     public decimal RadiatorTotal { get; set; }
     public decimal InstallationTotal { get; set; }
     public decimal LaborTotal { get; set; }
@@ -83,4 +85,11 @@ public class Offer : BaseEntity
 
     public bool IsOrder => Status is OfferStatus.ConvertedToOrder
         or OfferStatus.WaitingSupply or OfferStatus.Completed;
+
+    /// <summary>Fiyat özetindeki "Vana Grubu" satırı.</summary>
+    public decimal GetValveTotal() => RadiatorItems.Where(r => r.IsValve).Sum(r => r.TotalPrice);
+
+    /// <summary>Fiyat özetindeki "Radyatör" satırı. Fark olarak hesaplanır ki iki satırın toplamı
+    /// her zaman kayıtlı <see cref="RadiatorTotal"/>'a (dolayısıyla genel toplama) eşit kalsın.</summary>
+    public decimal GetPanelRadiatorTotal() => RadiatorTotal - GetValveTotal();
 }

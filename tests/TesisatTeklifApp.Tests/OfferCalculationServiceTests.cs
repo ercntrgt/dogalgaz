@@ -39,6 +39,19 @@ public class OfferCalculationServiceTests
     }
 
     [Fact]
+    public void Summary_Splits_Radiator_And_Valve_Without_Changing_Total()
+    {
+        var offer = new Offer();
+        offer.RadiatorItems.Add(new RadiatorItem { IsValve = false, Quantity = 4m, UnitPrice = 2500m });
+        offer.RadiatorItems.Add(new RadiatorItem { IsValve = true, Quantity = 2m, UnitPrice = 450m });
+        _calc.RecalculateOfferTotals(offer);
+
+        Assert.Equal(10900m, offer.RadiatorTotal);
+        Assert.Equal(10000m, offer.GetPanelRadiatorTotal());
+        Assert.Equal(900m, offer.GetValveTotal());
+    }
+
+    [Fact]
     public void Recalculate_Vat_Excluded_Adds_Vat_On_Top()
     {
         var offer = new Offer { VatRate = 20m, IsVatIncluded = false };

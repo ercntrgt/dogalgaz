@@ -2988,5 +2988,45 @@
     "PurchasePrice": 0.0,
     "SalePrice": 0.0,
     "VatRate": 20.0
+  },
+  {
+    "Name": "1'' BORU",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Boy",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "3/4'' BORU",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Boy",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "1/2'' BORU",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Boy",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ESNEK TESİSAT BORU",
+    "Category": "Doğalgaz Tesisatı",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Boy",
+    "PurchasePrice": 0.0,
+    "SalePrice": 0.0,
+    "VatRate": 20.0
   }
 ]

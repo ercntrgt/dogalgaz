@@ -3,6 +3,7 @@ using TesisatTeklifApp.Application.DTOs;
 using TesisatTeklifApp.Application.Interfaces;
 using TesisatTeklifApp.Domain.Constants;
 using TesisatTeklifApp.Domain.Entities;
+using TesisatTeklifApp.Domain.Enums;
 using TesisatTeklifApp.Infrastructure.Data;
 
 namespace TesisatTeklifApp.Infrastructure.Services;
@@ -51,7 +52,29 @@ public class CustomerService : ICustomerService
             q = q.Where(c => c.District != null && c.District.Contains(v));
         }
 
+        // "En son teklif" sırası GetLatestOfferStatusesAsync ile aynı olmalı (liste sütunu = filtre).
+        if (filter.OnlyWithoutOffer)
+            q = q.Where(c => !c.Offers.Any());
+        else if (filter.LastOfferStatus is { } status)
+            q = q.Where(c => c.Offers
+                .OrderByDescending(o => o.CreatedDate).ThenByDescending(o => o.Id)
+                .Select(o => (OfferStatus?)o.Status)
+                .FirstOrDefault() == status);
+
         return await q.AsNoTracking().OrderByDescending(c => c.CreatedDate).ToListAsync();
+    }
+
+    public async Task<Dictionary<int, OfferStatus>> GetLatestOfferStatusesAsync(IEnumerable<int> customerIds)
+    {
+        var ids = customerIds.ToList();
+        if (ids.Count == 0) return new();
+        var rows = await _db.Offers.AsNoTracking()
+            .Where(o => ids.Contains(o.CustomerId))
+            .Select(o => new { o.CustomerId, o.Status, o.CreatedDate, o.Id })
+            .ToListAsync();
+        return rows.GroupBy(r => r.CustomerId)
+            .ToDictionary(g => g.Key,
+                g => g.OrderByDescending(r => r.CreatedDate).ThenByDescending(r => r.Id).First().Status);
     }
 
     public Task<Customer?> GetByIdAsync(int id) =>

@@ -18,7 +18,8 @@ public class PaymentService : IPaymentService
 
         var q = _db.PaymentPlans
             .Include(p => p.Offer).ThenInclude(o => o!.Customer)
-            .Where(p => p.Offer != null && p.Offer.Status != OfferStatus.Cancelled);
+            .Where(p => p.Offer != null && p.Offer.Status != OfferStatus.Cancelled)
+            .Where(p => p.PaymentType != PaymentType.CreditCard);   // bkz. GetSummaryAsync
 
         if (filter.FromDate.HasValue)
             q = q.Where(p => p.PaymentDate >= filter.FromDate.Value.Date);
@@ -68,6 +69,9 @@ public class PaymentService : IPaymentService
         var data = await _db.PaymentPlans
             .Include(p => p.Offer)
             .Where(p => p.Offer != null && p.Offer.Status != OfferStatus.Cancelled)
+            // Kredi kartı taksitlerini banka tahsil eder; firma için takip edilecek vade yok.
+            // Ödeme takvimi listesinde ve özet kartlarında gösterilmez (teklifte kayıtlı kalır).
+            .Where(p => p.PaymentType != PaymentType.CreditCard)
             .AsNoTracking()
             .ToListAsync();
 

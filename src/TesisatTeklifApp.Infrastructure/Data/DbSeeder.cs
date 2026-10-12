@@ -147,7 +147,7 @@ public static class DbSeeder
     }
 
     /// <summary>Katalog sürümü — catalog.json değişince artır; seeder eksik kalemleri bir kez ekler.</summary>
-    private const int CatalogVersion = 3;
+    private const int CatalogVersion = 4;
 
     /// <summary>
     /// Excel içe aktarımında "Radyatör" kategorisine yanlışlıkla düşmüş tesisat/kolon kalemleri.

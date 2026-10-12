@@ -35,9 +35,19 @@ public class UstaService : IUstaService
         await _db.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// Ekran ustanın bir KOPYASINI düzenler (aynı Id). Liste aynı DbContext'te takip edildiği için
+    /// kopyayı Update ile eklemek "already being tracked" hatası verirdi; ayrıca kopyanın
+    /// CreatedDate'i yanlış olurdu. Bu yüzden kayıtlı ustanın yalnızca düzenlenebilir alanları güncellenir.
+    /// </summary>
     public async Task UpdateAsync(Usta usta)
     {
-        _db.Ustalar.Update(usta);
+        var existing = await _db.Ustalar.FirstOrDefaultAsync(u => u.Id == usta.Id);
+        if (existing is null) return;
+        existing.Name = usta.Name;
+        existing.Phone = usta.Phone;
+        existing.Specialty = usta.Specialty;
+        existing.IsActive = usta.IsActive;
         await _db.SaveChangesAsync();
     }
 

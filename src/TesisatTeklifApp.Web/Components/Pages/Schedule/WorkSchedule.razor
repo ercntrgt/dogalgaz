@@ -2,7 +2,6 @@
 @attribute [Authorize(Roles = "Admin,SalesPerson")]
 @rendermode InteractiveServer
 @inject IOfferService OfferService
-@inject IPaymentService PaymentService
 @inject IServiceRecordService ServiceService
 @inject NavigationManager Nav
 
@@ -53,19 +52,6 @@
                         {
                             <div class="cal-more">+@(items.Count - 3) daha</div>
                         }
-                        @{ var pays = payByDate.TryGetValue(day.Date, out var pl) ? pl : new List<PaymentScheduleRow>(); }
-                        @foreach (var p in pays.Take(2))
-                        {
-                            <div class="cal-event" style="background:@PayColor(p.Status)"
-                                 title="@p.CustomerName — @p.Amount.ToString("#,##0.00") ₺ (@(p.IsPaid ? "tahsil" : "vade"))"
-                                 @onclick="@(() => Nav.NavigateTo($"offers/{p.OfferId}"))">
-                                💰 @ShortAmount(p.Amount)
-                            </div>
-                        }
-                        @if (pays.Count > 2)
-                        {
-                            <div class="cal-more">+@(pays.Count - 2) ödeme</div>
-                        }
                         @{ var svcs = svcByDate.TryGetValue(day.Date, out var sl) ? sl : new List<ServiceRecord>(); }
                         @foreach (var s in svcs.Take(2))
                         {
@@ -90,7 +76,6 @@
                 @if (isAdmin)
                 {
                     <span>🔧 <span class="badge" style="background:#0d9488">&nbsp;</span> Servis randevusu</span>
-                    <span>💰 <span class="badge bg-info text-dark">&nbsp;</span> Ödeme vadesi</span>
                 }
             </div>
         </div>
@@ -192,7 +177,6 @@ else
     private DateTime month = new(DateTime.Today.Year, DateTime.Today.Month, 1);
     private List<DateTime> gridDays = new();
     private Dictionary<DateTime, List<Offer>> byDate = new();
-    private Dictionary<DateTime, List<PaymentScheduleRow>> payByDate = new();
     private Dictionary<DateTime, List<ServiceRecord>> svcByDate = new();
 
     private bool isAdmin;
@@ -227,16 +211,11 @@ else
         byDate = list.GroupBy(o => (o.WorkStartDate ?? o.OfferDate).Date)
                      .ToDictionary(g => g.Key, g => g.ToList());
 
-        // Ödemeler ve servisler yalnızca yöneticiye (satış ödemeleri görmez).
-        payByDate = new();
+        // Servisler yalnızca yöneticiye. Ödemeler/tutarlar bu takvimde YOK — tahsilat
+        // ayrı "Ödeme Takvimi" sayfasındadır (montaj takviminde fiyat görünmesin).
         svcByDate = new();
         if (isAdmin)
         {
-            var pays = await PaymentService.GetScheduleAsync(new PaymentScheduleFilter { FromDate = gridStart, ToDate = gridEnd });
-            payByDate = pays.Where(p => p.PaymentDate.HasValue)
-                            .GroupBy(p => p.PaymentDate!.Value.Date)
-                            .ToDictionary(g => g.Key, g => g.ToList());
-
             // Servis randevuları takvime düşer (randevu tarihi ızgara aralığında).
             var svc = await ServiceService.SearchAsync(new ServiceRecordFilter());
             svcByDate = svc.Where(s => s.AppointmentDate.HasValue && s.Status != ServiceStatus.Iptal
@@ -245,16 +224,6 @@ else
                            .ToDictionary(g => g.Key, g => g.ToList());
         }
     }
-
-    private static string PayColor(PaymentScheduleStatus s) => s switch
-    {
-        PaymentScheduleStatus.Paid => "#198754",
-        PaymentScheduleStatus.Overdue => "#dc3545",
-        PaymentScheduleStatus.DueToday => "#fd7e14",
-        _ => "#0dcaf0"
-    };
-
-    private static string ShortAmount(decimal v) => v >= 1000 ? $"{v / 1000:0.#}b₺" : $"{v:0}₺";
 
     private async Task PrevMonth() { month = month.AddMonths(-1); await LoadCalendar(); }
     private async Task NextMonth() { month = month.AddMonths(1); await LoadCalendar(); }

@@ -122,6 +122,8 @@ tr.stock-sufficient td .stock-dot { color: #198754; }
     align-self: flex-start;
     height: 100vh;
     overflow-y: auto;
+    /* Genişlik sabit: geniş içerikli sayfalarda (ör. Yeni Teklif tabloları) flex menüyü daraltmasın */
+    flex-shrink: 0;
 }
 .app-viewtoggle .simple-show { display: none; }   /* normalde "Basit" yazısı */
 

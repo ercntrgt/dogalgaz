@@ -55,21 +55,25 @@
             @if (Radiators.Any())
             {
                 <div class="pub-group">
-                    <div class="pub-group-head">RADYATÖR & VANA</div>
+                    <div class="pub-group-head">RADYATÖR</div>
                     @foreach (var r in Radiators)
                     {
                         <div class="pub-line">
-                            <span>
-                                @if (r.IsValve)
-                                {
-                                    @(r.ItemName ?? "Vana")
-                                }
-                                else
-                                {
-                                    @($"{r.RoomName} {r.RadiatorHeight}x{r.RadiatorWidth}".Trim())
-                                }
-                            </span>
-                            <span class="text-muted">@FormatQty(r.Quantity) @(r.IsValve ? "adet" : "adet panel")</span>
+                            <span>@r.GetDisplayName()</span>
+                            <span class="text-muted">@FormatQty(r.Quantity) adet panel</span>
+                        </div>
+                    }
+                </div>
+            }
+            @if (Valves.Any())
+            {
+                <div class="pub-group">
+                    <div class="pub-group-head">VANA GRUBU</div>
+                    @foreach (var r in Valves)
+                    {
+                        <div class="pub-line">
+                            <span>@r.GetDisplayName()</span>
+                            <span class="text-muted">@FormatQty(r.Quantity) adet</span>
                         </div>
                     }
                 </div>
@@ -177,7 +181,9 @@
         (offer?.PaymentPlans ?? new List<PaymentPlan>()).Where(p => p.Amount > 0);
 
     private IEnumerable<RadiatorItem> Radiators =>
-        (offer?.RadiatorItems ?? new List<RadiatorItem>()).Where(r => r.Quantity > 0);
+        (offer?.RadiatorItems ?? new List<RadiatorItem>()).Where(r => r.Quantity > 0 && !r.IsValve);
+    private IEnumerable<RadiatorItem> Valves =>
+        (offer?.RadiatorItems ?? new List<RadiatorItem>()).Where(r => r.Quantity > 0 && r.IsValve);
 
     protected override async Task OnInitializedAsync()
     {

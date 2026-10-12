@@ -21,6 +21,12 @@ public class CustomerSearchFilter
     public string? City { get; set; }
     public string? District { get; set; }
     public string? Keyword { get; set; }
+
+    /// <summary>Müşterinin EN SON teklifinin durumu (Taslak, Tamamlandı/Teslim Edildi...).</summary>
+    public OfferStatus? LastOfferStatus { get; set; }
+
+    /// <summary>Hiç teklifi olmayan müşteriler.</summary>
+    public bool OnlyWithoutOffer { get; set; }
 }
 
 /// <summary>Teklif / sipariş listesi filtresi.</summary>

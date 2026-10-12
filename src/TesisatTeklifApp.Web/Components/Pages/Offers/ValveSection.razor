@@ -1,0 +1,110 @@
+@* Vana grubu (radyatörden ayrı akordeon). Kalemler yine RadiatorItems'ta IsValve=true olarak tutulur:
+   veri modeli, toplam hesabı ve eski teklifler değişmez. Vana: ürün listesinden, Adet × birim fiyat. *@
+
+<datalist id="valveProductList">
+    @foreach (var p in ValveProducts) { <option value="@p.Name" /> }
+</datalist>
+
+<div class="card group-acc mb-2 @(collapsed ? "collapsed" : "")">
+    <div class="card-header group-head d-flex align-items-center" @onclick="Toggle" role="button">
+        <i class="bi bi-sliders me-2"></i>
+        <span class="fw-semibold">VANA GRUBU</span>
+        @if (Valves.Count > 0) { <span class="ms-2 badge rounded-pill bg-primary">@Valves.Count</span> }
+        <span class="ms-auto toggle-ico">@(collapsed ? "▸" : "▾")</span>
+    </div>
+    @if (!collapsed)
+    {
+        <div class="card-body pt-2">
+            <input class="form-control form-control-sm mb-2" placeholder="🔍 Vana ara..."
+                   @bind="valveSearch" @bind:event="oninput" />
+            <div class="group-picker mb-2">
+                @foreach (var p in FilteredValves.Take(200))
+                {
+                    <button type="button" class="group-pick" @onclick="() => AddValve(p)">
+                        <i class="bi bi-plus-circle text-success me-1"></i>
+                        <span class="pick-name">@p.Name</span>
+                        <span class="pick-price price-cell ms-auto">@p.SalePrice.ToString("#,##0") ₺</span>
+                    </button>
+                }
+                @if (FilteredValves.Count == 0)
+                {
+                    <div class="text-muted small p-2">Eşleşen vana yok. (Ürünler ekranından vana ekleyebilirsiniz.)</div>
+                }
+            </div>
+
+            @if (Valves.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th style="min-width:180px">Vana Ürünü</th>
+                                <th style="width:90px">Adet</th>
+                                <th style="width:110px" class="price-cell">Birim Fiyat</th>
+                                <th style="width:110px" class="text-end price-cell">Toplam</th>
+                                <th style="width:36px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in Valves)
+                            {
+                                <tr>
+                                    <td><input class="form-control form-control-sm" list="valveProductList" @bind="r.ItemName" @bind:after="() => OnValvePicked(r)" placeholder="Vana ara/seç" /></td>
+                                    <td><input type="number" step="any" class="form-control form-control-sm" @bind="r.Quantity" @bind:after="Changed" /></td>
+                                    <td class="price-cell"><input type="number" step="any" class="form-control form-control-sm" @bind="r.UnitPrice" @bind:after="Changed" /></td>
+                                    <td class="text-end fw-semibold price-cell">@r.TotalPrice.ToString("#,##0.00") ₺</td>
+                                    <td><button type="button" class="btn btn-sm btn-outline-danger" @onclick="() => Remove(r)">×</button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-muted small">Vana eklenmedi.</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public ICollection<RadiatorItem> Items { get; set; } = new List<RadiatorItem>();
+    [Parameter] public List<Product> ValveProducts { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private bool collapsed = true;
+    private string? valveSearch;
+    private void Toggle() => collapsed = !collapsed;
+
+    private List<RadiatorItem> Valves => Items.Where(i => i.IsValve).ToList();
+
+    private List<Product> FilteredValves =>
+        string.IsNullOrWhiteSpace(valveSearch)
+            ? ValveProducts
+            : ValveProducts.Where(p => (p.Name ?? "").Contains(valveSearch.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
+
+    /// <summary>Listeden vana seçilince satır olarak eklenir (adet × birim fiyat).</summary>
+    private void AddValve(Product p)
+    {
+        Items.Add(new RadiatorItem { IsValve = true, Quantity = 1, ItemName = p.Name, ValveProductId = p.Id, UnitPrice = p.SalePrice });
+        Changed();
+    }
+
+    private void Remove(RadiatorItem r) { Items.Remove(r); Changed(); }
+
+    private void OnValvePicked(RadiatorItem r)
+    {
+        var p = ValveProducts.FirstOrDefault(x =>
+            string.Equals(x.Name, (r.ItemName ?? "").Trim(), StringComparison.OrdinalIgnoreCase));
+        if (p is not null)
+        {
+            r.ValveProductId = p.Id;
+            r.UnitPrice = p.SalePrice;
+            if (r.Quantity <= 0) r.Quantity = 1;
+        }
+        Changed();
+    }
+
+    private void Changed() => OnChanged.InvokeAsync();
+}

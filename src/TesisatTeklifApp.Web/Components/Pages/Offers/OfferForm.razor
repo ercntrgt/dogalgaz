@@ -109,7 +109,8 @@ else
             {
                 @if (g.IsRadiator)
                 {
-                    <RadiatorSection Items="offer.RadiatorItems" RadiatorProducts="radiatorProducts" ValveProducts="valveProducts" OnChanged="Recalc" />
+                    <RadiatorSection Items="offer.RadiatorItems" RadiatorProducts="radiatorProducts" OnChanged="Recalc" />
+                    <ValveSection Items="offer.RadiatorItems" ValveProducts="valveProducts" OnChanged="Recalc" />
                 }
                 else
                 {
@@ -153,7 +154,8 @@ else
                                 <tr><td>Kombi / Kazan / Klima / Isı P.</td><td class="text-end">@Money(offer.KombiKazanTotal)</td></tr>
                                 <tr><td>Doğalgaz / Kolon Tesisatı</td><td class="text-end">@Money(offer.GasInstallationTotal)</td></tr>
                                 <tr><td>Malzeme / Ekipman</td><td class="text-end">@Money(offer.MaterialTotal)</td></tr>
-                                <tr><td>Radyatör</td><td class="text-end">@Money(offer.RadiatorTotal)</td></tr>
+                                <tr><td>Radyatör</td><td class="text-end">@Money(offer.GetPanelRadiatorTotal())</td></tr>
+                                <tr><td>Vana Grubu</td><td class="text-end">@Money(offer.GetValveTotal())</td></tr>
                                 <tr><td>Kalorifer Tesisatı</td><td class="text-end">@Money(offer.InstallationTotal)</td></tr>
                                 <tr><td>İşçilik</td><td class="text-end">@Money(offer.LaborTotal)</td></tr>
                                 <tr class="border-top"><td class="fw-semibold">Ara Toplam</td><td class="text-end fw-semibold">@Money(offer.SubTotal)</td></tr>

@@ -49,6 +49,15 @@ public class PdfExportServiceTests : IDisposable
                 ProductId = prod.Id, SectionName = OfferSections.KombiKazan, ItemName = "Kombi",
                 Quantity = 5, RequestedQuantity = 5, UnitPrice = 32000, TotalPrice = 160000, Unit = "Adet", IsSelected = true
             });
+            offer.RadiatorItems.Add(new RadiatorItem
+            {
+                ItemName = "HAVLUPAN 5*100 BEYAZ", RadiatorBrand = "HAVLUPAN", RoomName = "Banyo",
+                Quantity = 1, UnitPrice = 1049, TotalPrice = 1049
+            });
+            offer.RadiatorItems.Add(new RadiatorItem
+            {
+                IsValve = true, ItemName = "TERMOSTATİK VANA", Quantity = 4, UnitPrice = 250, TotalPrice = 1000
+            });
             ctx.Offers.Add(offer);
             await ctx.SaveChangesAsync();
             offerId = offer.Id;
