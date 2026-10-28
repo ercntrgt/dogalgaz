@@ -1,5 +1,5 @@
 @page "/customers"
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
 @rendermode InteractiveServer
 @inject ICustomerService CustomerService
 
@@ -54,7 +54,10 @@
                             else { <span class="text-muted small">Teklif yok</span> }
                         </td>
                         <td class="text-end">
-                            <a href="customers/@c.Id/tracking" class="btn btn-sm btn-outline-success">📊 Takip</a>
+                            @* Takip sayfası (ödemeler) yalnızca yöneticiye açık. *@
+                            <AuthorizeView Roles="Admin" Context="t">
+                                <a href="customers/@c.Id/tracking" class="btn btn-sm btn-outline-success">📊 Takip</a>
+                            </AuthorizeView>
                             <AuthorizeView Roles="Admin,SalesPerson" Context="a">
                                 <a href="offers/new?customerId=@c.Id" class="btn btn-sm btn-outline-primary">Teklif</a>
                                 <a href="customers/@c.Id" class="btn btn-sm btn-outline-secondary">Düzenle</a>

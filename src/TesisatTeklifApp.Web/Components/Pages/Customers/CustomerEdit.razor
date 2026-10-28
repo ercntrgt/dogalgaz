@@ -1,6 +1,6 @@
 @page "/customers/new"
 @page "/customers/{Id:int}"
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Roles = "Admin,SalesPerson")]
 @rendermode InteractiveServer
 @inject ICustomerService CustomerService
 @inject NavigationManager Nav

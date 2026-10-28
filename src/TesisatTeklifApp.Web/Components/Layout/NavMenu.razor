@@ -8,9 +8,10 @@
     <NavLink class="nav-link" href="schedule"><i class="bi bi-calendar3"></i><span>İş / Montaj Takvimi</span></NavLink>
     <AuthorizeView Roles="Admin,SalesPerson" Context="ns">
         <NavLink class="nav-link" href="offers/new"><i class="bi bi-plus-square"></i><span>Yeni Teklif</span></NavLink>
+        <NavLink class="nav-link" href="customers"><i class="bi bi-people"></i><span>Müşteriler</span></NavLink>
     </AuthorizeView>
 
-    @* Aşağıdaki her şey yalnızca yöneticiye görünür. Satış personeli sadece teklif/sipariş + takvim görür. *@
+    @* Aşağıdaki her şey yalnızca yöneticiye görünür. Satış personeli sadece teklif/sipariş + takvim + müşteriler görür. *@
     <AuthorizeView Roles="Admin" Context="adm">
         <div class="nav-group-title">Servis</div>
         <NavLink class="nav-link" href="services"><i class="bi bi-tools"></i><span>Servis Kayıtları</span></NavLink>
@@ -24,7 +25,6 @@
         <NavLink class="nav-link" href="suppliers"><i class="bi bi-building"></i><span>Tedarikçiler</span></NavLink>
 
         <div class="nav-group-title">Tanımlar</div>
-        <NavLink class="nav-link" href="customers"><i class="bi bi-people"></i><span>Müşteriler</span></NavLink>
         <NavLink class="nav-link" href="products"><i class="bi bi-wrench-adjustable"></i><span>Ürünler</span></NavLink>
 
         <div class="nav-group-title">Ödeme &amp; Raporlar</div>
