@@ -40,6 +40,9 @@ public static class OfferGroups
         new() { Name = "MALZEME EKİPMAN", Section = OfferSections.Material, Icon = "bi-tools",
                 Categories = new[] { ProductCategories.MalzemeEkipman } },
 
+        new() { Name = "ISI POMPASI MALZEME EKİPMAN", Section = OfferSections.Material, Icon = "bi-thermometer-sun",
+                Categories = new[] { ProductCategories.IsiPompasiMalzeme } },
+
         new() { Name = "İŞÇİLİKLER-DOĞALGAZ", Section = OfferSections.Labor, Icon = "bi-hammer",
                 Categories = new[] { ProductCategories.Iscilik }, AllowFreeText = true },
 

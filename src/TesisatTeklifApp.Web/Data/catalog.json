@@ -2740,167 +2740,7 @@
     "VatRate": 20.0
   },
   {
-    "Name": "MONTAJI İŞÇİLİK BEDELİ  7-9-12-14 BTU",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Adet",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "MONTAJI İŞÇİLİK BEDELİ 18-24 BTU",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Adet",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "MONTAJI İŞÇİLİK BEDELİ MULTİ İÇ ÜNİTE",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Adet",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
     "Name": "MONTAJI İŞÇİLİK BEDELİ MULTİDIŞ ÜNİTE",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Adet",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "BAKIR BORU 1/4 - 3/8 MALZEME",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Metre",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "BAKIR BORU 1/4 - 1/2 MALZEME",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Metre",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "BAKIR BORU 1/4 - 3/8 İŞÇİLİK",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Metre",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "BAKIR BORU 1/4 - 1/2 İŞÇİLİK",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Metre",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "KABLO KANALI  1/4 - 3/8",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Metre",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "KABLO KANALI  1/4 - 1/2",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Metre",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "KLİMA AYAĞI",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Adet",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "4*1,5 ANTIGRON KABLO",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Adet",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "BANT",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Adet",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "TEK TARAFLI TAKOZ",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Adet",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "ÇİFT TARAFLI TAKOZ",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Adet",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "TEK TARAFLI BÜYÜK TAKOZ",
-    "Category": "Malzeme/Ekipman",
-    "Brand": null,
-    "Model": null,
-    "Unit": "Adet",
-    "PurchasePrice": 0.0,
-    "SalePrice": 0.0,
-    "VatRate": 20.0
-  },
-  {
-    "Name": "ÇİGT TARAFLI BÜYÜK TAKOZ",
     "Category": "Malzeme/Ekipman",
     "Brand": null,
     "Model": null,
@@ -3027,6 +2867,16 @@
     "Unit": "Boy",
     "PurchasePrice": 0.0,
     "SalePrice": 0.0,
+    "VatRate": 20.0
+  },
+  {
+    "Name": "ISI POMPASI MONTAJ MALZEMESİ (DİREK BAĞLANTI)",
+    "Category": "Isı Pompası Malzeme/Ekipman",
+    "Brand": null,
+    "Model": null,
+    "Unit": "Adet",
+    "PurchasePrice": 5000.0,
+    "SalePrice": 5000.0,
     "VatRate": 20.0
   }
 ]

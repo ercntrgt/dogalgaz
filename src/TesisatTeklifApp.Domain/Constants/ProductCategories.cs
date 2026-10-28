@@ -30,6 +30,7 @@ public static class ProductCategories
     public const string Klima = "Klima";
     public const string IsiPompasi = "Isı Pompası";
     public const string MalzemeEkipman = "Malzeme/Ekipman";
+    public const string IsiPompasiMalzeme = "Isı Pompası Malzeme/Ekipman";
     public const string DogalgazTesisati = "Doğalgaz Tesisatı";
     public const string KolonTesisati = "Kolon Tesisatı";
     public const string KaloriferTesisati = "Kalorifer Tesisatı";
@@ -41,7 +42,7 @@ public static class ProductCategories
         Kombi, Kazan, Klima, Radyator, RadyatorVanasi, TermostatikVana, KombiDolabi,
         OdaTermostati, BacaUzatmasi, KombiElektrikIsi, SelenoidVana, GazAlarmCihazi,
         CamMenfezi, DogalgazBorulari, DogalgazVanalari, DogalgazTesisati, KolonTesisati,
-        KaloriferTesisati, FittingsMalzemeler, PlastikBorular, MalzemeEkipman,
+        KaloriferTesisati, FittingsMalzemeler, PlastikBorular, MalzemeEkipman, IsiPompasiMalzeme,
         Iscilik, Montaj, FullTesisat, HatTasima, EkHatAlma, KlimaHizmet, Diger
     };
 }
@@ -81,7 +82,8 @@ public static class SectionCategories
         [OfferSections.Material] = new[]
         {
             // Vana kategorileri radyatör bölümüne ait olduğu için burada yer almaz.
-            ProductCategories.MalzemeEkipman, ProductCategories.KombiDolabi,
+            ProductCategories.MalzemeEkipman, ProductCategories.IsiPompasiMalzeme,
+            ProductCategories.KombiDolabi,
             ProductCategories.OdaTermostati, ProductCategories.BacaUzatmasi,
             ProductCategories.SelenoidVana, ProductCategories.GazAlarmCihazi,
             ProductCategories.CamMenfezi, ProductCategories.KombiElektrikIsi,

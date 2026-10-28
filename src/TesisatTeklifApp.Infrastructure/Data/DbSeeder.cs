@@ -92,6 +92,8 @@ public static class DbSeeder
             // v3: "Radyatör" kategorisine sızmış tesisat/kolon kalemlerini düzelt.
             // (Önce çalışır ki eksik-kalem eklemesi düzeltilmiş kategorileri görsün.)
             await FixRadiatorCategoryAsync(db);
+            // v5: Malzeme Ekipman'daki klima kalemlerini kaldır (Klima grubunda zaten var).
+            await RemoveKlimaFromMalzemeAsync(db);
 
             var catalog = LoadCatalog(contentRootPath);
             if (catalog.Count == 0 && await db.Products.CountAsync() < 15)
@@ -147,7 +149,7 @@ public static class DbSeeder
     }
 
     /// <summary>Katalog sürümü — catalog.json değişince artır; seeder eksik kalemleri bir kez ekler.</summary>
-    private const int CatalogVersion = 4;
+    private const int CatalogVersion = 5;
 
     /// <summary>
     /// Excel içe aktarımında "Radyatör" kategorisine yanlışlıkla düşmüş tesisat/kolon kalemleri.
@@ -204,6 +206,26 @@ public static class DbSeeder
 
         // Kaydetmek şart: aşağıdaki "eksik kalemleri ekle" adımı kategorileri DB'den okur.
         // Kaydedilmezse taşınan kalem eksik sanılıp ikinci kez eklenir (kopya oluşur).
+        await db.SaveChangesAsync();
+    }
+
+    /// <summary>Malzeme Ekipman'dan kaldırılan klima kalemleri (müşteri isteği).</summary>
+    private static readonly HashSet<string> KlimaItemsInMalzeme = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "MONTAJI İŞÇİLİK BEDELİ 7-9-12-14 BTU", "MONTAJI İŞÇİLİK BEDELİ 18-24 BTU",
+        "MONTAJI İŞÇİLİK BEDELİ MULTİ İÇ ÜNİTE",
+        "BAKIR BORU 1/4 - 3/8 MALZEME", "BAKIR BORU 1/4 - 1/2 MALZEME",
+        "BAKIR BORU 1/4 - 3/8 İŞÇİLİK", "BAKIR BORU 1/4 - 1/2 İŞÇİLİK",
+        "KABLO KANALI 1/4 - 3/8", "KABLO KANALI 1/4 - 1/2", "KLİMA AYAĞI",
+        "4*1,5 ANTIGRON KABLO", "BANT", "TEK TARAFLI TAKOZ", "ÇİFT TARAFLI TAKOZ",
+        "TEK TARAFLI BÜYÜK TAKOZ", "ÇİGT TARAFLI BÜYÜK TAKOZ",
+    };
+
+    private static async Task RemoveKlimaFromMalzemeAsync(AppDbContext db)
+    {
+        var rows = await db.Products.Where(p => p.Category == ProductCategories.MalzemeEkipman).ToListAsync();
+        foreach (var row in rows.Where(r => KlimaItemsInMalzeme.Contains(Squash(r.Name))))
+            row.IsDeleted = true;
         await db.SaveChangesAsync();
     }
 
